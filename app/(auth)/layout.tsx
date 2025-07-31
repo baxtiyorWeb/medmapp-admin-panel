@@ -4,11 +4,20 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import IMask from "imask";
+import IMask, { InputMask, MaskedPatternOptions } from "imask";
 import Script from "next/script";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import api, { setAuthTokens } from "@/utils/api";
+
+// Define interface for API error response
+interface ApiError {
+  response?: {
+    data?: {
+      detail?: string;
+    };
+  };
+}
 
 export default function Home() {
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -17,10 +26,12 @@ export default function Home() {
   const registerFormWrapperRef = useRef<HTMLDivElement>(null);
   const tabLoginRef = useRef<HTMLButtonElement>(null);
   const tabRegisterRef = useRef<HTMLButtonElement>(null);
-  const loginPhoneMaskRef =
-    useRef<IMask.InputMask<IMask.AnyMaskedOptions> | null>(null);
-  const registerPhoneMaskRef =
-    useRef<IMask.InputMask<IMask.AnyMaskedOptions> | null>(null);
+  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
+    null
+  );
+  const registerPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
+    null
+  );
   const loginOtpInputsRef = useRef<HTMLInputElement[]>([]);
   const registerOtpInputsRef = useRef<HTMLInputElement[]>([]);
 
@@ -71,12 +82,14 @@ export default function Home() {
   ) => {
     const toastContainer = document.getElementById("toast-container");
     if (!toastContainer) return;
+
     const toast = document.createElement("div");
     toast.className = `toast-notification ${type}`;
     const icon =
       type === "success" ? "bi-check-circle-fill" : "bi-x-circle-fill";
     toast.innerHTML = `<span class="toast-icon"><i class="bi ${icon}"></i></span><span class="toast-message">${message}</span>`;
     toastContainer.appendChild(toast);
+
     setTimeout(() => toast.classList.add("show"), 100);
     setTimeout(() => {
       toast.classList.remove("show");
@@ -84,7 +97,6 @@ export default function Home() {
     }, 4000);
   };
 
-  // Telefon raqamdan maskni tozalash funksiyasi
   const cleanPhoneNumber = (phone: string): string => {
     return phone.replace(/[\s()_-]/g, "");
   };
@@ -138,15 +150,15 @@ export default function Home() {
     }
   };
 
-  const validateRegisterForm = () => {
+  const validateRegisterForm = (): boolean => {
     const isFirstNameValid = registerFirstName.trim() !== "";
     const isLastNameValid = registerLastName.trim() !== "";
     const isRegionValid = registerRegion !== "";
-    const isPhoneValid = registerPhoneMaskRef.current?.masked.isComplete;
+    const isPhoneValid =
+      registerPhoneMaskRef.current?.masked.isComplete ?? false;
     return isFirstNameValid && isLastNameValid && isRegionValid && isPhoneValid;
   };
 
-  // API Call: /auth/request-otp/
   const handleRegisterSendCode = async () => {
     if (!validateRegisterForm()) return;
     setLoading(true);
@@ -162,13 +174,13 @@ export default function Home() {
         startTimer();
         showToast("Tasdiqlash kodi yuborildi!", "success");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      showToast(error.response?.data?.detail || "Xato yuz berdi!", "error");
+      const err = error as ApiError;
+      showToast(err.response?.data?.detail || "Xato yuz berdi!", "error");
     }
   };
 
-  // API Call: /auth/request-otp/
   const handleLoginSendCode = async () => {
     if (!loginPhoneMaskRef.current?.masked.isComplete) return;
     setLoading(true);
@@ -183,14 +195,14 @@ export default function Home() {
         setLoginStep("otp");
         showToast("Tasdiqlash kodi yuborildi!", "success");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
-      showToast(error.response?.data?.detail || "Xato yuz berdi!", "error");
+      const err = error as ApiError;
+      showToast(err.response?.data?.detail || "Xato yuz berdi!", "error");
     }
   };
 
-  // API Call: /auth/login/
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const otpCode = loginOtp.join("");
@@ -208,17 +220,17 @@ export default function Home() {
         setAuthTokens(response.data.access, response.data.refresh);
         // setTimeout(() => window.location.reload(), 2000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
+      const err = error as ApiError;
       showToast(
-        error.response?.data?.detail || "Kod noto'g'ri kiritildi!",
+        err.response?.data?.detail || "Kod noto'g'ri kiritildi!",
         "error"
       );
     }
   };
 
-  // API Call: /auth/register/ & /auth/verify-otp/
-  const handleRegisterSubmit = async (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     const cleanedPhone = cleanPhoneNumber(registerPhone);
@@ -243,44 +255,37 @@ export default function Home() {
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
         // setTimeout(() => window.location.reload(), 2000);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setLoading(false);
+      const err = error as ApiError;
       const errorMessage =
-        error.response?.data?.detail || "Ro'yxatdan o'tishda xato yuz berdi!";
+        err.response?.data?.detail || "Ro'yxatdan o'tishda xato yuz berdi!";
       showToast(errorMessage, "error");
     }
   };
 
   useEffect(() => {
-    const registerPhoneInput = document.getElementById("registerPhone");
-    const loginPhoneInput = document.getElementById("loginPhone");
+    const registerPhoneInput = document.getElementById(
+      "registerPhone"
+    ) as HTMLInputElement | null;
+    const loginPhoneInput = document.getElementById(
+      "loginPhone"
+    ) as HTMLInputElement | null;
 
-    if (
-      registerPhoneInput &&
-      typeof window !== "undefined" &&
-      (window as any).IMask
-    ) {
-      registerPhoneMaskRef.current = (window as any)
-        .IMask(registerPhoneInput as HTMLInputElement, {
-          mask: "(00) 000-00-00",
-        })
-        .on("accept", () => {
-          setRegisterPhone(registerPhoneMaskRef.current?.value || "");
-        });
+    if (registerPhoneInput) {
+      registerPhoneMaskRef.current = IMask(registerPhoneInput, {
+        mask: "(00) 000-00-00",
+      }).on("accept", () => {
+        setRegisterPhone(registerPhoneMaskRef.current?.value || "");
+      });
     }
 
-    if (
-      loginPhoneInput &&
-      typeof window !== "undefined" &&
-      (window as any).IMask
-    ) {
-      loginPhoneMaskRef.current = (window as any)
-        .IMask(loginPhoneInput as HTMLInputElement, {
-          mask: "(00) 000-00-00",
-        })
-        .on("accept", () => {
-          setLoginPhone(loginPhoneMaskRef.current?.value || "");
-        });
+    if (loginPhoneInput) {
+      loginPhoneMaskRef.current = IMask(loginPhoneInput, {
+        mask: "(00) 000-00-00",
+      }).on("accept", () => {
+        setLoginPhone(loginPhoneMaskRef.current?.value || "");
+      });
     }
 
     return () => {
@@ -297,6 +302,7 @@ export default function Home() {
         strategy="beforeInteractive"
       />
       <Script src="https://unpkg.com/imask" strategy="beforeInteractive" />
+
       <div className="auth-wrapper bg-[linear-gradient(to_right,#e9f0f8_0%,#5c99f4_100%)]">
         <div id="toast-container"></div>
         <div className="auth-card">
@@ -354,7 +360,7 @@ export default function Home() {
                 type="button"
                 onClick={() => switchForms("register")}
               >
-                Ro‘yxatdan o‘tish
+                Ro&apos;yxatdan o&apos;tish
               </button>
             </div>
 
@@ -436,15 +442,16 @@ export default function Home() {
                             )
                           }
                           onPaste={(e) => handleOtpPaste(e, setLoginOtp)}
-                          ref={(el) =>
-                            (loginOtpInputsRef.current[index] =
-                              el as HTMLInputElement)
-                          }
+                          ref={(el: HTMLInputElement | null) => {
+                            if (el) {
+                              loginOtpInputsRef.current[index] = el;
+                            }
+                          }}
                         />
                       ))}
                     </div>
                     <div className="validation-message" id="login-otp-error">
-                      Kod noto'g'ri kiritildi.
+                      Kod noto&apos;g&apos;ri kiritildi.
                     </div>
                     <div className="d-grid my-3">
                       <button
@@ -485,9 +492,9 @@ export default function Home() {
             >
               {registerStep === "phone" && (
                 <div id="register-phone-step" className="step">
-                  <h3 className="fw-bold mb-2">Ro‘yxatdan o‘tish</h3>
+                  <h3 className="fw-bold mb-2">Ro&apos;yxatdan o&apos;tish</h3>
                   <p className="text-secondary mb-4">
-                    Ma'lumotlarni to‘ldiring.
+                    Ma&apos;lumotlarni to&apos;ldiring.
                   </p>
                   <form onSubmit={(e) => e.preventDefault()}>
                     <div className="row">
@@ -543,7 +550,7 @@ export default function Home() {
                         </option>
                         <option value="Buxoro viloyati">Buxoro viloyati</option>
                         <option value="Farg'ona viloyati">
-                          Farg'ona viloyati
+                          Farg&apos;ona viloyati
                         </option>
                         <option value="Jizzax viloyati">Jizzax viloyati</option>
                         <option value="Xorazm viloyati">Xorazm viloyati</option>
@@ -555,7 +562,7 @@ export default function Home() {
                           Qashqadaryo viloyati
                         </option>
                         <option value="Qoraqalpog'iston Respublikasi">
-                          Qoraqalpog'iston Respublikasi
+                          Qoraqalpog&apos;iston Respublikasi
                         </option>
                         <option value="Samarqand viloyati">
                           Samarqand viloyati
@@ -638,15 +645,16 @@ export default function Home() {
                             )
                           }
                           onPaste={(e) => handleOtpPaste(e, setRegisterOtp)}
-                          ref={(el) =>
-                            (registerOtpInputsRef.current[index] =
-                              el as HTMLInputElement)
-                          }
+                          ref={(el: HTMLInputElement | null) => {
+                            if (el) {
+                              registerOtpInputsRef.current[index] = el;
+                            }
+                          }}
                         />
                       ))}
                     </div>
                     <div className="validation-message" id="register-otp-error">
-                      Kod noto'g'ri kiritildi.
+                      Kod noto&apos;g&apos;ri kiritildi.
                     </div>
                     <div className="d-grid my-3">
                       <button
@@ -678,6 +686,7 @@ export default function Home() {
                           onClick={(e) => {
                             e.preventDefault();
                             startTimer();
+                            handleRegisterSendCode(); // Re-send OTP
                           }}
                         >
                           Qayta yuborish

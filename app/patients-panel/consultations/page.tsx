@@ -1,6 +1,7 @@
 "use client";
 
 import { PaperclipIcon } from "lucide-react";
+import Image from "next/image";
 import React, { useState, useEffect, useRef } from "react";
 import {
   BsChatDotsFill,
@@ -8,8 +9,51 @@ import {
   BsFileEarmarkMedicalFill,
 } from "react-icons/bs";
 
-const ConsultationPage = () => {
-  const [consultations, setConsultations] = useState([
+// Interfaces for better type safety
+interface Doctor {
+  name: string;
+  specialty: string;
+  avatar: string;
+}
+
+interface Message {
+  from: "doctor" | "patient";
+  text: string;
+  time: string;
+}
+
+interface File {
+  name: string;
+  size: string;
+  by: "Bemor" | "Shifokor";
+}
+
+interface Note {
+  diagnosis: string;
+  recommendations: string[];
+}
+
+interface Prescription {
+  name: string;
+  instruction: string;
+  duration: string;
+}
+
+interface Consultation {
+  id: number;
+  doctor: Doctor;
+  lastMessage: string;
+  timestamp: string;
+  unread: number;
+  active: boolean;
+  files: File[];
+  messages: Message[];
+  notes: Note | null;
+  prescriptions: Prescription[];
+}
+
+const ConsultationPage: React.FC = () => {
+  const [consultations, setConsultations] = useState<Consultation[]>([
     {
       id: 1,
       doctor: {
@@ -110,10 +154,12 @@ const ConsultationPage = () => {
     },
   ]);
 
-  const [selectedConsultationId, setSelectedConsultationId] = useState(null);
-  const [activeTab, setActiveTab] = useState("chat");
-  const chatInputRef = useRef(null);
-  const scrollContainerRef = useRef(null);
+  const [selectedConsultationId, setSelectedConsultationId] = useState<
+    number | null
+  >(null);
+  const [activeTab, setActiveTab] = useState<string>("chat");
+  const chatInputRef = useRef<HTMLInputElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (consultations.length > 0) {
@@ -132,18 +178,19 @@ const ConsultationPage = () => {
     (con) => con.id === selectedConsultationId
   );
 
-  const handleSelectConsultation = (id) => {
+  const handleSelectConsultation = (id: number) => {
     setSelectedConsultationId(id);
     setActiveTab("chat");
   };
 
-  const handleTabChange = (tab) => {
+  const handleTabChange = (tab: string) => {
     setActiveTab(tab);
   };
 
   const handleSendMessage = () => {
     if (!chatInputRef.current || !chatInputRef.current.value.trim()) return;
 
+    // 1️⃣ Patient xabarini qo‘shish
     const updatedConsultations = consultations.map((con) => {
       if (con.id === selectedConsultationId) {
         return {
@@ -151,8 +198,8 @@ const ConsultationPage = () => {
           messages: [
             ...con.messages,
             {
-              from: "patient",
-              text: chatInputRef.current.value,
+              from: "patient" as const, // endi TypeScript qabul qiladi
+              text: chatInputRef.current!.value,
               time: new Date().toLocaleTimeString("uz-UZ", {
                 hour: "2-digit",
                 minute: "2-digit",
@@ -165,9 +212,11 @@ const ConsultationPage = () => {
     });
 
     setConsultations(updatedConsultations);
+
     chatInputRef.current.value = "";
     chatInputRef.current.focus();
 
+    // 2️⃣ Doctor javobi
     setTimeout(() => {
       const updatedAgain = updatedConsultations.map((con) => {
         if (con.id === selectedConsultationId) {
@@ -176,7 +225,7 @@ const ConsultationPage = () => {
             messages: [
               ...con.messages,
               {
-                from: "doctor",
+                from: "doctor" as const, // type assertion qo‘shildi
                 text: "Xabaringizni oldim, hozir ko'rib chiqaman.",
                 time: new Date().toLocaleTimeString("uz-UZ", {
                   hour: "2-digit",
@@ -188,11 +237,12 @@ const ConsultationPage = () => {
         }
         return con;
       });
+
       setConsultations(updatedAgain);
     }, 1500);
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSendMessage();
     }
@@ -211,7 +261,7 @@ const ConsultationPage = () => {
           onClick={() => handleSelectConsultation(con.id)}
         >
           <div className="relative flex-shrink-0">
-            <img
+            <Image
               src={con.doctor.avatar}
               className="w-12 h-12 rounded-full"
               alt=""
@@ -251,7 +301,7 @@ const ConsultationPage = () => {
     </div>
   );
 
-  const ChatPane = ({ messages }) => (
+  const ChatPane: React.FC<{ messages: Message[] }> = ({ messages }) => (
     <div
       id="chat-pane"
       className="tab-pane p-4 sm:p-6 space-y-4 chat-body"
@@ -287,8 +337,8 @@ const ConsultationPage = () => {
     </div>
   );
 
-  const NotesPane = ({ notes }) => (
-    <div id="notes-pane" className="tab-pane  space-y-6">
+  const NotesPane: React.FC<{ notes: Note | null }> = ({ notes }) => (
+    <div id="notes-pane" className="tab-pane p-4 sm:p-6 space-y-6">
       {notes ? (
         <>
           <div className="mb-6">
@@ -320,7 +370,9 @@ const ConsultationPage = () => {
     </div>
   );
 
-  const PrescriptionsPane = ({ prescriptions }) => (
+  const PrescriptionsPane: React.FC<{ prescriptions: Prescription[] }> = ({
+    prescriptions,
+  }) => (
     <div id="prescriptions-pane" className="tab-pane p-4 sm:p-6">
       {prescriptions.length > 0 ? (
         <ul className="divide-y divide-slate-200">
@@ -344,7 +396,7 @@ const ConsultationPage = () => {
     </div>
   );
 
-  const FilesPane = ({ files }) => (
+  const FilesPane: React.FC<{ files: File[] }> = ({ files }) => (
     <div id="files-pane" className="tab-pane p-4 sm:p-6 space-y-3">
       {files.length > 0 ? (
         files.map((f, index) => (
@@ -383,7 +435,7 @@ const ConsultationPage = () => {
             Konsultatsiya mavjud emas
           </h3>
           <p className="text-slate-500">
-            Hozircha sizda faol yoki yakunlangan konsultatsiyalar yo'q.
+            Hozircha sizda faol yoki yakunlangan konsultatsiyalar yo&apos;q.
           </p>
         </div>
       );
@@ -396,7 +448,7 @@ const ConsultationPage = () => {
       >
         <div className="bg-white rounded-2xl shadow-lg h-full flex flex-col">
           <div className="p-4 border-b border-slate-200 flex items-center gap-4 flex-shrink-0">
-            <img
+            <Image
               src={selectedConsultation.doctor.avatar}
               className="w-11 h-11 rounded-full"
               alt=""
@@ -420,7 +472,7 @@ const ConsultationPage = () => {
                     : "text-slate-500 border-transparent hover:text-primary hover:border-primary-300"
                 }`}
               >
-                <BsChatDotsFill className="mr-2"/> Chat
+                <BsChatDotsFill className="mr-2" /> Chat
               </button>
               <button
                 onClick={() => handleTabChange("notes")}
