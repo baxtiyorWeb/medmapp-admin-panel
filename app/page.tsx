@@ -11,7 +11,7 @@ export default function Home() {
         </h1>
         <p className="text-[16px] leading-[24px] text-[#6c757d] mt-[8px]">
           Assalomu alaykum, Dr. Salima Nosirova! Bugungi ish kuningiz haqida
-          umumiy ma'lumot.
+          umumiy ma&apos;lumot.
         </p>
       </div>
 

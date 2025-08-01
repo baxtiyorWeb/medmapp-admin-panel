@@ -10,7 +10,7 @@ const PatientsPage = () => {
           Bemorlar
         </h1>
         <p className="text-[16px] leading-[24px] text-[#6c757d] mt-[8px]">
-          Sizga biriktirilgan bemorlar ro'yxati.
+          Sizga biriktirilgan bemorlar ro&apos;yxati.
         </p>
       </div>
 
