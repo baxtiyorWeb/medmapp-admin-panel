@@ -189,7 +189,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     onClick={onClick}
     className={`flex items-center h-[50px] py-[10px] px-[12px] rounded-lg cursor-pointer transition-colors duration-200 ${
       active
-        ? "bg-[#3D4FE4] text-white font-semibold "
+        ? "bg-[#4153F1] text-white font-semibold "
         : "text-gray-600 hover:bg-gray-100"
     } ${className}`}
   >
