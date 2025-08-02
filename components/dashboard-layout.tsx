@@ -46,22 +46,28 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
       )}
 
       <aside
-        className={`bg-white border-r border-gray-200 transition-all duration-300 z-40 ${
+        className={`bg-white transition-all duration-300 border-r border-gray-200  z-40 ${
           isMobile
             ? isSidebarOpen
               ? "fixed inset-y-0 left-0 w-[280px]"
-              : "hidden"
+              : " transition-all duration-300"
             : isSidebarOpen
             ? "w-[280px]"
-            : "w-[80px]"
+            : "w-[80px] "
         }`}
       >
-        <div className="h-[66px] flex w-[199px] mt-[20px] mb-[70px] ml-[20px] items-center justify-center">
+        <div
+          className={`h-[66px] flex items-center justify-center mt-[20px] mb-[70px] transition-all duration-300 overflow-hidden ${
+            isSidebarOpen ? "ml-[20px] w-[199px]" : "ml-0 w-[80px]"
+          }`}
+        >
           <Link href={"/"}>
             <Image
-              className="h-[66px] w-auto"
-              width={100}
-              height={100}
+              className={`transition-all duration-300 object-contain ${
+                isSidebarOpen ? "h-[66px] w-auto" : "h-[40px] w-auto"
+              }`}
+              width={isSidebarOpen ? 100 : 40}
+              height={isSidebarOpen ? 66 : 40}
               src={
                 isSidebarOpen
                   ? "https://medmapp.uz/images/MedMapp_Logo_shaffof.png"
