@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Menu,
   LayoutDashboard,
@@ -10,106 +10,130 @@ import {
   LogOut,
   Search,
   Bell,
-  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-// ... (boshqa importlar o'zgarishsiz)
-import { usePathname } from "next/navigation"; // <-- YANGI
+import { usePathname } from "next/navigation";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const pathname = usePathname(); // <-- YANGI
+  const [isMobile, setIsMobile] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth < 768) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
-    <div
-      className="grid min-h-screen bg-[#F0F2F5] transition-all duration-300"
-      style={{
-        gridTemplateColumns: isSidebarOpen ? "280px 1fr" : "80px 1fr",
-      }}
-    >
-      <aside className="bg-white h-screen sticky top-0 flex flex-col border-r border-gray-200">
-        <div className="h-16 mb-[56px] mt-[16px] flex items-center justify-center font-bold text-blue-700 text-lg border-gray-200">
-          {isSidebarOpen ? (
-            <div className="flex items-center space-x-2">
-              <Link href={"/"}>
-                <Image
-                  className="h-[66px] w-full"
-                  width={100}
-                  height={100}
-                  src="https://medmapp.uz/images/MedMapp_Logo_shaffof.png"
-                  alt=""
-                />
-              </Link>
-            </div>
-          ) : (
-            <Link href={"/"}>
-              <Image
-                className="h-[4.5rem] w-full"
-                width={100}
-                height={100}
-                src="http://127.0.0.1:5500/images/favicon.png"
-                alt=""
-              />
-            </Link>
-          )}
+    <div className="flex min-h-screen relative bg-[#F0F2F5] overflow-hidden">
+      {isMobile && isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 bg-opacity-40 z-30"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      <aside
+        className={`bg-white border-r border-gray-200 transition-all duration-300 z-40 ${
+          isMobile
+            ? isSidebarOpen
+              ? "fixed inset-y-0 left-0 w-[280px]"
+              : "hidden"
+            : isSidebarOpen
+            ? "w-[280px]"
+            : "w-[80px]"
+        }`}
+      >
+        <div className="h-[66px] flex w-[199px] mt-[20px] mb-[70px] ml-[20px] items-center justify-center">
+          <Link href={"/"}>
+            <Image
+              className="h-[66px] w-auto"
+              width={100}
+              height={100}
+              src={
+                isSidebarOpen
+                  ? "https://medmapp.uz/images/MedMapp_Logo_shaffof.png"
+                  : "http://127.0.0.1:5500/images/favicon.png"
+              }
+              alt="logo"
+            />
+          </Link>
         </div>
-        <nav className="mt-6 flex-1 flex flex-col space-y-2 px-4">
+
+        <nav className="flex-1 flex flex-col space-y-1 px-4">
           <SidebarItem
             link="/"
             icon={LayoutDashboard}
             text="Boshqaruv Paneli"
             open={isSidebarOpen}
-            active={pathname === "/"} // <-- BU YERDA O'ZGARTIRILGAN
+            active={pathname === "/"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
           <SidebarItem
             link="/schedule"
             icon={Calendar}
             text="Kun Tartibi"
             open={isSidebarOpen}
-            active={pathname === "/schedule"} // <-- BU YERDA O'ZGARTIRILGAN
+            active={pathname === "/schedule"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
           <SidebarItem
             link="/patients"
             icon={Stethoscope}
             text="Bemorlar"
             open={isSidebarOpen}
-            active={pathname === "/patients"} // <-- BU YERDA O'ZGARTIRILGAN
+            active={pathname === "/patients"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
           <SidebarItem
             link="/messages"
             icon={MessageSquare}
             text="Xabarlar"
             open={isSidebarOpen}
-            active={pathname === "/messages"} // <-- BU YERDA O'ZGARTIRILGAN
+            active={pathname === "/messages"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
           <SidebarItem
             link="/settings"
             icon={Settings}
             text="Profil Sozlamalari"
             open={isSidebarOpen}
-            active={pathname === "/settings"} // <-- BU YERDA O'ZGARTIRILGAN
+            active={pathname === "/settings"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
         </nav>
+
         <div className="p-4 mt-auto">
           <SidebarItem
             link="/login"
             icon={LogOut}
             text="Chiqish"
             open={isSidebarOpen}
-            className="text-[#E74C3C]"
+            className="text-[#E74C3C] absolute bottom-10"
             active={pathname === "/login"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
           />
         </div>
       </aside>
 
-      <div className="flex flex-col min-h-screen">
-        {/* ... Header va Main qismi o'zgarishsiz qoladi */}
-        <header className="h-[70px] bg-white flex items-center px-6 justify-between sticky top-0 z-10 border-b border-gray-200">
+      <div className="flex flex-col flex-1 min-h-screen">
+        <header className="h-[70px] bg-white flex items-center px-4 md:px-6 justify-between sticky top-0 z-10 border-b border-gray-200">
           <button onClick={() => setIsSidebarOpen((prev) => !prev)}>
             <Menu size={24} className="text-gray-500 cursor-pointer" />
           </button>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4 md:gap-6">
             <button className="text-gray-500 hover:text-blue-500">
               <Search size={20} />
             </button>
@@ -119,7 +143,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <button className="text-gray-500 hover:text-blue-500">
               <Settings size={20} />
             </button>
-            <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
+            <div className="hidden md:flex items-center gap-2 border-l border-gray-200 pl-4">
               <div className="bg-[#3E79F7] text-white w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full text-sm font-semibold">
                 SN
               </div>
@@ -132,12 +156,15 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             </div>
           </div>
         </header>
-        <main className="p-[30px] flex-1 bg-white">{children}</main>
+
+        <main className="p-4 md:p-6 flex-1 bg-white overflow-auto">
+          {children}
+        </main>
       </div>
     </div>
   );
 };
-// ... SidebarItem komponenti o'zgarishsiz qoladi
+
 interface SidebarItemProps {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   text: string;
@@ -145,6 +172,7 @@ interface SidebarItemProps {
   className?: string;
   active?: boolean;
   link: string;
+  onClick?: () => void;
 }
 
 const SidebarItem: React.FC<SidebarItemProps> = ({
@@ -154,9 +182,11 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   className = "",
   active = false,
   link = "",
+  onClick,
 }) => (
   <Link
-    href={`${link}`}
+    href={link}
+    onClick={onClick}
     className={`flex items-center h-[50px] py-[10px] px-[12px] rounded-lg cursor-pointer transition-colors duration-200 ${
       active
         ? "bg-[#3D4FE4] text-white font-semibold "
@@ -175,7 +205,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     </div>
     {open && (
       <span
-        className={`text-[15px] font-[Inter]  ${active ? "text-white" : ""}`}
+        className={`text-[15px] font-[Inter] ${active ? "text-white" : ""}`}
       >
         {text}
       </span>
