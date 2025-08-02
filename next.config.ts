@@ -15,6 +15,7 @@ const nextConfig: NextConfig = {
         port: "5500",
         pathname: "/images/**",
       },
+     
     ],
   },
 };

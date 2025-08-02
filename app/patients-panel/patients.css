@@ -1,0 +1,101 @@
+/* index.css (Bosh sahifa) uchun maxsus stillar */
+/* globals.css faylingizga yozing */
+
+/* Bootstrap CSS */
+@import url("https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css");
+
+/* Bootstrap Icons */
+
+/* Faviconlar uchun esa CSS emas, HTML <head> ichida link kerak bo'ladi */
+
+.info-card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  background-color: var(--card-background);
+  margin-bottom: 1.5rem;
+}
+
+.info-card .card-body {
+  padding: 1.5rem;
+}
+
+.info-card .card-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.appointment-card {
+  background: linear-gradient(
+    135deg,
+    var(--secondary-color),
+    var(--primary-color)
+  );
+  color: #fff;
+}
+
+.appointment-card .doctor-avatar {
+  width: 56px;
+  height: 56px;
+  border: 3px solid #fff;
+}
+
+.activity-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-item .activity-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  margin-right: 1rem;
+}
+
+.service-card {
+  text-align: center;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+.service-card .icon-wrapper {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: var(--primary-light);
+  color: var(--primary-color);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.service-card h4 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.service-card p {
+  font-size: 0.8rem;
+}
+
+body.dark-mode .appointment-card {
+  background: linear-gradient(135deg, #2c3e50, #34495e);
+}

@@ -10,3 +10,136 @@
   body {
     font-family: var(--font-inter);
   }
+
+  :root {
+    --primary-color: #4154f1;
+    --secondary-color: #012970;
+    --background-color: #f4f6fc;
+    --card-background: #ffffff;
+    --text-color: #344054;
+    --text-light: #667085;
+    --border-color: #eaecf0;
+  }
+  
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+  }
+  
+  .main-container {
+    display: flex;
+    min-height: 100vh;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  
+  .portal-container {
+    width: 100%;
+    max-width: 1200px; /* Kenglik 5 ta kartaga moslandi */
+    text-align: center;
+  }
+  
+  .logo-container {
+    margin-bottom: 2rem;
+  }
+  
+  .logo-container img {
+    max-height: 70px;
+  }
+  
+  .portal-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .portal-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+      0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-color: var(--primary-color);
+  }
+  
+  .portal-card .icon-wrapper {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    background-color: var(--primary-light);
+    color: var(--primary-color);
+    font-size: 28px;
+  }
+  
+  /* Har bir rol uchun alohida ranglar */
+  .portal-card.doctor-card .icon-wrapper {
+    background-color: #e7f7f0;
+    color: #12b76a;
+  }
+  .portal-card.operator-card .icon-wrapper {
+    background-color: #e4f9f5;
+    color: #14b8a6;
+  }
+  .portal-card.admin-card .icon-wrapper {
+    background-color: #fffbeb;
+    color: #f79009;
+  }
+  .portal-card.superadmin-card .icon-wrapper {
+    background-color: #fdecec;
+    color: #f04438;
+  }
+  
+  .portal-card h3 {
+    font-weight: 600;
+    color: var(--secondary-color);
+    font-size: 1.25rem;
+  }
+  
+  .portal-card p {
+    color: var(--text-light);
+    flex-grow: 1;
+    min-height: 60px;
+  }
+  
+  .portal-card .btn-login {
+    margin-top: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .portal-card.doctor-card .btn-login {
+    color: #12b76a;
+  }
+  .portal-card.operator-card .btn-login {
+    color: #14b8a6;
+  }
+  .portal-card.admin-card .btn-login {
+    color: #f79009;
+  }
+  .portal-card.superadmin-card .btn-login {
+    color: #f04438;
+  }
+  
+  .portal-card .btn-login i {
+    transition: transform 0.2s;
+  }
+  
+  .portal-card:hover .btn-login i {
+    transform: translateX(5px);
+  }
+  
