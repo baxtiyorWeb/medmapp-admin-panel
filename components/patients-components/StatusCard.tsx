@@ -103,6 +103,7 @@ interface FormData {
   gender: string;
   phone: string;
   email: string;
+  clinicName: string;
   complaint: string;
   diagnosis: string;
   documents: DocumentFile[];
@@ -132,6 +133,7 @@ const StatusCard: React.FC = () => {
     gender: "",
     phone: "",
     email: "",
+    clinicName: "",
     complaint: "",
     diagnosis: "",
     documents: [],
@@ -170,6 +172,8 @@ const StatusCard: React.FC = () => {
       if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
         newErrors.email = "To'g'ri email kiritilishi shart";
     } else if (step === 2) {
+      if (!formData.clinicName)
+        newErrors.clinicName = "Klinika nomi kiritilishi shart";
       if (!formData.complaint)
         newErrors.complaint = "Shikoyat kiritilishi shart";
     } else if (step === 4) {
@@ -281,7 +285,7 @@ const StatusCard: React.FC = () => {
       setSubmitError(null);
 
       try {
-        const payload = {
+        const profilePayload = {
           patient_profile: {
             full_name: formData.fullName,
             passport: formData.passport,
@@ -295,10 +299,38 @@ const StatusCard: React.FC = () => {
           // Agar documents kerak bo'lsa, bu yerda qo'shish mumkin, ammo API specda yo'q
         };
 
-        const response = await api.patch("/profile/me/", payload);
+        const profileResponse = await api.patch("/profile/me/", profilePayload);
+
+        // Create application
+        const appPayload = {
+          clinic_name: formData.clinicName,
+          complaint: formData.complaint,
+          diagnosis: formData.diagnosis,
+        };
+
+        const appResponse = await api.post("/application/create/", appPayload);
+
+        const appId = appResponse.data.id;
+
+        // Upload documents
+        for (const doc of formData.documents) {
+          const response = await fetch(doc.dataUrl);
+          const blob = await response.blob();
+          const file = new File([blob], doc.name, { type: doc.type });
+
+          const docFormData = new FormData();
+          docFormData.append("application", appId.toString());
+          docFormData.append("file", file);
+
+          await api.post("/documents/create/", docFormData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+        }
 
         // Success handling
-        if (response.status === 200 || response.status === 201) {
+        if (profileResponse.status === 200 || profileResponse.status === 201) {
           // Optional: localStorage ga saqlashni saqlab qolish yoki o'chirish
           localStorage.setItem(
             "formData",
@@ -487,6 +519,16 @@ const StatusCard: React.FC = () => {
           <div className="w-full max-w-3xl mx-auto">
             <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl space-y-4 shadow-sm">
               <InputField
+                id="clinicName"
+                label="Klinika nomi"
+                placeholder="Masalan, Shox International Hospital"
+                icon="hospital"
+                value={formData.clinicName}
+                required
+                onChange={handleInputChange}
+                error={errors.clinicName}
+              />
+              <InputField
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
                 type="textarea"
@@ -662,6 +704,14 @@ const StatusCard: React.FC = () => {
                 </button>
               </div>
               <dl className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
+                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
+                    Klinika nomi
+                  </dt>
+                  <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
+                    {formData.clinicName}
+                  </dd>
+                </div>
                 <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
                   <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
                     Shikoyatlar

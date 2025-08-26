@@ -41,12 +41,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth < 768) {
-        setIsSidebarOpen(false);
-      } else {
-        setIsSidebarOpen(true);
-      }
+      const mobileView = window.innerWidth < 768;
+      setIsMobile(mobileView);
+      // Set the sidebar to be open on desktop and closed on mobile by default
+      setIsSidebarOpen(!mobileView);
     };
 
     handleResize();
@@ -58,10 +56,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <div className="flex h-screen bg-slate-100 text-slate-800 overflow-hidden">
       {/* Sidebar Backdrop */}
-      {isMobile && isSidebarOpen && (
+      {isMobile && (
         <div
           id="sidebar-backdrop"
-          className="fixed inset-0 bg-black bg-opacity-50 z-30"
+          className={`fixed inset-0 bg-black/80 z-30 transition-opacity duration-300 ease-in-out ${
+            isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+          }`}
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -69,14 +69,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`sidebar-transition fixed inset-y-0 left-0 z-40 w-[260px] bg-white border-r border-slate-200 flex flex-col transform
-          ${
-            !isMobile
-              ? isSidebarOpen
-                ? "translate-x-0"
-                : "-translate-x-full"
-              : "translate-x-0"
-          }
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 ease-in-out
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
         {/* Logo Section */}
@@ -152,8 +146,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
       <div
         className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out
-        ${!isMobile && isSidebarOpen ? "ml-[260px]" : "ml-0"}
-      `}
+          ${isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"}
+        `}
       >
         <header className="flex items-center justify-between py-4 px-8 bg-white border-b border-slate-200 h-[89px] flex-shrink-0">
           <button onClick={() => setIsSidebarOpen((prev) => !prev)}>
