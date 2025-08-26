@@ -9,7 +9,7 @@ const Portal = () => {
       id: 1,
       title: "Bemor Kabineti",
       description:
-        "Uchrashuvlar tarixi, tahlil natijalari va shaxsiy ma'lumotlarni ko'rish.",
+        "Uchrashuvlar tarixi, tahlil natijalari va shaxsiy ma&apos;lumotlarni ko&apos;rish.",
       icon: <User className="text-xl" />,
       link: "/patient",
       color: "bg-blue-100 text-blue-600",
@@ -19,7 +19,7 @@ const Portal = () => {
       id: 2,
       title: "Shifokor Kabineti",
       description:
-        "Qabullar jadvali, bemorlar ro'yxati va maslahatlarni boshqarish.",
+        "Qabullar jadvali, bemorlar ro&apos;yxati va maslahatlarni boshqarish.",
       icon: <HeartPulse className="text-xl" />,
       link: "/doctor",
       color: "bg-emerald-100 text-emerald-600",
@@ -29,7 +29,7 @@ const Portal = () => {
       id: 3,
       title: "Operator Paneli",
       description:
-        "Bemorlar va klinikalar o'rtasidagi jarayonlarni, so'rovlarni va qo'llab-quvvatlashni boshqarish.",
+        "Bemorlar va klinikalar o&apos;rtasidagi jarayonlarni, so&apos;rovlarni va qo&apos;llab-quvvatlashni boshqarish.",
       icon: <Headset className="text-xl" />,
       link: "/admin",
       color: "bg-teal-100 text-teal-600",
@@ -64,14 +64,14 @@ const Portal = () => {
           <img src="images/MedMapp_Logo_shaffof.png" alt="MedMapp.uz Logo" />
         </div>
         <div className="mb-6">
-          <h1 className="text-[32px] mb-3  text-[#212529] font-bold leading-[32px]">
+          <h1 className="text-[32px] mb-3 text-[#212529] font-bold leading-[32px]">
             Platformaga kirish
           </h1>
           <span className="text-[#6c757D] font-light text-[20px]">
-            O'z rolingizni tanlang va tizimga kiring.
+            O&apos;z rolingizni tanlang va tizimga kiring.
           </span>
         </div>
-        <div className="row g-4 justify-content-center flex justify-center items-center flex-wrap w-full gap-4">
+        <div className="row g-4 justify-center flex flex-wrap w-full gap-4">
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
             <a href="/patients-panel" className="portal-card">
               <div className="icon-wrapper">
@@ -79,14 +79,15 @@ const Portal = () => {
               </div>
               <h3>Bemor Kabineti</h3>
               <p>
-                Uchrashuvlar tarixi, tahlil natijalari va shaxsiy ma'lumotlarni
-                ko'rish.
+                Uchrashuvlar tarixi, tahlil natijalari va shaxsiy
+                ma&apos;lumotlarni ko&apos;rish.
               </p>
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
             </a>
           </div>
+
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
             <a href="/doctors" className="portal-card doctor-card">
               <div className="icon-wrapper">
@@ -94,13 +95,15 @@ const Portal = () => {
               </div>
               <h3>Shifokor Kabineti</h3>
               <p>
-                Qabullar jadvali, bemorlar ro'yxati va maslahatlarni boshqarish.
+                Qabullar jadvali, bemorlar ro&apos;yxati va maslahatlarni
+                boshqarish.
               </p>
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
             </a>
           </div>
+
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
             <a href="admin/index.html" className="portal-card operator-card">
               <div className="icon-wrapper">
@@ -108,14 +111,15 @@ const Portal = () => {
               </div>
               <h3>Operator Paneli</h3>
               <p>
-                Bemorlar va klinikalar o'rtasidagi jarayonlarni, so'rovlarni va
-                qo'llab-quvvatlashni boshqarish.
+                Bemorlar va klinikalar o&apos;rtasidagi jarayonlarni,
+                so&apos;rovlarni va qo&apos;llab-quvvatlashni boshqarish.
               </p>
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
             </a>
           </div>
+
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
             <a href="clinic/index.html" className="portal-card admin-card">
               <div className="icon-wrapper">
@@ -131,6 +135,7 @@ const Portal = () => {
               </span>
             </a>
           </div>
+
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
             <a
               href="superadmin/index.html"
