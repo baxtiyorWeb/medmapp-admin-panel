@@ -79,7 +79,7 @@ const Settings = () => {
                         Rasm yuklash
                       </button>
                       <button className="text-sm text-slate-500 hover:text-danger ml-3">
-                        O'chirish
+                        O&apos;chirish
                       </button>
                     </div>
                   </div>
@@ -89,7 +89,7 @@ const Settings = () => {
                         htmlFor="fullName"
                         className="text-sm font-medium text-slate-700 mb-1 block"
                       >
-                        To'liq ism
+                        To&apos;liq ism
                       </label>
                       <input
                         type="text"
@@ -142,7 +142,7 @@ const Settings = () => {
                         <option>Toshkent viloyati</option>
                         <option>Andijon viloyati</option>
                         <option>Buxoro viloyati</option>
-                        <option>Farg'ona viloyati</option>
+                        <option>Farg&apos;ona viloyati</option>
                         <option>Jizzax viloyati</option>
                         <option>Xorazm viloyati</option>
                         <option>Namangan viloyati</option>
@@ -151,14 +151,14 @@ const Settings = () => {
                         <option>Samarqand viloyati</option>
                         <option>Sirdaryo viloyati</option>
                         <option>Surxondaryo viloyati</option>
-                        <option>Qoraqalpog'iston Respublikasi</option>
+                        <option>Qoraqalpog&apos;iston Respublikasi</option>
                       </select>
                     </div>
                   </div>
                 </div>
                 <div className="p-6 bg-slate-50 rounded-b-2xl text-right">
                   <button className="bg-primary text-white font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
-                    O'zgarishlarni saqlash
+                    O&apos;zgarishlarni saqlash
                   </button>
                 </div>
               </div>

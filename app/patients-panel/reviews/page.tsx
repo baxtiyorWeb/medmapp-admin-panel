@@ -184,8 +184,8 @@ const Home = () => {
                             <i className="bi bi-star-half"></i>
                           </div>
                           <p className="text-slate-600">
-                            Xizmat ko'rsatish sifati yaxshi, lekin ro'yxatdan
-                            o'tish joyida biroz kutib qoldim. Umuman olganda,
+                            Xizmat ko&apos;rsatish sifati yaxshi, lekin ro&apos;yxatdan
+                            o&apos;tish joyida biroz kutib qoldim. Umuman olganda,
                             tavsiya qilaman.
                           </p>
                         </div>

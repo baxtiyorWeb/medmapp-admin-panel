@@ -144,7 +144,7 @@ const LoginPage = () => {
               ))}
             </div>
             <div className="validation-message" id="login-otp-error">
-              Kod noto'g'ri kiritildi.
+              Kod noto&apos;g&apos;ri kiritildi.
             </div>
             <div className="d-grid my-3">
               <button
