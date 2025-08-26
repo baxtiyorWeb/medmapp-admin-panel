@@ -403,7 +403,7 @@ body {
   from {
     transform: translateX(-100%);
   }
-<<<<<<< HEAD
+
 
   to {
     transform: translateX(100%);
@@ -1065,7 +1065,7 @@ body {
   }
 }
 
-<<<<<<< HEAD
+
 /* service card */
 
 /* Xatolik uchun stillar */
@@ -1413,7 +1413,6 @@ body {
 .lightbox-next {
   right: 1rem;
 }
-=======
   
   /* Body va matnlar uchun default font */
   body {
@@ -1552,8 +1551,6 @@ body {
     transform: translateX(5px);
   }
   
->>>>>>> 619ee19 (Initial commit)
-=======
 
 /* service card */
 
@@ -1718,4 +1715,3 @@ body {
     }
     .lightbox-prev { left: 1rem; }
     .lightbox-next { right: 1rem; }
->>>>>>> 3fb007e (yangilandi)
