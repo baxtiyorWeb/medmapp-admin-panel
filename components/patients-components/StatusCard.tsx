@@ -342,6 +342,16 @@ const StatusCard: React.FC = () => {
     if (statusProgressBar) statusProgressBar.style.width = `${progress}%`;
   }, [currentStep]);
 
+  const [isClosing, setIsClosing] = useState(false);
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setTimeout(() => {
+      setIsModalOpen(false);
+      setIsClosing(false);
+    }, 300); // duration-300 bilan mos
+  };
+
   const stepVariants = {
     enter: (direction: number) => ({
       x: direction > 0 ? 50 : -50,
@@ -859,74 +869,76 @@ const StatusCard: React.FC = () => {
         </div>
       )}
 
-      <div
-        onClick={() => setIsModalOpen(!isModalOpen)}
-        className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 bg-opacity-50 transition-opacity duration-300 ${
-          isModalOpen ? "opacity-100 visible" : "opacity-0  invisible"
-        }`}
-      >
+      {(isModalOpen || isClosing) && (
         <div
-          onClick={(e) => e.stopPropagation()}
-          className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
-            isModalOpen ? "scale-100" : "scale-95"
+          onClick={handleClose}
+          className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 transition-opacity duration-100 ${
+            isClosing ? "opacity-0" : "visible"
           }`}
         >
-          <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-            <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
-              Konsultatsiya uchun Anketa
-            </h3>
-            <button
-              onClick={closeModal}
-              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
-            >
-              <i className="bi bi-x-lg text-2xl"></i>
-            </button>
-          </div>
-          <div className="px-6 pt-5">
-            <div className="bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
-              <div
-                id="modal-progress-bar"
-                className="bg-primary-600 h-2.5 rounded-full transition-all duration-300"
-              ></div>
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-00 ${
+              isClosing ? "scale-95" : "scale-100"
+            }`}
+          >
+            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
+              <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+                Konsultatsiya uchun Anketa
+              </h3>
+              <button
+                onClick={closeModal}
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <i className="bi bi-x-lg text-2xl"></i>
+              </button>
+            </div>
+            <div className="px-6 pt-5">
+              <div className="bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+                <div
+                  id="modal-progress-bar"
+                  className="bg-primary-600 h-2.5 rounded-full transition-all duration-300"
+                ></div>
+              </div>
+            </div>
+            <div className="p-6 overflow-y-auto flex-grow">{renderStep()}</div>
+            <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 rounded-b-2xl">
+              <button
+                type="button"
+                id="prev-btn"
+                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
+                  currentStep === 1 ? "invisible" : ""
+                }`}
+                onClick={prevStep}
+              >
+                Orqaga
+              </button>
+              <div className="flex-grow"></div>
+              {currentStep < 4 ? (
+                <button
+                  type="button"
+                  id="next-btn"
+                  className="bg-[#4f45e4] text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
+                  onClick={nextStep}
+                >
+                  Keyingisi <i className="bi bi-arrow-right"></i>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  id="submit-btn"
+                  className="disabled:bg-[#96cab3] bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  disabled={!confirmChecked || isSubmitting}
+                  onClick={handleSubmit}
+                >
+                  {isSubmitting ? "Yuborilmoqda..." : "Tasdiqlash va Yuborish"}{" "}
+                  <BsSendCheck />
+                </button>
+              )}
             </div>
           </div>
-          <div className="p-6 overflow-y-auto flex-grow">{renderStep()}</div>
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 rounded-b-2xl">
-            <button
-              type="button"
-              id="prev-btn"
-              className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
-                currentStep === 1 ? "invisible" : ""
-              }`}
-              onClick={prevStep}
-            >
-              Orqaga
-            </button>
-            <div className="flex-grow"></div>
-            {currentStep < 4 ? (
-              <button
-                type="button"
-                id="next-btn"
-                className="bg-[#4f45e4] text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
-                onClick={nextStep}
-              >
-                Keyingisi <i className="bi bi-arrow-right"></i>
-              </button>
-            ) : (
-              <button
-                type="button"
-                id="submit-btn"
-                className="disabled:bg-[#96cab3] bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!confirmChecked || isSubmitting}
-                onClick={handleSubmit}
-              >
-                {isSubmitting ? "Yuborilmoqda..." : "Tasdiqlash va Yuborish"}{" "}
-                <BsSendCheck />
-              </button>
-            )}
-          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

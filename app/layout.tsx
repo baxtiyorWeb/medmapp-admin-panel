@@ -30,6 +30,10 @@ export default function RootLayout({
           href="https://placehold.co/180x180/3a86ff/ffffff?text=✈"
           rel="apple-touch-icon"
         />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+        ></link>
       </head>
       <body className={`${inter.variable}`}>{children}</body>
     </html>
