@@ -371,7 +371,6 @@ export default function Home() {
               }`}
               ref={loginFormWrapperRef}
             >
-              {/* s */}
               {loginStep === "phone" && (
                 <div id="login-phone-step" className="step">
                   <h3 className="fw-bold mb-2">Tizimga kirish</h3>
