@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 import "./application.css"; // Assuming the CSS is in a separate file
 import {
   BsCheckCircleFill,
@@ -8,8 +8,24 @@ import {
   BsXCircleFill,
 } from "react-icons/bs";
 
+// Define the types for the application data
+interface ApplicationDetails {
+  complaint: string;
+  documents: string[];
+  services: string[];
+}
+
+interface Application {
+  id: string;
+  clinic: string;
+  date: string;
+  status: "approved" | "pending" | "rejected";
+  details: ApplicationDetails;
+  reason?: string;
+}
+
 const Table = () => {
-  const [applications, setApplications] = useState([
+  const [applications, setApplications] = useState<Application[]>([
     {
       id: "MED-78241",
       clinic: "Shox International Hospital",
@@ -73,7 +89,7 @@ const Table = () => {
     status: "all",
   });
 
-  const [selectedApp, setSelectedApp] = useState(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
   // Filter applications based on search and status
   const filteredApplications = applications.filter((app) => {
@@ -86,19 +102,21 @@ const Table = () => {
   });
 
   // Handle search input change
-  const handleSearchChange = (e) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ ...filters, search: e.target.value });
   };
 
   // Handle status filter change
-  const handleStatusChange = (e) => {
+  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ ...filters, status: e.target.value });
   };
 
   // Handle opening modal
-  const openModal = (appId) => {
+  const openModal = (appId: string) => {
     const app = applications.find((a) => a.id === appId);
-    setSelectedApp(app);
+    if (app) {
+      setSelectedApp(app);
+    }
   };
 
   // Handle closing modal
@@ -107,7 +125,7 @@ const Table = () => {
   };
 
   // Render status badge
-  const renderStatusBadge = (status) => {
+  const renderStatusBadge = (status: string): JSX.Element | null => {
     switch (status) {
       case "pending":
         return (
