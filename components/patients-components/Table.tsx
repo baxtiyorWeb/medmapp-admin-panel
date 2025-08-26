@@ -1,22 +1,25 @@
 "use client";
 
 import React, { JSX, useState } from "react";
-import "./application.css"; // Assuming the CSS is in a separate file
+import "./application.css";
 import {
   BsCheckCircleFill,
   BsHourglassSplit,
   BsXCircleFill,
 } from "react-icons/bs";
+import api from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
 
-// Define the types for the application data
+// Define the types for the application data from the backend
 interface ApplicationDetails {
   complaint: string;
-  documents: string[];
-  services: string[];
+  documents: string[]; // Adjust based on how you fetch documents
+  services: string[]; // Not in backend; can be removed or handled separately
 }
 
 interface Application {
   id: string;
+  application_id: string; // Backenddan kelgan ID
   clinic: string;
   date: string;
   status: "approved" | "pending" | "rejected";
@@ -24,75 +27,63 @@ interface Application {
   reason?: string;
 }
 
-const Table = () => {
-  const [applications, setApplications] = useState<Application[]>([
-    {
-      id: "MED-78241",
-      clinic: "Shox International Hospital",
-      date: "2024-08-05",
-      status: "approved",
-      details: {
-        complaint: "Yurak sohasidagi og'riq, nafas qisishi.",
-        documents: ["tahlil_qon.pdf", "mrt_natija.jpg"],
-        services: ["Taklifnoma & Viza", "Transfer Xizmati"],
-      },
-    },
-    {
-      id: "MED-78155",
-      clinic: "Akfa Medline",
-      date: "2024-08-02",
-      status: "pending",
-      details: {
-        complaint: "Bosh aylanishi va ko'ngil aynishi.",
-        documents: ["ultratovush.pdf"],
-        services: [],
-      },
-    },
-    {
-      id: "MED-78009",
-      clinic: "City Med",
-      date: "2024-07-28",
-      status: "rejected",
-      reason: "Hujjatlar to'liq emas",
-      details: {
-        complaint: "Tizzadagi surunkali og'riq.",
-        documents: [],
-        services: ["Mehmonxona"],
-      },
-    },
-    {
-      id: "MED-77982",
-      clinic: "American Hospital",
-      date: "2024-07-25",
-      status: "approved",
-      details: {
-        complaint: "Qorindagi og'riq.",
-        documents: ["endoskopiya.pdf", "qon_tahlili.pdf"],
-        services: ["Tarjimon Xizmati", "SIM-karta"],
-      },
-    },
-    {
-      id: "MED-77901",
-      clinic: "Akfa Medline",
-      date: "2024-07-21",
-      status: "approved",
-      details: {
-        complaint: "Gripp va yuqori isitma.",
-        documents: [],
-        services: [],
-      },
-    },
-  ]);
+interface BackendApplication {
+  application_id: number;
+  clinic_name: string;
+  created_at: string;
+  status: "new" | "processing" | "approved" | "rejected";
+  complaint: string;
+}
 
+// Function to fetch data, to be used with TanStack Query
+const fetchApplications = async (): Promise<Application[]> => {
+  const response = await api.get("/applications/");
+  if (response.status !== 200) {
+    throw new Error("Failed to fetch applications");
+  }
+
+  const data: BackendApplication[] = await response.data;
+
+  const mappedApplications: Application[] = data.map((app) => ({
+    id: String(app.application_id), // React key uchun string
+    application_id: String(app.application_id), // Agar kerak bo'lsa qo'shamiz
+    clinic: app.clinic_name,
+    date: new Date(app.created_at).toISOString().split("T")[0],
+    status:
+      app.status === "new" || app.status === "processing"
+        ? "pending"
+        : (app.status as "approved" | "rejected"),
+    details: {
+      complaint: app.complaint,
+      documents: [],
+      services: [],
+    },
+    reason: app.status === "rejected" ? "Hujjatlar to'liq emas" : undefined,
+  }));
+
+  return mappedApplications;
+};
+
+const Table = () => {
   const [filters, setFilters] = useState({
     search: "",
     status: "all",
   });
-
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
+  // Use TanStack Query to fetch and manage data
+  const {
+    data: applications,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<Application[], Error>({
+    queryKey: ["applications"],
+    queryFn: fetchApplications,
+  });
+
   // Filter applications based on search and status
-  const filteredApplications = applications.filter((app) => {
+  const filteredApplications = applications?.filter((app) => {
     const searchMatch = app.id
       .toLowerCase()
       .includes(filters.search.toLowerCase());
@@ -113,7 +104,7 @@ const Table = () => {
 
   // Handle opening modal
   const openModal = (appId: string) => {
-    const app = applications.find((a) => a.id === appId);
+    const app = applications?.find((a) => a.id === appId);
     if (app) {
       setSelectedApp(app);
     }
@@ -124,7 +115,6 @@ const Table = () => {
     setSelectedApp(null);
   };
 
-  // Render status badge
   const renderStatusBadge = (status: string): JSX.Element | null => {
     switch (status) {
       case "pending":
@@ -152,8 +142,8 @@ const Table = () => {
 
   return (
     <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg">
-      <div className="bg-white ">
-        <div className="p-4 sm:p-6 border-b border-slate-200  flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="bg-white">
+        <div className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">
             Mening Arizalarim
           </h2>
@@ -164,7 +154,7 @@ const Table = () => {
                 type="text"
                 id="searchInput"
                 placeholder="Ariza ID bo'yicha..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-100  border border-slate-300  rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
+                className="w-full pl-10 pr-4 py-2 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
                 value={filters.search}
                 onChange={handleSearchChange}
               />
@@ -172,7 +162,7 @@ const Table = () => {
             <div className="relative">
               <select
                 id="statusFilter"
-                className="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-100  border border-slate-300  rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
+                className="w-full sm:w-auto pl-4 pr-8 py-2 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
                 value={filters.status}
                 onChange={handleStatusChange}
               >
@@ -186,70 +176,90 @@ const Table = () => {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto ">
-          <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
-            <thead className="text-xs text-slate-700 uppercase bg-slate-50  ">
-              <tr>
-                <th scope="col" className="px-6 py-3">
-                  Ariza ID
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Klinika
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Sana
-                </th>
-                <th scope="col" className="px-6 py-3">
-                  Holati
-                </th>
-                <th scope="col" className="px-6 py-3 text-right">
-                  Amallar
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredApplications.map((app) => (
-                <tr
-                  key={app.id}
-                  className="bg-white  border-b border-[#e5e7eb]  hover:bg-slate-50 "
-                >
-                  <td className="px-6 py-4 h-[61px]  font-bold text-[rgb(65_84_241)] dark:text-primary-400">
-                    {app.id}
-                  </td>
-                  <td className="px-6 py-4 h-[61px]">{app.clinic}</td>
-                  <td className="px-6 py-4 h-[61px]">{app.date}</td>
-                  <td className="px-6 py-4 h-[61px]">
-                    {renderStatusBadge(app.status)}
-                  </td>
-                  <td className="px-6 py-4 h-[61px] text-right">
-                    <button
-                      className="view-details-btn text-[rgb(65_84_241)]  hover:underline"
-                      onClick={() => openModal(app.id)}
+        {/* Loading and Error States */}
+        {isLoading && <p className="p-4 text-center">Yuklanmoqda...</p>}
+        {isError && (
+          <p className="p-4 text-center text-red-500">{error.message}</p>
+        )}
+
+        {/* Table or Empty State */}
+        {!isLoading && !isError && filteredApplications?.length === 0 ? (
+          <div className="p-4 text-center text-slate-500">
+            <p>Hech qanday ariza topilmadi.</p>
+            {filters.search || filters.status !== "all" ? (
+              <p>Filtrlarni tozalab, qayta urinib ko&apos;ring.</p>
+            ) : (
+              <p>Siz hali hech qanday ariza yubormagansiz.</p>
+            )}
+          </div>
+        ) : (
+          !isLoading &&
+          !isError && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-slate-500 dark:text-slate-400">
+                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Ariza ID
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Klinika
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Sana
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Holati
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      Amallar
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredApplications?.map((app) => (
+                    <tr
+                      key={app.id}
+                      className="bg-white border-b border-[#e5e7eb] hover:bg-slate-50"
                     >
-                      Batafsil
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                      <td className="px-6 py-4 h-[61px] font-bold text-[rgb(65_84_241)] dark:text-primary-400">
+                        {app.id}
+                      </td>
+                      <td className="px-6 py-4 h-[61px]">{app.clinic}</td>
+                      <td className="px-6 py-4 h-[61px]">{app.date}</td>
+                      <td className="px-6 py-4 h-[61px]">
+                        {renderStatusBadge(app.status)}
+                      </td>
+                      <td className="px-6 py-4 h-[61px] text-right">
+                        <button
+                          className="view-details-btn text-[rgb(65_84_241)] hover:underline"
+                          onClick={() => openModal(app.id)}
+                        >
+                          Batafsil
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        )}
 
         {/* Pagination Placeholder */}
         <div
           id="pagination-controls"
-          className="p-4 sm:p-6 border-t border-slate-200  flex justify-end"
+          className="p-4 sm:p-6 border-t border-slate-200 flex justify-end"
         >
-          {/* Pagination can be added here if needed */}
+          {/* Add pagination logic here if needed */}
         </div>
       </div>
 
       {/* Application Details Modal */}
       {selectedApp && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-          <div className="bg-slate-50  rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
-            <div className="flex items-start justify-between p-5 border-b border-slate-200 ">
+          <div className="bg-slate-50 rounded-2xl shadow-2xl w-full max-w-2xl mx-4 max-h-[90vh] flex flex-col">
+            <div className="flex items-start justify-between p-5 border-b border-slate-200">
               <div>
                 <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
                   Ariza #{selectedApp.id}
@@ -258,17 +268,17 @@ const Table = () => {
               </div>
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600  -mt-2 -mr-2"
+                className="text-slate-400 hover:text-slate-600 -mt-2 -mr-2"
               >
                 <i className="bi bi-x-lg text-2xl"></i>
               </button>
             </div>
             <div className="p-6 overflow-y-auto space-y-6">
               <div>
-                <h4 className="font-semibold mb-2 text-slate-700 ">
+                <h4 className="font-semibold mb-2 text-slate-700">
                   Umumiy ma&apos;lumot
                 </h4>
-                <div className="bg-white  p-4 rounded-lg space-y-3 text-sm">
+                <div className="bg-white p-4 rounded-lg space-y-3 text-sm">
                   <div className="flex justify-between">
                     <span className="text-slate-500">Yuborilgan sana:</span>
                     <span className="font-medium">{selectedApp.date}</span>
@@ -288,20 +298,20 @@ const Table = () => {
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold mb-2 text-slate-700 ">
+                <h4 className="font-semibold mb-2 text-slate-700">
                   Shikoyatlar
                 </h4>
-                <div className="bg-white  p-4 rounded-lg">
-                  <p className="text-sm text-slate-600 ">
+                <div className="bg-white p-4 rounded-lg">
+                  <p className="text-sm text-slate-600">
                     {selectedApp.details.complaint}
                   </p>
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold mb-2 text-slate-700 ">
+                <h4 className="font-semibold mb-2 text-slate-700">
                   Yuklangan Hujjatlar
                 </h4>
-                <div className="bg-white  p-4 rounded-lg space-y-2">
+                <div className="bg-white p-4 rounded-lg space-y-2">
                   {selectedApp.details.documents.length > 0 ? (
                     selectedApp.details.documents.map((doc, index) => (
                       <a
@@ -321,15 +331,15 @@ const Table = () => {
                 </div>
               </div>
               <div>
-                <h4 className="font-semibold mb-2 text-slate-700 ">
+                <h4 className="font-semibold mb-2 text-slate-700">
                   Buyurtma qilingan xizmatlar
                 </h4>
-                <div className="bg-white  p-4 rounded-lg space-y-2">
+                <div className="bg-white p-4 rounded-lg space-y-2">
                   {selectedApp.details.services.length > 0 ? (
                     selectedApp.details.services.map((srv, index) => (
                       <p
                         key={index}
-                        className="flex items-center gap-2 text-sm text-slate-600 "
+                        className="flex items-center gap-2 text-sm text-slate-600"
                       >
                         <i className="bi bi-check-circle text-success"></i>
                         <span>{srv}</span>
@@ -343,7 +353,7 @@ const Table = () => {
                 </div>
               </div>
             </div>
-            <div className="flex items-center justify-end p-5 border-t border-slate-200  bg-slate-100 /50 rounded-b-2xl">
+            <div className="flex items-center justify-end p-5 border-t border-slate-200 bg-slate-100/50 rounded-b-2xl">
               <button
                 onClick={closeModal}
                 className="bg-primary text-white font-bold py-2 px-5 rounded-lg hover:bg-primary-700 transition"

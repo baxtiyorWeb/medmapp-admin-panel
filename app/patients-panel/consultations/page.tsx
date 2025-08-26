@@ -262,6 +262,8 @@ const ConsultationPage: React.FC = () => {
         >
           <div className="relative flex-shrink-0">
             <Image
+              width={100}
+              height={100}
               src={con.doctor.avatar}
               className="w-12 h-12 rounded-full"
               alt=""
@@ -449,6 +451,8 @@ const ConsultationPage: React.FC = () => {
         <div className="bg-white rounded-2xl shadow-lg h-full flex flex-col">
           <div className="p-4 border-b border-slate-200 flex items-center gap-4 flex-shrink-0">
             <Image
+              width={100}
+              height={100}
               src={selectedConsultation.doctor.avatar}
               className="w-11 h-11 rounded-full"
               alt=""

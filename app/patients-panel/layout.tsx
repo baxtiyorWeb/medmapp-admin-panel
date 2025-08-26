@@ -15,7 +15,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsFillGrid1X2Fill } from "react-icons/bs";
-
+import { useQuery } from "@tanstack/react-query";
+import { isArray } from "lodash";
+import useProfile from "@/hooks/useProfile";
 // Define a type for the component's props
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,6 +27,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
+  const { fetchProfile } = useProfile();
+
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => await fetchProfile(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const isData = isArray(data) ? data : [data];
+
+  const dataItems = isData && isData.length > 0 ? isData[0] : null;
 
   useEffect(() => {
     const handleResize = () => {
@@ -159,7 +172,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               </div>
               <div className="flex flex-col text-sm">
                 <span className="font-bold text-slate-700">
-                  Dr. Salima Nosirova
+                  {dataItems?.full_name || "Foydalanuvchi"}
                 </span>
                 <span className="text-slate-500">Kardiolog</span>
               </div>
