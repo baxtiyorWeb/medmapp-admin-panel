@@ -1065,6 +1065,7 @@ body {
   }
 }
 
+<<<<<<< HEAD
 /* service card */
 
 /* Xatolik uchun stillar */
@@ -1552,3 +1553,169 @@ body {
   }
   
 >>>>>>> 619ee19 (Initial commit)
+=======
+
+/* service card */
+
+
+
+    /* Xatolik uchun stillar */
+    .input-error { border-color: #ef4444 !important; }
+    .error-message { 
+        color: #ef4444; 
+        font-size: 0.75rem; /* 12px */
+        line-height: 1rem; /* 16px */
+        margin-top: 4px; 
+    }
+    
+    /* Xabarnoma stillari */
+    .notification {
+        position: fixed;
+        top: 5rem; /* Headerdan pastroq */
+        right: 1.5rem;
+        padding: 1rem 1.5rem;
+        border-radius: 0.75rem;
+        color: white;
+        font-weight: 600;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+        box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+    .notification.success { background-color: #10b981; }
+    .notification.warning { background-color: #f59e0b; }
+    .notification.danger { background-color: #ef4444; }
+
+    @keyframes slideInRight { 
+        from { transform: translateX(100%); opacity: 0; } 
+        to { transform: translateX(0); opacity: 1; } 
+    }
+    @keyframes fadeOut { 
+        from { opacity: 1; } 
+        to { opacity: 0; visibility: hidden; } 
+    }
+
+    /* Fayl yuklash stillari */
+    .file-card-preview {
+        width: 5rem; height: 5rem; flex-shrink: 0;
+        background-color: #e2e8f0; border-radius: 0.5rem;
+        display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .dark .file-card-preview { background-color: #334155; }
+    .file-card-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .file-card-preview .file-icon { font-size: 2.5rem; color: #64748b; }
+    .dark .file-card-preview .file-icon { color: #94a3b8; }
+    
+    /* Mehmonxona tanlash modali uchun stillar */
+    .hotel-card-image {
+        scroll-snap-type: x mandatory;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    .hotel-card-image::-webkit-scrollbar { display: none; }
+    .hotel-card-image div {
+        scroll-snap-align: start;
+        flex-shrink: 0;
+        width: 100%;
+        height: 100%;
+    }
+    .hotel-image-dot {
+        width: 8px; height: 8px; border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+        transition: background-color 0.3s;
+    }
+    .hotel-image-dot.active { background-color: white; }
+
+    /* Mehmonxona tanlash modali uchun qo'shimcha stillar */
+    #hotel-modal .modal-content .overflow-y-auto {
+        background-color: #f1f5f9; /* slate-100 */
+    }
+    .dark #hotel-modal .modal-content .overflow-y-auto {
+        background-color: #1e293b; /* slate-800 */
+    }
+    .hotel-card-image-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 2rem; /* 32px */
+        height: 2rem; /* 32px */
+        background-color: rgba(0, 0, 0, 0.3);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        z-index: 10;
+    }
+    .hotel-card:hover .hotel-card-image-nav {
+        opacity: 1;
+    }
+    .hotel-card-image-nav:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    .amenity-tooltip:hover::after {
+        content: attr(title);
+        position: absolute;
+        bottom: 110%;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: #334155;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 20;
+    }
+
+     /* Rasm ko'rish oynasi (Lightbox) uchun stillar */
+    .image-lightbox-backdrop {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: fadeIn 0.3s;
+    }
+    .lightbox-content {
+        position: relative;
+        width: 90%;
+        max-width: 900px;
+        max-height: 90vh;
+    }
+    .lightbox-content img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        border-radius: 0.75rem;
+    }
+    .lightbox-close, .lightbox-nav {
+        position: absolute;
+        color: white;
+        background-color: rgba(0, 0, 0, 0.4);
+        border-radius: 50%;
+        cursor: pointer;
+        transition: background-color 0.2s, transform 0.2s;
+    }
+    .lightbox-close:hover, .lightbox-nav:hover {
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .lightbox-close {
+        top: 1rem; right: 1rem; width: 2.5rem; height: 2.5rem;
+        font-size: 1.5rem; line-height: 2.5rem; text-align: center;
+    }
+    .lightbox-nav {
+        top: 50%; transform: translateY(-50%);
+        width: 3rem; height: 3rem; font-size: 1.75rem;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .lightbox-prev { left: 1rem; }
+    .lightbox-next { right: 1rem; }
+>>>>>>> 3fb007e (yangilandi)
