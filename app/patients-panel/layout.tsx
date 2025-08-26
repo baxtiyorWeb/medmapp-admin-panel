@@ -149,26 +149,86 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           ${isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"}
         `}
       >
-        <header className="flex items-center justify-between py-4 px-8 bg-white border-b border-slate-200 h-[89px] flex-shrink-0">
-          <button onClick={() => setIsSidebarOpen((prev) => !prev)}>
-            <Menu size={32} className="text-slate-500 hover:text-slate-700" />
-          </button>
-          <div className="flex items-center space-x-5">
-            <button className="text-slate-500 hover:text-primary">
-              <Search size={20} />
+        <header className="flex items-center justify-between py-4 px-8 bg-white  border-b border-slate-200  h-[89px] flex-shrink-0">
+          <div className="flex items-center">
+            <button
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+              id="sidebar-toggle"
+              className="-ml-2 mr-4 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            >
+              <i className="bi bi-list text-3xl"></i>
             </button>
-            <button className="text-slate-500 hover:text-primary">
-              <Bell size={20} />
-            </button>
-            <div className="hidden md:flex items-center gap-2 border-l border-slate-200 pl-4">
-              <div className="bg-primary text-white w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full text-sm font-semibold">
-                SN
+            <h1 className="hidden md:block text-2xl font-semibold text-slate-800 dark:text-white">
+              Boshqaruv Paneli
+            </h1>
+          </div>
+          <div className="flex items-center space-x-3 md:space-x-5">
+            <div className="relative">
+              <button className="lang-toggle text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300">
+                <i className="bi bi-translate text-xl"></i>
+              </button>
+              <div className="lang-dropdown hidden absolute right-0 mt-2 w-40 bg-white  rounded-md shadow-lg py-1 z-10">
+                <a
+                  href="#"
+                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
+                >
+                  <i className="bi bi-flag-fill mr-2"></i> O&apos;zbekcha
+                </a>
+                <a
+                  href="#"
+                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
+                >
+                  <i className="bi bi-flag-fill mr-2"></i> Русский
+                </a>
+                <a
+                  href="#"
+                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
+                >
+                  <i className="bi bi-flag-fill mr-2"></i> English
+                </a>
               </div>
-              <div className="flex flex-col text-sm">
-                <span className="font-bold text-slate-700">
-                  {dataItems?.full_name || "Foydalanuvchi"}
-                </span>
-                <span className="text-slate-500">Kardiolog</span>
+            </div>
+            <button
+              id="dark-mode-toggle"
+              className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300"
+            >
+              <i className="bi bi-moon-stars-fill text-xl block dark:hidden"></i>
+              <i className="bi bi-sun-fill text-xl hidden dark:block"></i>
+            </button>
+            <button className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300">
+              <i className="bi bi-bell text-xl"></i>
+            </button>
+            <div className="relative">
+              <button className="profile-toggle flex items-center space-x-3">
+                <img
+                  className="h-10 w-10 rounded-full object-cover"
+                  src="https://placehold.co/40x40/EFEFEF/333333?text=A"
+                  alt="Profil rasmi"
+                />
+                <div className="hidden md:block text-left">
+                  <div className="font-bold text-slate-700 dark:text-slate-200">
+                    Ali Valiyev
+                  </div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                    Bemor
+                  </div>
+                </div>
+              </button>
+              <div className="profile-dropdown hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-md shadow-lg py-1 z-10">
+                <a
+                  href="#"
+                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
+                >
+                  <i className="bi bi-gear-fill mr-2 text-slate-500"></i>
+                  Sozlamalar
+                </a>
+                <div className="border-t border-slate-200 dark:border-slate-600 my-1"></div>
+                <a
+                  href="#"
+                  className="flex items-center px-4 py-2 texthover:bg-slate-100 "
+                >
+                  <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
+                </a>
               </div>
             </div>
           </div>
