@@ -191,7 +191,7 @@ const ServiceCard = () => {
             </button>
           </div>
         </div>
-
+{/* / */}
         <div
           className="service-card bg-white rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
           data-service-id="simcard"
