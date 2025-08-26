@@ -1,8 +1,4 @@
 "use client";
-<<<<<<< HEAD
-
-=======
->>>>>>> 619ee19 (Initial commit)
 import React, { useState, useEffect } from "react";
 import {
   Menu,
