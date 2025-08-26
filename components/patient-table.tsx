@@ -55,7 +55,6 @@ const PatientTable = () => {
         </div>
       </div>
 
-      {/* Jadval (faqat sm dan katta) */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 text-sm">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs tracking-wider">

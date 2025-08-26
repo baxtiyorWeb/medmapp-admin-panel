@@ -1,4 +1,4 @@
-import { Calendar, LucideMessageCircleWarning, UserPlus2 } from "lucide-react";
+import { LucideMessageCircleWarning, UserPlus2 } from "lucide-react";
 import { FaRegCalendarCheck } from "react-icons/fa";
 import AppointmentTable from "./dashboard-users-table";
 import DashboardUserLastMessage from "./dashboard-user-latest-message";
@@ -41,7 +41,6 @@ const DashboardStatisticsNumbers = () => {
 
 export default DashboardStatisticsNumbers;
 
-// ✅ Statistik kartani komponentga ajratamiz
 const StatCard = ({
   icon,
   bgColor,

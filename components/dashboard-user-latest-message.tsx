@@ -1,7 +1,5 @@
-// components/NewsCard.js
 import React from "react";
 
-// Ma'lumotlar massivi
 const news = [
   {
     id: 1,

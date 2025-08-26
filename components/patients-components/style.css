@@ -1,0 +1,304 @@
+body {
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8fafc;
+}
+.dark body {
+  background-color: #0f172a;
+}
+
+.sidebar-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
+.main-content-transition {
+  transition: margin-left 0.3s ease-in-out;
+}
+/* Katta ekranlar uchun sidebar yopilgan holati */
+body.sidebar-collapsed #main-content {
+  margin-left: 0;
+}
+body.sidebar-collapsed #sidebar {
+  transform: translateX(-100%);
+}
+
+.form-step,
+.modal-backdrop {
+  display: none;
+  animation: fadeIn 0.5s;
+}
+.form-step.active,
+.modal-backdrop.active {
+  display: flex;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.modal-content {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Xatolik uchun stillar */
+.input-error {
+  border-color: #ef4444 !important;
+}
+.error-message {
+  color: #ef4444;
+  font-size: 0.75rem; /* 12px */
+  line-height: 1rem; /* 16px */
+  margin-top: 4px;
+}
+
+/* Xabarnoma stillari */
+.notification {
+  position: fixed;
+  top: 5rem; /* Headerdan pastroq */
+  right: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.notification.success {
+  background-color: #10b981;
+}
+.notification.warning {
+  background-color: #f59e0b;
+}
+.notification.danger {
+  background-color: #ef4444;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* Fayl yuklash stillari */
+.file-card-preview {
+  width: 5rem;
+  height: 5rem;
+  flex-shrink: 0;
+  background-color: #e2e8f0;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.dark .file-card-preview {
+  background-color: #334155;
+}
+.file-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.file-card-preview .file-icon {
+  font-size: 2.5rem;
+  color: #64748b;
+}
+.dark .file-card-preview .file-icon {
+  color: #94a3b8;
+}
+
+/* Mehmonxona tanlash modali uchun stillar */
+#hotel-modal .modal-content .overflow-y-auto {
+  background-color: #f1f5f9; /* slate-100 */
+}
+.dark #hotel-modal .modal-content .overflow-y-auto {
+  background-color: #1e293b; /* slate-800 */
+}
+#hotel-list-container::-webkit-scrollbar {
+  display: none;
+}
+.amenity-tooltip .tooltip-text {
+  visibility: hidden;
+  width: max-content;
+  background-color: #1e293b; /* slate-800 */
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 10px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.amenity-tooltip .tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+}
+
+.amenity-tooltip:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Rasm ko'rish oynasi (Lightbox) uchun stillar */
+.image-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+.lightbox-content {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+}
+.lightbox-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0.75rem;
+}
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+}
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+.lightbox-close {
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  line-height: 2.5rem;
+  text-align: center;
+}
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox-prev {
+  left: 1rem;
+}
+.lightbox-next {
+  right: 1rem;
+}
+
+/* Service Status Sidebar */
+#service-status-sidebar {
+  transition: transform 0.3s ease-in-out;
+}
+
+.free-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80px;
+  height: 80px;
+  overflow: hidden;
+  z-index: 10;
+}
+.free-ribbon span {
+  position: absolute;
+  display: block;
+  width: 110px;
+  padding: 8px 0;
+  background-color: #10b981;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  color: #fff;
+  font-size: 12px;
+  font-weight: bold;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  text-align: center;
+  left: -15px;
+  top: 20px;
+  transform: rotate(45deg);
+}
+.price-tag {
+  position: absolute;
+  top: 12px;
+  right: -1px;
+  background-color: #4f46e5; /* primary-600 */
+  color: white;
+  padding: 4px 12px 4px 18px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 20px 0 0 20px;
+  box-shadow: -2px 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+.dark .price-tag {
+  background-color: #6366f1; /* primary-500 */
+}
+
+#ordered-services-container::-webkit-scrollbar {
+  height: 8px;
+}
+#ordered-services-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+.dark #ordered-services-container::-webkit-scrollbar-thumb {
+  background: #475569;
+}
