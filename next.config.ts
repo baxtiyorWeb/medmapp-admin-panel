@@ -27,15 +27,11 @@ const nextConfig: NextConfig = {
         port: "5500",
         pathname: "/images/**",
       },
-<<<<<<< HEAD
       {
         protocol: "https",
         hostname: "medmapp.netlify.app",
         pathname: "/**",
       },
-=======
-     
->>>>>>> 619ee19 (Initial commit)
     ],
   },
 };
