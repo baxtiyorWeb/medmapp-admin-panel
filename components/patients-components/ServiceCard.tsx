@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const ServiceCard = () => {
   const [showNotification, setShowNotification] = useState(false);
-  const [selectedService, setSelectedService] = useState(null);
+  const [selectedService, setSelectedService] = useState<string | null>(null);
 
   // Function to check if formData exists and currentStep is at least 4
   const isFormDataValid = () => {
@@ -17,7 +17,7 @@ const ServiceCard = () => {
   };
 
   // Function to handle service button click
-  const handleServiceButtonClick = (serviceId) => {
+  const handleServiceButtonClick = (serviceId: string) => {
     if (!isFormDataValid()) {
       setShowNotification(true);
       setTimeout(() => setShowNotification(false), 5000);
@@ -41,10 +41,13 @@ const ServiceCard = () => {
 
   // Function to handle form submission
   const handleFormSubmit = () => {
-    const fileInput = document.getElementById("service-file-passportScan");
-    const notes = document.getElementById("service-notes")?.value || "";
+    const fileInput = document.getElementById(
+      "service-file-passportScan"
+    ) as HTMLInputElement | null;
+    const notes =
+      (document.getElementById("service-notes") as HTMLInputElement | null)
+        ?.value || "";
     const serviceId = selectedService;
-
     // Update orderedServices in localStorage
     try {
       const data = JSON.parse(localStorage.getItem("formData") || "{}");
@@ -52,7 +55,7 @@ const ServiceCard = () => {
       data.formData.orderedServices = data.formData.orderedServices || [];
       data.formData.orderedServices.push({
         serviceId,
-        passportScan: fileInput?.files[0]?.name || null,
+        passportScan: fileInput?.files?.[0]?.name || null,
         notes,
       });
       localStorage.setItem("formData", JSON.stringify(data));
@@ -191,7 +194,7 @@ const ServiceCard = () => {
             </button>
           </div>
         </div>
-{/* / */}
+        {/* / */}
         <div
           className="service-card bg-white rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden"
           data-service-id="simcard"
@@ -286,7 +289,7 @@ const ServiceCard = () => {
                     <textarea
                       id="service-notes"
                       placeholder=""
-                      rows="3"
+                      rows={3}
                       className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[rgb(79_70_229)] focus:border-[rgb(79_70_229)] outline-none transition"
                     ></textarea>
                   </div>
@@ -303,7 +306,7 @@ const ServiceCard = () => {
                   <textarea
                     id="service-notes"
                     placeholder="Masalan, aeroportga kelish vaqti yoki maxsus talablar"
-                    rows="3"
+                    rows={3}
                     className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[rgb(79_70_229)] focus:border-[rgb(79_70_229)] outline-none transition"
                   ></textarea>
                 </div>
@@ -319,7 +322,7 @@ const ServiceCard = () => {
                   <textarea
                     id="service-notes"
                     placeholder="Masalan, mehmonxona turi yoki qo‘shimcha xizmatlar"
-                    rows="3"
+                    rows={3}
                     className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[rgb(79_70_229)] focus:border-[rgb(79_70_229)] outline-none transition"
                   ></textarea>
                 </div>
@@ -335,7 +338,7 @@ const ServiceCard = () => {
                   <textarea
                     id="service-notes"
                     placeholder="Masalan, qaysi tillar kerak yoki maxsus talablar"
-                    rows="3"
+                    rows={3}
                     className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[rgb(79_70_229)] focus:border-[rgb(79_70_229)] outline-none transition"
                   ></textarea>
                 </div>
@@ -351,7 +354,7 @@ const ServiceCard = () => {
                   <textarea
                     id="service-notes"
                     placeholder="Masalan, SIM-karta turi yoki qo‘shimcha xizmatlar"
-                    rows="3"
+                    rows={3}
                     className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[rgb(79_70_229)] focus:border-[rgb(79_70_229)] outline-none transition"
                   ></textarea>
                 </div>
