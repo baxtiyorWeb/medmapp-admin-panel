@@ -1,5 +1,3 @@
-// app/page.tsx
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -165,6 +163,13 @@ export default function Home() {
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
     try {
+      await api.post("/auth/register/", {
+        phone_number: `+998${cleanedPhone}`,
+        first_name: registerFirstName,
+        last_name: registerLastName,
+        district: registerRegion,
+      });
+
       const response = await api.post("/auth/request-otp/", {
         phone_number: `+998${cleanedPhone}`,
       });
@@ -233,17 +238,10 @@ export default function Home() {
   const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    const otpCode = registerOtp.join("");
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
     try {
-      await api.post("/auth/register/", {
-        phone_number: `+998${cleanedPhone}`,
-        first_name: registerFirstName,
-        last_name: registerLastName,
-        district: registerRegion,
-      });
-
-      const otpCode = registerOtp.join("");
       const verifyResponse = await api.post("/auth/verify-otp/", {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
