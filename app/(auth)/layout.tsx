@@ -223,7 +223,7 @@ export default function Home() {
         setLoading(false);
         showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
         setAuthTokens(response.data.access, response.data.refresh);
-        setTimeout(() => window.location.href ="/patients-panel", 500);
+        setTimeout(() => (window.location.href = "/patients-panel"), 500);
       }
     } catch (error: unknown) {
       setLoading(false);
@@ -251,7 +251,7 @@ export default function Home() {
         setLoading(false);
         showToast("Muvaffaqiyatli ro'yxatdan o'tdingiz!", "success");
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
-        setTimeout(() => window.location.href ="/patients-panel", 500);
+        setTimeout(() => (window.location.href = "/patients-panel"), 500);
       }
     } catch (error: unknown) {
       setLoading(false);
