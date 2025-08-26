@@ -8,6 +8,7 @@ import {
   BsClipboard2PlusFill,
   BsFileEarmarkMedicalFill,
 } from "react-icons/bs";
+import "./consultations.css";
 
 // Interfaces for better type safety
 interface Doctor {
@@ -250,56 +251,84 @@ const ConsultationPage: React.FC = () => {
 
   const renderConsultationList = () => (
     <div id="consultation-list" className="overflow-y-auto flex-grow p-2">
-      {consultations.map((con) => (
-        <div
-          key={con.id}
-          className={`consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors ${
-            selectedConsultationId === con.id
-              ? "bg-primary-50"
-              : "hover:bg-slate-100"
-          }`}
-          onClick={() => handleSelectConsultation(con.id)}
-        >
-          <div className="relative flex-shrink-0">
-            <Image
-              width={100}
-              height={100}
-              src={con.doctor.avatar}
-              className="w-12 h-12 rounded-full"
-              alt=""
-            />
-            {con.active && (
-              <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-[#21C55D] ring-2 ring-white"></span>
-            )}
+      <div
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors bg-[#EEF2FF] "
+        data-id="1"
+      >
+        <div className="relative flex-shrink-0">
+          <img
+            src="https://placehold.co/100x100/eef2ff/4154f1?text=SN"
+            className="w-12 h-12 rounded-full"
+          />
+          <span className="absolute bottom-0 right-0 block h-3 w-3 rounded-full bg-[#21C55D] ring-2 ring-white "></span>
+        </div>
+        <div className="flex-grow overflow-hidden">
+          <div className="flex justify-between items-center">
+            <h4 className="font-bold text-sm truncate text-[#4152f1]">
+              Dr. Salima Nosirova
+            </h4>
+            <span className="text-xs text-slate-500 flex-shrink-0">10:45</span>
           </div>
-          <div className="flex-grow overflow-hidden">
-            <div className="flex justify-between items-center">
-              <h4
-                className={`font-bold text-sm truncate ${
-                  selectedConsultationId === con.id
-                    ? "text-primary"
-                    : "text-slate-800"
-                }`}
-              >
-                {con.doctor.name}
-              </h4>
-              <span className="text-xs text-slate-500 flex-shrink-0">
-                {con.timestamp}
-              </span>
-            </div>
-            <div className="flex justify-between items-start">
-              <p className="text-sm text-slate-500 truncate">
-                {con.lastMessage}
-              </p>
-              {con.unread > 0 && (
-                <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4153F1] text-white text-xs flex items-center justify-center rounded-full">
-                  {con.unread}
-                </span>
-              )}
-            </div>
+          <div className="flex justify-between items-start">
+            <p className="text-sm text-slate-500 truncate">
+              Retseptni yubordim, ko&apos;rib chiqing.
+            </p>
+            <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4152f1] text-white text-xs flex items-center justify-center rounded-full">
+              1
+            </span>
           </div>
         </div>
-      ))}
+      </div>
+
+      <div
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-[#EEF2FF]/50"
+        data-id="2"
+      >
+        <div className="relative flex-shrink-0">
+          <img
+            src="https://placehold.co/100x100/dcfce7/166534?text=AJ"
+            className="w-12 h-12 rounded-full"
+          />
+        </div>
+        <div className="flex-grow overflow-hidden">
+          <div className="flex justify-between items-center">
+            <h4 className="font-bold text-sm truncate text-slate-800 ">
+              Dr. Anvar Jo&apos;rayev
+            </h4>
+            <span className="text-xs text-slate-500 flex-shrink-0">Kecha</span>
+          </div>
+          <div className="flex justify-between items-start">
+            <p className="text-sm text-slate-500 truncate">
+              MRT natijalarini kutyapman.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-[#EEF2FF]/50"
+        data-id="3"
+      >
+        <div className="relative flex-shrink-0">
+          <img
+            src="https://placehold.co/100x100/fee2e2/991b1b?text=MA"
+            className="w-12 h-12 rounded-full"
+          />
+        </div>
+        <div className="flex-grow overflow-hidden">
+          <div className="flex justify-between items-center">
+            <h4 className="font-bold text-sm truncate text-slate-800 ">
+              Dr. Malika Ahmedova
+            </h4>
+            <span className="text-xs text-slate-500 flex-shrink-0">
+              2 kun oldin
+            </span>
+          </div>
+          <div className="flex justify-between items-start">
+            <p className="text-sm text-slate-500 truncate">Yaxshi, rahmat!</p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 
@@ -320,7 +349,7 @@ const ConsultationPage: React.FC = () => {
             <div
               className={`message-content py-2 px-4 rounded-2xl ${
                 msg.from === "patient"
-                  ? "bg-primary text-white rounded-br-lg"
+                  ? "bg-[#4152f1] text-white rounded-br-lg"
                   : "bg-slate-200 rounded-bl-lg"
               }`}
             >
@@ -342,28 +371,42 @@ const ConsultationPage: React.FC = () => {
   const NotesPane: React.FC<{ notes: Note | null }> = ({ notes }) => (
     <div id="notes-pane" className="tab-pane p-4 sm:p-6 space-y-6">
       {notes ? (
-        <>
+        <div id="notes-pane" className="tab-pane p-4 sm:p-6 space-y-6">
           <div className="mb-6">
-            <h6 className="font-bold mb-2 text-slate-800">
-              <i className="bi bi-clipboard2-pulse-fill mr-2 text-primary"></i>
+            <h6 className="font-bold mb-2 text-slate-800 ">
+              <i className="bi bi-clipboard2-pulse-fill mr-2 text-[#4152f1]"></i>
               Tashxis
             </h6>
-            <p className="pl-7 text-slate-600">{notes.diagnosis}</p>
+            <p className="pl-7 text-slate-600 ">
+              O&apos;tkir respirator virusli infeksiya (O&apos;RVI), astenik sindrom.
+            </p>
           </div>
           <div>
-            <h6 className="font-bold mb-2 text-slate-800">
-              <i className="bi bi-list-check mr-2 text-primary"></i>Tavsiyalar
+            <h6 className="font-bold mb-2 text-slate-800 ">
+              <i className="bi bi-list-check mr-2 text-[#4152f1]"></i>Tavsiyalar
             </h6>
             <ul className="pl-7 space-y-2">
-              {notes.recommendations.map((r, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <i className="bi bi-check-circle-fill text-success mt-1"></i>
-                  <span>{r}</span>
-                </li>
-              ))}
+              <li className="flex items-start gap-2">
+                <i className="bi bi-check-circle-fill text-[#21C55D] mt-1"></i>
+                <span>
+                  Ko&apos;proq suyuqlik ichish (malinali choy, namatak damlamasi).
+                </span>
+              </li>
+              <li className="flex items-start gap-2">
+                <i className="bi bi-check-circle-fill text-[#21C55D] mt-1"></i>
+                <span>Yotoq rejimi (kamida 2-3 kun).</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <i className="bi bi-check-circle-fill text-[#21C55D] mt-1"></i>
+                <span>Xonani tez-tez shamollatib turish.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <i className="bi bi-check-circle-fill text-[#21C55D] mt-1"></i>
+                <span>Quyidagi dori-darmonlarni qabul qilish.</span>
+              </li>
             </ul>
           </div>
-        </>
+        </div>
       ) : (
         <p className="text-center text-slate-500 py-10">
           Shifokor hali xulosa yozmadi.
@@ -407,7 +450,7 @@ const ConsultationPage: React.FC = () => {
             href="#"
             className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-100 transition-colors"
           >
-            <i className="bi bi-file-earmark-zip-fill text-3xl text-primary"></i>
+            <i className="bi bi-file-earmark-zip-fill text-3xl text-[#4152f1]"></i>
             <div className="flex-grow">
               <p className="font-semibold text-slate-800">{f.name}</p>
               <p className="text-sm text-slate-500">
@@ -470,20 +513,20 @@ const ConsultationPage: React.FC = () => {
             <nav className="flex space-x-2" id="infoTab">
               <button
                 onClick={() => handleTabChange("chat")}
-                className={`tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-semibold flex justify-center items-center ${
+                className={`tab-btn whitespace-nowrap cursor-pointer py-3 px-4 border-b-2 font-semibold flex justify-center items-center ${
                   activeTab === "chat"
-                    ? "text-primary border-primary"
-                    : "text-slate-500 border-transparent hover:text-primary hover:border-primary-300"
+                    ? "text-[#4153F1] border-[#4153F1]"
+                    : "text-slate-500 border-transparent hover:text-[#4152F1] hover:border-[#4152F1]"
                 }`}
               >
-                <BsChatDotsFill className="mr-2" /> Chat
+                <i className="bi bi-chat-dots-fill mr-2"></i>Chat
               </button>
               <button
                 onClick={() => handleTabChange("notes")}
-                className={`tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium flex justify-center items-center ${
+                className={`tab-btn whitespace-nowrap py-3 cursor-pointer px-4 border-b-2 font-medium flex justify-center items-center ${
                   activeTab === "notes"
-                    ? "text-primary border-primary"
-                    : "text-slate-500 border-transparent hover:text-primary hover:border-primary-300"
+                    ? "text-[#4153F1] border-[#4153F1]"
+                    : "text-slate-500 border-transparent hover:text-[#4152F1] hover:border-[#4152F1]"
                 }`}
               >
                 <BsClipboard2PlusFill className="mr-2" />
@@ -491,10 +534,10 @@ const ConsultationPage: React.FC = () => {
               </button>
               <button
                 onClick={() => handleTabChange("prescriptions")}
-                className={`tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium flex justify-center items-center ${
+                className={`tab-btn whitespace-nowrap py-3 cursor-pointer px-4 border-b-2 font-medium flex justify-center items-center ${
                   activeTab === "prescriptions"
-                    ? "text-primary border-primary"
-                    : "text-slate-500 border-transparent hover:text-primary hover:border-primary-300"
+                    ? "text-[#4153F1] border-[#4153F1]"
+                    : "text-slate-500 border-transparent hover:text-[#4152F1] hover:border-[#4152F1]"
                 }`}
               >
                 <BsFileEarmarkMedicalFill className="mr-2" />
@@ -502,10 +545,10 @@ const ConsultationPage: React.FC = () => {
               </button>
               <button
                 onClick={() => handleTabChange("files")}
-                className={`tab-btn whitespace-nowrap py-3 px-4 border-b-2 font-medium flex justify-center items-center ${
+                className={`tab-btn whitespace-nowrap py-3 cursor-pointer px-4 border-b-2 font-medium flex justify-center items-center ${
                   activeTab === "files"
-                    ? "text-primary border-primary"
-                    : "text-slate-500 border-transparent hover:text-primary hover:border-primary-300"
+                    ? "text-[#4153F1] border-[#4153F1]"
+                    : "text-slate-500 border-transparent hover:text-[#4152F1] hover:border-[#4152F1]"
                 }`}
               >
                 <PaperclipIcon className="mr-2" />
@@ -543,17 +586,17 @@ const ConsultationPage: React.FC = () => {
                   id="chat-input"
                   type="text"
                   placeholder="Xabar yozing..."
-                  className="w-full pl-4 pr-20 py-3 bg-white border border-slate-300 rounded-full focus:ring-2 focus:ring-primary focus:outline-none"
+                  className="w-full pl-4 pr-20 py-3 bg-white border border-slate-300 rounded-full focus:ring-2 focus:ring-[#4152f1] focus:outline-none"
                   ref={chatInputRef}
                   onKeyPress={handleKeyPress}
                 />
                 <div className="absolute inset-y-0 right-2 flex items-center">
-                  <button className="p-2 text-slate-500 hover:text-primary">
+                  <button className="p-2 text-slate-500 hover:text-[#4152f1]">
                     <i className="bi bi-paperclip text-xl"></i>
                   </button>
                   <button
                     id="send-btn"
-                    className="ml-1 w-10 h-10 bg-primary text-white rounded-full flex items-center justify-center hover:bg-primary-600 transition"
+                    className="ml-1 w-10 h-10 bg-[#4152f1] text-white rounded-full flex items-center justify-center hover:bg-[#4152f1]-600 transition"
                     onClick={handleSendMessage}
                   >
                     <i className="bi bi-send-fill"></i>

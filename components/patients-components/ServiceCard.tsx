@@ -68,7 +68,7 @@ const ServiceCard = () => {
 
   return (
     <div>
-      <h1 className="text-xl my-4 font-bold text-slate-800 dark:text-white">
+      <h1 className="text-xl my-4 font-bold text-slate-800 ">
         Qo&apos;shimcha xizmatlar
       </h1>
 
@@ -104,7 +104,7 @@ const ServiceCard = () => {
               Taklifnoma bepul, Viza $100
             </p>
             <button
-              className="service-btn w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
+              className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("invitation")}
             >
               Buyurtma
@@ -132,7 +132,7 @@ const ServiceCard = () => {
           <div className="mt-4 w-full">
             <p className="text-xs text-slate-400 mb-2 h-8">Bepul</p>
             <button
-              className="service-btn w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
+              className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("transfer")}
             >
               Buyurtma
@@ -159,7 +159,7 @@ const ServiceCard = () => {
               Turiga qarab, o&apos;rtacha 10 kunga $200
             </p>
             <button
-              className="service-btn w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
+              className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("hotel")}
             >
               Buyurtma
@@ -187,7 +187,7 @@ const ServiceCard = () => {
           <div className="mt-4 w-full">
             <p className="text-xs text-slate-400 mb-2 h-8">Bepul</p>
             <button
-              className="service-btn w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
+              className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("translator")}
             >
               Buyurtma
@@ -214,7 +214,7 @@ const ServiceCard = () => {
               $15 dan boshlanadi
             </p>
             <button
-              className="service-btn cursor-pointer w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
+              className="service-btn cursor-pointer w-full bg-[rgb(238_242_255)] text-[rgb(79_70_229)]  dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("simcard")}
             >
               Buyurtma

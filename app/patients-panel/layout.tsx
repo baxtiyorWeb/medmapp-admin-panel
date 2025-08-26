@@ -1,24 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import {
-  Menu,
-  LayoutDashboard,
   Calendar,
   Stethoscope,
   MessageSquare,
   Settings,
   LogOut,
-  Search,
-  Bell,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BsFillGrid1X2Fill } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
-import { isArray } from "lodash";
+import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
-// Define a type for the component's props
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -37,13 +32,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const isData = isArray(data) ? data : [data];
 
-  const dataItems = isData && isData.length > 0 ? isData[0] : null;
+  const dataItem = isData && isData.length > 0 ? isData[0] : null;
 
   useEffect(() => {
     const handleResize = () => {
       const mobileView = window.innerWidth < 768;
       setIsMobile(mobileView);
-      // Set the sidebar to be open on desktop and closed on mobile by default
       setIsSidebarOpen(!mobileView);
     };
 
@@ -206,10 +200,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   alt="Profil rasmi"
                 />
                 <div className="hidden md:block text-left">
-                  <div className="font-bold text-slate-700 dark:text-slate-200">
-                    Ali Valiyev
+                  <div className="font-bold text-slate-700 ">
+                    {get(dataItem, "full_name", "Bemor")}
                   </div>
-                  <div className="text-sm text-slate-500 dark:text-slate-400">
+                  <div className="text-sm text-slate-500 ">
                     Bemor
                   </div>
                 </div>
