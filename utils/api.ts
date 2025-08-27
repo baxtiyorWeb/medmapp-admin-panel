@@ -1,6 +1,6 @@
 // utils/api.ts
 import axios, { AxiosInstance } from "axios";
-
+import Router from "next/router";
 const API_BASE_URL = "https://medmapp.onrender.com/api/";
 // https://medmapp.onrender.com/api/
 // http://127.0.0.1:8000/api/
@@ -44,21 +44,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    // Check for a 401 error and make sure it's not a retry attempt
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       try {
         const { refreshToken } = getAuthTokens();
+        // If no refresh token exists, the user is not authenticated.
         if (!refreshToken) {
           removeAuthTokens();
+          window.location.href = "/login";
           return Promise.reject(error);
         }
 
-        // Faqat access token yangilanadi
         const refreshResponse = await axios.post(
           `${API_BASE_URL}auth/refresh/`,
           {
@@ -67,19 +68,24 @@ api.interceptors.response.use(
         );
 
         const newAccessToken = refreshResponse.data.access;
-        setAuthTokens(newAccessToken, refreshToken); // Refresh o‘zgarmaydi
+        setAuthTokens(newAccessToken, refreshToken);
         api.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${newAccessToken}`;
 
-        // Asl so‘rovni qayta yuboramiz
+        // Retry the original request with the new token
         return api(originalRequest);
       } catch (refreshError) {
+        // If refresh fails, clear tokens and redirect to login
         removeAuthTokens();
-        window.location.href = "/login"; // login sahifasiga yo‘naltirish
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
+    } else {
+      removeAuthTokens();
+      Router.push("/login");
     }
+
     return Promise.reject(error);
   }
 );
