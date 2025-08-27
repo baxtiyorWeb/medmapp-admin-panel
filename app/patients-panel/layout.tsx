@@ -14,6 +14,8 @@ import { BsFillGrid1X2Fill } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
+import LoadingOverlay from "@/components/LoadingOverlay";
+
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -21,17 +23,17 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false); // New state
   const pathname = usePathname();
   const { fetchProfile } = useProfile();
 
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const isData = isArray(data) ? data : [data];
-
   const dataItem = isData && isData.length > 0 ? isData[0] : null;
 
   useEffect(() => {
@@ -41,11 +43,29 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       setIsSidebarOpen(!mobileView);
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+      const profileToggle = document.querySelector(".profile-toggle");
+      const profileDropdown = document.querySelector(".profile-dropdown");
+      if (
+        isProfileDropdownOpen &&
+        profileToggle &&
+        profileDropdown &&
+        !profileToggle.contains(event.target as Node) &&
+        !profileDropdown.contains(event.target as Node)
+      ) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
     handleResize();
     window.addEventListener("resize", handleResize);
+    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobile, isProfileDropdownOpen]);
 
   return (
     <div className="flex h-screen bg-slate-100 text-slate-800 overflow-hidden">
@@ -67,7 +87,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
         `}
       >
-        {/* Logo Section */}
         <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
           <Link href="/">
             <Image
@@ -83,8 +102,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             />
           </Link>
         </div>
-
-        {/* Navigation */}
         <nav className="flex-grow px-6 pb-6 space-y-[5px]">
           <SidebarItem
             link="/patients-panel"
@@ -143,101 +160,92 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           ${isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"}
         `}
       >
-        <header className="flex items-center justify-between py-4 px-8 bg-white  border-b border-slate-200  h-[89px] flex-shrink-0">
+        <header className="flex items-center justify-between py-4 px-8 bg-white border-b border-slate-200 h-[89px] flex-shrink-0">
           <div className="flex items-center">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               id="sidebar-toggle"
-              className="-ml-2 mr-4 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              className="-ml-2 mr-4 text-slate-500 hover:text-slate-700"
             >
               <i className="bi bi-list text-3xl"></i>
             </button>
-            <h1 className="hidden md:block text-2xl font-semibold text-slate-800 dark:text-white">
+            <h1 className="hidden md:block text-2xl font-semibold text-slate-800">
               Boshqaruv Paneli
             </h1>
           </div>
           <div className="flex items-center space-x-3 md:space-x-5">
+            {/* Language, dark mode, and bell buttons remain the same */}
             <div className="relative">
-              <button className="lang-toggle text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300">
+              <button className="lang-toggle cursor-pointer text-slate-500 hover:text-primary">
                 <i className="bi bi-translate text-xl"></i>
               </button>
-              <div className="lang-dropdown hidden absolute right-0 mt-2 w-40 bg-white  rounded-md shadow-lg py-1 z-10">
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
-                >
-                  <i className="bi bi-flag-fill mr-2"></i> O&apos;zbekcha
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
-                >
-                  <i className="bi bi-flag-fill mr-2"></i> Русский
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
-                >
-                  <i className="bi bi-flag-fill mr-2"></i> English
-                </a>
-              </div>
             </div>
             <button
               id="dark-mode-toggle"
-              className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300"
+              className="text-slate-500 cursor-pointer hover:text-primary"
             >
-              <i className="bi bi-moon-stars-fill text-xl block dark:hidden"></i>
-              <i className="bi bi-sun-fill text-xl hidden dark:block"></i>
+              <i className="bi bi-moon-stars-fill text-xl"></i>
             </button>
-            <button className="text-slate-500 hover:text-primary dark:text-slate-400 dark:hover:text-primary-300">
+            <button className="text-slate-500 cursor-pointer hover:text-primary">
               <i className="bi bi-bell text-xl"></i>
             </button>
+
+            {/* Profile section with the dropdown logic */}
             <div className="relative">
-              <button className="profile-toggle flex items-center space-x-3">
-                <img
-                  className="h-10 w-10 rounded-full object-cover"
-                  src="https://placehold.co/40x40/EFEFEF/333333?text=A"
-                  alt="Profil rasmi"
-                />
+              <button
+                className="profile-toggle cursor-pointer flex items-center space-x-3"
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+              >
+                {dataItem && dataItem.full_name ? (
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 font-bold">
+                    {dataItem.full_name.charAt(0).toUpperCase()}
+                  </div>
+                ) : (
+                  <img
+                    className="h-10 w-10 rounded-full object-cover"
+                    src="https://placehold.co/40x40/EFEFEF/333333?text=A"
+                    alt="Profil rasmi"
+                  />
+                )}
                 <div className="hidden md:block text-left">
-                  <div className="font-bold text-slate-700 ">
+                  <div className="font-bold text-slate-700">
                     {get(dataItem, "full_name", "Bemor")}
                   </div>
-                  <div className="text-sm text-slate-500 ">
-                    Bemor
-                  </div>
+                  <div className="text-sm text-slate-500">Bemor</div>
                 </div>
               </button>
-              <div className="profile-dropdown hidden absolute right-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-md shadow-lg py-1 z-10">
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 "
-                >
-                  <i className="bi bi-gear-fill mr-2 text-slate-500"></i>
-                  Sozlamalar
-                </a>
-                <div className="border-t border-slate-200 dark:border-slate-600 my-1"></div>
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2 texthover:bg-slate-100 "
-                >
-                  <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
-                </a>
-              </div>
+              {isProfileDropdownOpen && (
+                <div className="profile-dropdown absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                  <Link
+                    href="#"
+                    className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  >
+                    <i className="bi bi-gear-fill mr-2 text-slate-500"></i>
+                    Sozlamalar
+                  </Link>
+                  <div className="border-t border-slate-200 my-1"></div>
+                  <Link
+                    href="#"
+                    className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-slate-100"
+                  >
+                    <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-slate-100">
-          {children}
+        <main className="flex-1 relative overflow-y-auto p-6 md:p-8 bg-slate-100">
+          {isLoading ? <LoadingOverlay /> : children}
         </main>
       </div>
     </div>
   );
 };
 
-// Define a type for the SidebarItem component's props
+// SidebarItem component remains unchanged
 interface SidebarItemProps {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   text: string;

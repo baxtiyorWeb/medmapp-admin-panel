@@ -9,6 +9,8 @@ import {
 } from "react-icons/bs";
 import api from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
+import { AiOutlineLoading } from "react-icons/ai";
+import LoadingOverlay from "../LoadingOverlay";
 
 // Define the types for the application data from the backend
 interface ApplicationDetails {
@@ -140,6 +142,10 @@ const Table = () => {
     }
   };
 
+  if (isLoading) {
+    return <LoadingOverlay />;
+  }
+
   return (
     <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg">
       <div className="bg-white">
@@ -177,7 +183,11 @@ const Table = () => {
         </div>
 
         {/* Loading and Error States */}
-        {isLoading && <p className="p-4 text-center">Yuklanmoqda...</p>}
+        {isLoading && (
+          <div className="p-4 text-center text-slate-500 flex justify-center">
+            <AiOutlineLoading className="text-2xl text-primary animate-spin duration-300 transition-all " />
+          </div>
+        )}
         {isError && (
           <p className="p-4 text-center text-red-500">{error.message}</p>
         )}

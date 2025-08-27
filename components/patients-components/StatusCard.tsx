@@ -4,6 +4,9 @@ import React, { useState, useEffect, useCallback, memo, JSX } from "react";
 import { BsCheckCircleFill, BsPencilSquare, BsSendCheck } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/utils/api";
+import useProfile from "@/hooks/useProfile";
+import { isArray } from "lodash";
+import { useQuery } from "@tanstack/react-query";
 
 interface InputFieldProps {
   id: string;
@@ -142,6 +145,7 @@ const StatusCard: React.FC = () => {
   const [confirmChecked, setConfirmChecked] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const { fetchProfile } = useProfile();
 
   const openModal = (): void => {
     setIsModalOpen(true);
@@ -850,6 +854,16 @@ const StatusCard: React.FC = () => {
     );
   };
 
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => await fetchProfile(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const isData = isArray(data) ? data : [data];
+
+  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+
   return (
     <div className="relative">
       {typeof window !== "undefined" &&
@@ -893,7 +907,7 @@ const StatusCard: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2" id="status-text">
-                Assalomu alaykum, {formData.fullName}!
+                Assalomu alaykum, {dataItem!.full_name}
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
                 Konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
@@ -910,7 +924,7 @@ const StatusCard: React.FC = () => {
             <button
               id="main-action-button"
               onClick={openModal}
-              className="bg-white text-[#4154f1] hover:bg-primary-50 font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 flex-shrink-0 transition-all duration-300"
+              className="bg-white cursor-pointer  text-[#4154f1] hover:bg-primary-50 font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 flex-shrink-0 transition-all duration-300"
             >
               <BsPencilSquare />
               <span>Anketani To&apos;ldirishni Boshlash</span>
