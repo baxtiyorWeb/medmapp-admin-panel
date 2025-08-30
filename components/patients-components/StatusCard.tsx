@@ -129,12 +129,24 @@ const StatusCard: React.FC = () => {
   const [percent, setPercent] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [direction, setDirection] = useState<number>(0);
+  const { fetchProfile } = useProfile();
+
+  const { data } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => await fetchProfile(),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  const isData = isArray(data) ? data : [data];
+
+  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+
   const [formData, setFormData] = useState<FormData>({
-    fullName: "Ali Valiyev",
-    passport: "",
-    dob: "",
-    gender: "",
-    phone: "",
+    fullName: `${dataItem?.full_name || ""} ${dataItem?.full_name || ""}`,
+    passport: `${dataItem?.passport || ""}`,
+    dob: `${dataItem?.dob || ""}`,
+    gender: `${dataItem?.gender || ""}`,
+    phone: `${dataItem?.phone || ""}`,
     email: "",
     clinicName: "",
     complaint: "",
@@ -145,7 +157,6 @@ const StatusCard: React.FC = () => {
   const [confirmChecked, setConfirmChecked] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const { fetchProfile } = useProfile();
 
   const openModal = (): void => {
     setIsModalOpen(true);
@@ -482,8 +493,8 @@ const StatusCard: React.FC = () => {
                   required
                   selectOptions={[
                     { value: "", label: "Tanlang..." },
-                    { value: "Erkak", label: "Erkak" },
-                    { value: "Ayol", label: "Ayol" },
+                    { value: "male", label: "Erkak" },
+                    { value: "female", label: "Ayol" },
                   ]}
                   onChange={handleInputChange}
                   error={errors.gender}
@@ -853,16 +864,6 @@ const StatusCard: React.FC = () => {
       </AnimatePresence>
     );
   };
-
-  const { data } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
-  });
-
-  const isData = isArray(data) ? data : [data];
-
-  const dataItem = isData && isData.length > 0 ? isData[0] : null;
 
   return (
     <div className="relative">
