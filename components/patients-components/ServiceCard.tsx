@@ -107,7 +107,7 @@ const ServiceCard = () => {
               className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("invitation")}
             >
-              Buyurtma
+              Buyurma qilish
             </button>
           </div>
         </div>
@@ -135,7 +135,7 @@ const ServiceCard = () => {
               className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("transfer")}
             >
-              Buyurtma
+              Buyurma qilish
             </button>
           </div>
         </div>
@@ -162,7 +162,7 @@ const ServiceCard = () => {
               className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("hotel")}
             >
-              Buyurtma
+              Buyurma qilish
             </button>
           </div>
         </div>
@@ -190,7 +190,7 @@ const ServiceCard = () => {
               className="service-btn  w-full bg-[rgb(238_242_255)] dark:bg-primary-800/50 text-[rgb(79_70_229)] dark:text-primary-200 font-semibold py-2 px-4 cursor-pointer rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("translator")}
             >
-              Buyurtma
+              Buyurma qilish
             </button>
           </div>
         </div>
@@ -217,7 +217,7 @@ const ServiceCard = () => {
               className="service-btn cursor-pointer w-full bg-[rgb(238_242_255)] text-[rgb(79_70_229)]  dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
               onClick={() => handleServiceButtonClick("simcard")}
             >
-              Buyurtma
+              Buyurma qilish
             </button>
           </div>
         </div>

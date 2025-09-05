@@ -536,7 +536,12 @@ body {
   line-height: 50px;
 
   background-color: rgba(255, 255, 255, 0.7);
+
+  outline-color: #3a86ff;
+  outline-width: 1px;
+  outline-offset: 3.5px;
 }
+
 
 .form-control,
 .form-select {
@@ -734,11 +739,11 @@ body {
 }
 
 .toast-notification {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.4);
 
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(3px);
 
-  -webkit-backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(10px);
 
   color: #fff;
 
@@ -765,7 +770,6 @@ body {
 
 .toast-notification.show {
   opacity: 1;
-
   transform: translateX(0);
 }
 

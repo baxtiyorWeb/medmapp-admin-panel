@@ -23,6 +23,7 @@ interface InputFieldProps {
     >
   ) => void;
   error?: string;
+  pattern?: string; // Telefon formati uchun qo'shildi
 }
 
 const InputField = memo<InputFieldProps>(
@@ -37,6 +38,7 @@ const InputField = memo<InputFieldProps>(
     selectOptions = null,
     onChange,
     error,
+    pattern,
   }) => (
     <div>
       <label
@@ -84,6 +86,7 @@ const InputField = memo<InputFieldProps>(
             type={type}
             placeholder={placeholder}
             required={required}
+            pattern={pattern} // Telefon formati uchun qo'shildi
             className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
             value={value}
             onChange={onChange}
@@ -101,12 +104,10 @@ InputField.displayName = "InputField";
 
 interface FormData {
   fullName: string;
-  passport: string;
   dob: string;
   gender: string;
   phone: string;
   email: string;
-  clinicName: string;
   complaint: string;
   diagnosis: string;
   documents: DocumentFile[];
@@ -138,17 +139,14 @@ const StatusCard: React.FC = () => {
   });
 
   const isData = isArray(data) ? data : [data];
-
   const dataItem = isData && isData.length > 0 ? isData[0] : null;
 
   const [formData, setFormData] = useState<FormData>({
-    fullName: `${dataItem?.full_name || ""} ${dataItem?.full_name || ""}`,
-    passport: `${dataItem?.passport || ""}`,
+    fullName: `${dataItem?.full_name || ""}`,
     dob: `${dataItem?.dob || ""}`,
     gender: `${dataItem?.gender || ""}`,
     phone: `${dataItem?.phone || ""}`,
     email: "",
-    clinicName: "",
     complaint: "",
     diagnosis: "",
     documents: [],
@@ -179,18 +177,18 @@ const StatusCard: React.FC = () => {
     if (step === 1) {
       if (!formData.fullName)
         newErrors.fullName = "Ism-familiya kiritilishi shart";
-      if (!formData.passport)
-        newErrors.passport = "Pasport seriyasi kiritilishi shart";
       if (!formData.dob) newErrors.dob = "Tug'ilgan sana kiritilishi shart";
       if (!formData.gender) newErrors.gender = "Jins tanlanishi shart";
-      if (!formData.phone) newErrors.phone = "Telefon raqami kiritilishi shart";
-      if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-        newErrors.email = "To'g'ri email kiritilishi shart";
+      if (!formData.phone)
+        newErrors.phone = "Telefon raqami kiritilishi shart";
+      else if (!/^\+998\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/.test(formData.phone))
+        newErrors.phone = "Telefon raqami +998(90) 123-45-67 formatida bo'lishi kerak";
     } else if (step === 2) {
-      if (!formData.clinicName)
-        newErrors.clinicName = "Klinika nomi kiritilishi shart";
       if (!formData.complaint)
         newErrors.complaint = "Shikoyat kiritilishi shart";
+    } else if (step === 3) {
+      if (formData.documents.length === 0)
+        newErrors.documents = "Kamida bitta hujjat yuklash shart";
     } else if (step === 4) {
       if (!confirmChecked) return false;
     }
@@ -213,6 +211,27 @@ const StatusCard: React.FC = () => {
     setErrors({});
   };
 
+  const formatPhoneNumber = (value: string): string => {
+    const digits = value.replace(/\D/g, "");
+
+    let formatted = "+998";
+
+    if (digits.length > 3) {
+      formatted += `(${digits.slice(3, 5)}`;
+    }
+    if (digits.length > 5) {
+      formatted += `) ${digits.slice(5, 8)}`;
+    }
+    if (digits.length > 8) {
+      formatted += `-${digits.slice(8, 10)}`;
+    }
+    if (digits.length > 10) {
+      formatted += `-${digits.slice(10, 12)}`;
+    }
+
+    return formatted;
+  };
+
   const handleInputChange = useCallback(
     (
       e: React.ChangeEvent<
@@ -220,7 +239,24 @@ const StatusCard: React.FC = () => {
       >
     ): void => {
       const { id, value } = e.target;
-      setFormData((prev) => ({ ...prev, [id.replace("input-", "")]: value }));
+
+      if (id === "input-phone") {
+        // faqat raqamlarni olish (bazaga saqlash uchun)
+        const digits = value.replace(/\D/g, "").slice(0, 12); // max 12 ta raqam (998xx...)
+        // formatlangan ko‘rinish
+        const formatted = formatPhoneNumber(digits);
+
+        setFormData((prev) => ({
+          ...prev,
+          phone: digits, // ← bazaga ketadigan formatsiz raqam
+          phoneFormatted: formatted, // ← inputda ko‘rinadigan
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [id.replace("input-", "")]: value,
+        }));
+      }
     },
     []
   );
@@ -229,9 +265,7 @@ const StatusCard: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       const files = Array.from(e.target.files || []);
       const newDocuments = files.map((file) => {
-        const id = `file_${Date.now()}_${Math.random()
-          .toString(36)
-          .substring(7)}`;
+        const id = `file_${Date.now()}_${Math.random().toString(36).substring(7)}`;
         return new Promise<DocumentFile>((resolve) => {
           const reader = new FileReader();
           reader.onload = (ev) =>
@@ -271,12 +305,12 @@ const StatusCard: React.FC = () => {
             documents: prev.documents.map((doc) =>
               doc.id === id
                 ? {
-                    ...doc,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    dataUrl: ev.target?.result as string,
-                  }
+                  ...doc,
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  dataUrl: ev.target?.result as string,
+                }
                 : doc
             ),
           }));
@@ -303,7 +337,6 @@ const StatusCard: React.FC = () => {
         const profilePayload = {
           patient_profile: {
             full_name: formData.fullName,
-            passport: formData.passport,
             dob: formData.dob,
             gender: formData.gender,
             phone: formData.phone,
@@ -311,19 +344,19 @@ const StatusCard: React.FC = () => {
           },
           complaint: formData.complaint,
           diagnosis: formData.diagnosis,
-          // Agar documents kerak bo'lsa, bu yerda qo'shish mumkin, ammo API specda yo'q
+          
         };
 
-        const profileResponse = await api.patch("/profile/me/", profilePayload);
+        const profileResponse = await api.patch("/patients/profile/me/", profilePayload);
 
         // Create application
         const appPayload = {
-          clinic_name: formData.clinicName,
           complaint: formData.complaint,
           diagnosis: formData.diagnosis,
+          clinic_name: "clinick name ni remove qilish kerak "
         };
 
-        const appResponse = await api.post("/application/create/", appPayload);
+        const appResponse = await api.post("/applications/application/create/", appPayload);
 
         const appId = appResponse.data.id;
 
@@ -337,7 +370,7 @@ const StatusCard: React.FC = () => {
           docFormData.append("application", appId.toString());
           docFormData.append("file", file);
 
-          await api.post("/documents/create/", docFormData, {
+          await api.post("/applications/documents/create/", docFormData, {
             headers: {
               "Content-Type": "multipart/form-data",
             },
@@ -346,7 +379,6 @@ const StatusCard: React.FC = () => {
 
         // Success handling
         if (profileResponse.status === 200 || profileResponse.status === 201) {
-          // Optional: localStorage ga saqlashni saqlab qolish yoki o'chirish
           localStorage.setItem(
             "formData",
             JSON.stringify({
@@ -365,7 +397,9 @@ const StatusCard: React.FC = () => {
             })
           );
           closeModal();
-          alert("Anketa muvaffaqiyatli yuborildi!");
+          alert(
+            "Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada shaxsiy kabinetingizga xabar yuboriladi!"
+          );
         }
       } catch (error) {
         console.error("API xatosi:", error);
@@ -379,7 +413,7 @@ const StatusCard: React.FC = () => {
   };
 
   useEffect(() => {
-    const totalSteps = 4; // jami step soni
+    const totalSteps = 4;
     const progress = ((currentStep - 1) / (totalSteps - 1)) * 100;
 
     const modalProgressBar = document.getElementById("modal-progress-bar");
@@ -396,7 +430,7 @@ const StatusCard: React.FC = () => {
     setTimeout(() => {
       setIsModalOpen(false);
       setIsClosing(false);
-    }, 300); // duration-300 bilan mos
+    }, 300);
   };
 
   const stepVariants = {
@@ -422,7 +456,7 @@ const StatusCard: React.FC = () => {
   }
 
   const stepCallback = useCallback(() => {
-    if (typeof window === "undefined") return 0; // faqat browserda ishlaydi
+    if (typeof window === "undefined") return 0;
 
     let formDatas: { currentStep?: number } = {};
     try {
@@ -435,7 +469,7 @@ const StatusCard: React.FC = () => {
     }
 
     const currentStepValue = formDatas.currentStep || 1;
-    const totalSteps = 4; // umumiy step soni
+    const totalSteps = 4;
 
     return ((currentStepValue - 1) / (totalSteps - 1)) * 100;
   }, []);
@@ -466,16 +500,6 @@ const StatusCard: React.FC = () => {
                   error={errors.fullName}
                 />
                 <InputField
-                  id="passport"
-                  label="Pasport seriya va raqami"
-                  placeholder="AA1234567"
-                  icon="person-vcard"
-                  value={formData.passport}
-                  required
-                  onChange={handleInputChange}
-                  error={errors.passport}
-                />
-                <InputField
                   id="dob"
                   label="Tug'ilgan sana"
                   type="date"
@@ -503,10 +527,11 @@ const StatusCard: React.FC = () => {
                   id="phone"
                   label="Telefon raqami"
                   type="tel"
-                  placeholder="+998 90 123 45 67"
+                  placeholder="+998(90) 123-45-67"
                   icon="telephone"
                   value={formData.phone}
                   required
+                  pattern="\+998\(\d{2}\)\s\d{3}-\d{2}-\d{2}"
                   onChange={handleInputChange}
                   error={errors.phone}
                 />
@@ -517,7 +542,7 @@ const StatusCard: React.FC = () => {
                   placeholder="aliyev@gmail.com"
                   icon="envelope"
                   value={formData.email}
-                  required
+                  required={false}
                   onChange={handleInputChange}
                   error={errors.email}
                 />
@@ -533,16 +558,6 @@ const StatusCard: React.FC = () => {
         content: (
           <div className="w-full max-w-3xl mx-auto">
             <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl space-y-4 shadow-sm">
-              <InputField
-                id="clinicName"
-                label="Klinika nomi"
-                placeholder="Masalan, Shox International Hospital"
-                icon="hospital"
-                value={formData.clinicName}
-                required
-                onChange={handleInputChange}
-                error={errors.clinicName}
-              />
               <InputField
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
@@ -569,7 +584,7 @@ const StatusCard: React.FC = () => {
         icon: "file-earmark-arrow-up",
         title: "Tibbiy Hujjatlar",
         description:
-          "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun mavjud tibbiy hujjatlarni (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
+          "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun kamida bitta tibbiy hujjat (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
             <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm">
@@ -582,7 +597,7 @@ const StatusCard: React.FC = () => {
                   Fayl yuklash
                 </p>
                 <p className="text-sm text-slate-500">
-                  yoki fayllarni shu yerga tashlang
+                  yoki fayllarni shu yerga tashlang (kamida bitta fayl yuklash shart)
                 </p>
               </label>
               <input
@@ -651,6 +666,11 @@ const StatusCard: React.FC = () => {
                     </div>
                   ))
                 )}
+                {errors.documents && (
+                  <div className="text-red-500 text-sm mt-2">
+                    {errors.documents}
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -683,11 +703,10 @@ const StatusCard: React.FC = () => {
               <dl className="divide-y divide-slate-100 dark:divide-slate-700/50 grid grid-cols-1 md:grid-cols-2 md:gap-x-8">
                 {[
                   { label: "Ism-familiya", value: formData.fullName },
-                  { label: "Pasport", value: formData.passport },
                   { label: "Tug'ilgan sana", value: formData.dob },
                   { label: "Jins", value: formData.gender },
                   { label: "Telefon", value: formData.phone },
-                  { label: "Pochta", value: formData.email },
+                  { label: "Pochta", value: formData.email || "Kiritilmagan" },
                 ].map((item, idx) => (
                   <div
                     key={idx}
@@ -721,14 +740,6 @@ const StatusCard: React.FC = () => {
               <dl className="divide-y divide-slate-100 dark:divide-slate-700/50">
                 <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
                   <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
-                    Klinika nomi
-                  </dt>
-                  <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
-                    {formData.clinicName}
-                  </dd>
-                </div>
-                <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
-                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
                     Shikoyatlar
                   </dt>
                   <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
@@ -740,7 +751,7 @@ const StatusCard: React.FC = () => {
                     Avvalgi tashxis
                   </dt>
                   <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
-                    {formData.diagnosis}
+                    {formData.diagnosis || "Kiritilmagan"}
                   </dd>
                 </div>
               </dl>
@@ -842,13 +853,12 @@ const StatusCard: React.FC = () => {
             <div className="text-center mb-8">
               <div className="w-16 h-16 mx-auto bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
                 <i
-                  className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${
-                    currentStep === 2
-                      ? "text-red-500"
-                      : currentStep === 4
+                  className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${currentStep === 2
+                    ? "text-red-500"
+                    : currentStep === 4
                       ? "text-teal-500"
                       : "text-primary-500"
-                  }`}
+                    }`}
                 ></i>
               </div>
               <h4 className="text-xl font-semibold mt-4 text-slate-800 dark:text-slate-200">
@@ -868,7 +878,7 @@ const StatusCard: React.FC = () => {
   return (
     <div className="relative">
       {typeof window !== "undefined" &&
-      window.localStorage.getItem("formData") ? (
+        window.localStorage.getItem("formData") ? (
         <div
           id="status-card"
           className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl p-6 md:p-8 shadow-lg mb-8 transition-all duration-500"
@@ -908,10 +918,10 @@ const StatusCard: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2" id="status-text">
-                Assalomu alaykum, {dataItem!.full_name}
+                Assalomu alaykum, {dataItem!.full_name} !
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
-                Konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
+                Tibbiy konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
                 quyidagi tugmani bosing.
               </p>
               <div className="w-full bg-[rgb(129_140_248_/_50%)] rounded-full h-2.5">
@@ -925,10 +935,10 @@ const StatusCard: React.FC = () => {
             <button
               id="main-action-button"
               onClick={openModal}
-              className="bg-white cursor-pointer  text-[#4154f1] hover:bg-primary-50 font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 flex-shrink-0 transition-all duration-300"
+              className="bg-white cursor-pointer text-[#4154f1] hover:bg-primary-50 font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 flex-shrink-0 transition-all duration-300"
             >
               <BsPencilSquare />
-              <span>Anketani To&apos;ldirishni Boshlash</span>
+              <span>Anketa to’ldirish</span>
             </button>
           </div>
         </div>
@@ -937,19 +947,17 @@ const StatusCard: React.FC = () => {
       {(isModalOpen || isClosing) && (
         <div
           onClick={handleClose}
-          className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 transition-opacity duration-100 ${
-            isClosing ? "opacity-0" : "visible"
-          }`}
+          className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 transition-opacity duration-100 ${isClosing ? "opacity-0" : "visible"
+            }`}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-00 ${
-              isClosing ? "scale-95" : "scale-100"
-            }`}
+            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${isClosing ? "scale-95" : "scale-100"
+              }`}
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
               <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
-                Konsultatsiya uchun Anketa
+                Tibbiy konsultatsiya uchun anketa
               </h3>
               <button
                 onClick={closeModal}
@@ -971,9 +979,8 @@ const StatusCard: React.FC = () => {
               <button
                 type="button"
                 id="prev-btn"
-                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
-                  currentStep === 1 ? "invisible" : ""
-                }`}
+                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${currentStep === 1 ? "invisible" : ""
+                  }`}
                 onClick={prevStep}
               >
                 Orqaga

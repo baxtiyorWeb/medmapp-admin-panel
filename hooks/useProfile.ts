@@ -4,7 +4,7 @@ import { useCallback } from "react";
 const useProfile = () => {
   const fetchProfile = useCallback(async () => {
     try {
-      const response = await api.get("/profile/me/");
+      const response = await api.get("/patients/profile/me/");
       return response.data;
     } catch (error) {
       console.error("Error fetching profile:", error);

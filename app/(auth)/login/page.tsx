@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { toast } from "react-hot-toast"; // Bu kutubxonani o'rnatish kerak: npm install react-hot-toast
+import { toast } from "react-hot-toast"; 
 
 const LoginPage = () => {
   const [isPhoneStep, setIsPhoneStep] = useState(true);
@@ -15,7 +15,6 @@ const LoginPage = () => {
   };
 
   const handleSendCode = () => {
-    // API chaqiruvi simulyatsiyasi
     if (phone === "901234567") {
       toast.error("Bu raqam ro'yxatdan o'tmagan!");
       return;
@@ -131,7 +130,7 @@ const LoginPage = () => {
                 <input
                   key={index}
                   type="tel"
-                  className="otp-input"
+                  className="otp-input outline-none"
                   maxLength={1}
                   inputMode="numeric"
                   value={otp[index] || ""}

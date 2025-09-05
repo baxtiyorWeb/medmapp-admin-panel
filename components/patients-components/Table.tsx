@@ -39,7 +39,7 @@ interface BackendApplication {
 
 // Function to fetch data, to be used with TanStack Query
 const fetchApplications = async (): Promise<Application[]> => {
-  const response = await api.get("/applications/");
+  const response = await api.get("/applications/applications/");
   if (response.status !== 200) {
     throw new Error("Failed to fetch applications");
   }

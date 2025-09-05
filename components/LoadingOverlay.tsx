@@ -6,13 +6,15 @@ const circleVariants = {
   end: { scale: 1.5 },
 };
 
+
+
 const circleTransition = (i: number) => ({
   repeat: Infinity,
   repeatType: "mirror" as const,
   duration: 0.6,
   delay: i * 0.2,
   ease: easeInOut,
-});
+}); 
 
 const LoadingOverlay: React.FC = () => {
   return (

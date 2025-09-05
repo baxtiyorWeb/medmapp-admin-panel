@@ -1,9 +1,8 @@
 // utils/api.ts
 import axios, { AxiosInstance } from "axios";
-import Router from "next/router";
-const API_BASE_URL = "https://medmapp.onrender.com/api/";
-// https://medmapp.onrender.com/api/
-// http://127.0.0.1:8000/api/
+
+const API_BASE_URL = "https://medmapp-production.up.railway.app/api/";
+
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
@@ -48,44 +47,47 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    // Check for a 401 error and make sure it's not a retry attempt
+
+    // Faqat 401 (Unauthorized) da ishlash kerak
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
+    
       try {
         const { refreshToken } = getAuthTokens();
-        // If no refresh token exists, the user is not authenticated.
+
+       
         if (!refreshToken) {
           removeAuthTokens();
-          window.location.href = "/login";
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 300);
           return Promise.reject(error);
         }
 
+        // token yangilashga urinish
         const refreshResponse = await axios.post(
           `${API_BASE_URL}auth/refresh/`,
-          {
-            refresh: refreshToken,
-          }
+          { refresh: refreshToken }
         );
 
         const newAccessToken = refreshResponse.data.access;
         setAuthTokens(newAccessToken, refreshToken);
-        api.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
 
-        // Retry the original request with the new token
+        api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
+
+        // Avvalgi so'rovni qayta yuborish
         return api(originalRequest);
       } catch (refreshError) {
-        // If refresh fails, clear tokens and redirect to login
+        // refresh ham ishlamadi → login sahifaga
         removeAuthTokens();
-        window.location.href = "/login";
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 300);
         return Promise.reject(refreshError);
       }
-    } else {
-      removeAuthTokens();
-      Router.push("/login");
     }
 
+    // Boshqa status kodlar → tokenlarni o‘chirib yubormaslik kerak
     return Promise.reject(error);
   }
 );

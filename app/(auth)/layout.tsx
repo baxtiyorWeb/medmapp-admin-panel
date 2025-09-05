@@ -12,10 +12,12 @@ import api, { setAuthTokens } from "@/utils/api";
 interface ApiError {
   response?: {
     data?: {
-      detail?: string;
+      phone_number?: string;
     };
   };
 }
+
+
 
 export default function Home() {
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -24,12 +26,8 @@ export default function Home() {
   const registerFormWrapperRef = useRef<HTMLDivElement>(null);
   const tabLoginRef = useRef<HTMLButtonElement>(null);
   const tabRegisterRef = useRef<HTMLButtonElement>(null);
-  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
-    null
-  );
-  const registerPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
-    null
-  );
+  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
+  const registerPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
   const loginOtpInputsRef = useRef<HTMLInputElement[]>([]);
   const registerOtpInputsRef = useRef<HTMLInputElement[]>([]);
 
@@ -49,6 +47,12 @@ export default function Home() {
 
   const switchForms = (formToShow: "login" | "register") => {
     setActiveForm(formToShow);
+    setLoginStep("phone");
+    setRegisterStep("phone");
+    setLoginPhone(""); // Reset login phone when switching forms
+    setLoginOtp(Array(6).fill("")); // Reset OTP
+    setRegisterOtp(Array(6).fill(""));
+    if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
   };
 
   const setLoading = (loading: boolean) => {
@@ -83,8 +87,7 @@ export default function Home() {
 
     const toast = document.createElement("div");
     toast.className = `toast-notification ${type}`;
-    const icon =
-      type === "success" ? "bi-check-circle-fill" : "bi-x-circle-fill";
+    const icon = type === "success" ? "bi-check-circle-fill" : "bi-x-circle-fill";
     toast.innerHTML = `<span class="toast-icon"><i class="bi ${icon}"></i></span><span class="toast-message">${message}</span>`;
     toastContainer.appendChild(toast);
 
@@ -152,8 +155,7 @@ export default function Home() {
     const isFirstNameValid = registerFirstName.trim() !== "";
     const isLastNameValid = registerLastName.trim() !== "";
     const isRegionValid = registerRegion !== "";
-    const isPhoneValid =
-      registerPhoneMaskRef.current?.masked.isComplete ?? false;
+    const isPhoneValid = registerPhoneMaskRef.current?.masked.isComplete ?? false;
     return isFirstNameValid && isLastNameValid && isRegionValid && isPhoneValid;
   };
 
@@ -163,14 +165,14 @@ export default function Home() {
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
     try {
-      await api.post("/auth/register/", {
+      await api.post("/auth/auth/register/", {
         phone_number: `+998${cleanedPhone}`,
         first_name: registerFirstName,
         last_name: registerLastName,
         district: registerRegion,
       });
 
-      const response = await api.post("/auth/request-otp/", {
+      const response = await api.post("/auth/auth/request-otp/", {
         phone_number: `+998${cleanedPhone}`,
       });
       if (response.status === 200) {
@@ -182,7 +184,7 @@ export default function Home() {
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
-      showToast(err.response?.data?.detail || "Xato yuz berdi!", "error");
+      showToast(err.response?.data?.phone_number || "Xato yuz berdi!", "error");
     }
   };
 
@@ -192,18 +194,19 @@ export default function Home() {
     const cleanedPhone = cleanPhoneNumber(loginPhone);
 
     try {
-      const response = await api.post("/auth/request-otp/", {
+      const response = await api.post("/auth/auth/request-otp/", {
         phone_number: `+998${cleanedPhone}`,
       });
       if (response.status === 200) {
         setLoading(false);
         setLoginStep("otp");
         showToast("Tasdiqlash kodi yuborildi!", "success");
+        startTimer();
       }
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
-      showToast(err.response?.data?.detail || "Xato yuz berdi!", "error");
+      showToast(err.response?.data?.phone_number || "Xato yuz berdi!", "error");
     }
   };
 
@@ -214,7 +217,7 @@ export default function Home() {
     const cleanedPhone = cleanPhoneNumber(loginPhone);
 
     try {
-      const response = await api.post("/auth/login/", {
+      const response = await api.post("/auth/auth/login/", {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
@@ -229,7 +232,7 @@ export default function Home() {
       setLoading(false);
       const err = error as ApiError;
       showToast(
-        err.response?.data?.detail || "Kod noto'g'ri kiritildi!",
+        err.response?.data?.phone_number || "Kod noto'g'ri kiritildi!",
         "error"
       );
     }
@@ -242,7 +245,7 @@ export default function Home() {
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
     try {
-      const verifyResponse = await api.post("/auth/verify-otp/", {
+      const verifyResponse = await api.post("/auth/auth/verify-otp/", {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
@@ -257,7 +260,7 @@ export default function Home() {
       setLoading(false);
       const err = error as ApiError;
       const errorMessage =
-        err.response?.data?.detail || "Ro'yxatdan o'tishda xato yuz berdi!";
+        err.response?.data?.phone_number || "Ro'yxatdan o'tishda xato yuz berdi!";
       showToast(errorMessage, "error");
     }
   };
@@ -312,9 +315,9 @@ export default function Home() {
             <div className="progress-bar-line"></div>
           </div>
           <div className="auth-left">
-            <div className="icon">
+            <div className="icon relative left-7 -top-10">
               <Image
-                src="/images/MedMapp_Logo_shaffof_new.png"
+                src={'/assets/login.png'}
                 width={250}
                 height={100}
                 style={{ marginBottom: "15px" }}
@@ -327,11 +330,10 @@ export default function Home() {
               imkoniyatlaridan mustaqil foydalaning.
             </p>
           </div>
-
           <div className="auth-right">
             <div className="mobile-logo-container">
               <Image
-                src="/images/MedMapp_Logo_shaffof_new.png"
+                src={'/assets/login.png'}
                 width={150}
                 height={50}
                 alt="MedMapp Mobil Logotipi"
@@ -341,9 +343,7 @@ export default function Home() {
               <button
                 id="tab-login"
                 ref={tabLoginRef}
-                className={`auth-tab-btn ${
-                  activeForm === "login" ? "active" : ""
-                }`}
+                className={`auth-tab-btn ${activeForm === "login" ? "active" : ""}`}
                 type="button"
                 onClick={() => switchForms("login")}
               >
@@ -352,9 +352,7 @@ export default function Home() {
               <button
                 id="tab-register"
                 ref={tabRegisterRef}
-                className={`auth-tab-btn ${
-                  activeForm === "register" ? "active" : ""
-                }`}
+                className={`auth-tab-btn ${activeForm === "register" ? "active" : ""}`}
                 type="button"
                 onClick={() => switchForms("register")}
               >
@@ -364,9 +362,7 @@ export default function Home() {
 
             <div
               id="login-form-wrapper"
-              className={`form-wrapper ${
-                activeForm === "login" ? "active" : ""
-              }`}
+              className={`form-wrapper ${activeForm === "login" ? "active" : ""}`}
               ref={loginFormWrapperRef}
             >
               {loginStep === "phone" && (
@@ -387,6 +383,8 @@ export default function Home() {
                           className="form-control phone-input"
                           id="loginPhone"
                           placeholder="(90) 123-45-67"
+                          value={loginPhone}
+                          onChange={(e) => setLoginPhone(e.target.value)}
                         />
                       </div>
                     </div>
@@ -408,8 +406,7 @@ export default function Home() {
                 <div id="login-otp-step" className="step">
                   <h3 className="fw-bold mb-2">Tasdiqlash</h3>
                   <p className="text-secondary mb-3" id="login-otp-message">
-                    +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni
-                    kiriting.
+                    +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni kiriting.
                   </p>
                   <form id="login-otp-form" onSubmit={handleLoginSubmit}>
                     <div className="otp-input-fields" id="login-otp-container">
@@ -461,6 +458,33 @@ export default function Home() {
                         <span className="btn-text">Kirish</span>
                       </button>
                     </div>
+                    <div className="text-center small text-secondary mb-2">
+                      Kodning amal qilish muddati: 1 daqiqa
+                    </div>
+                    <div
+                      id="resend-otp-container"
+                      className="text-center small"
+                    >
+                      {isResendDisabled ? (
+                        <span id="timer-text">
+                          Kod kelmadimi? Qayta yuborish uchun:{" "}
+                          <span id="timer">{timer}</span>s
+                        </span>
+                      ) : (
+                        <a
+                          href="#"
+                          id="resend-otp-link"
+                          className="form-switch-link"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            startTimer();
+                            handleLoginSendCode(); // Re-send OTP
+                          }}
+                        >
+                          Qayta yuborish
+                        </a>
+                      )}
+                    </div>
                     <p className="text-center small mt-3">
                       <a
                         href="#"
@@ -470,6 +494,9 @@ export default function Home() {
                           e.preventDefault();
                           setLoginStep("phone");
                           setLoginOtp(Array(6).fill(""));
+                          setLoginPhone(""); // Reset phone number
+                          if (timerIntervalRef.current)
+                            clearInterval(timerIntervalRef.current);
                         }}
                       >
                         <i className="bi bi-arrow-left-circle"></i>{" "}
@@ -483,9 +510,7 @@ export default function Home() {
 
             <div
               id="register-form-wrapper"
-              className={`form-wrapper ${
-                activeForm === "register" ? "active" : ""
-              }`}
+              className={`form-wrapper ${activeForm === "register" ? "active" : ""}`}
               ref={registerFormWrapperRef}
             >
               {registerStep === "phone" && (
@@ -587,6 +612,8 @@ export default function Home() {
                           className="form-control phone-input"
                           id="registerPhone"
                           placeholder="(90) 123-45-67"
+                          value={registerPhone}
+                          onChange={(e) => setRegisterPhone(e.target.value)}
                         />
                       </div>
                     </div>
@@ -684,7 +711,7 @@ export default function Home() {
                           onClick={(e) => {
                             e.preventDefault();
                             startTimer();
-                            handleRegisterSendCode(); // Re-send OTP
+                            handleRegisterSendCode();
                           }}
                         >
                           Qayta yuborish
@@ -699,6 +726,7 @@ export default function Home() {
                         onClick={(e) => {
                           e.preventDefault();
                           setRegisterStep("phone");
+                          setRegisterOtp(Array(6).fill(""));
                           if (timerIntervalRef.current)
                             clearInterval(timerIntervalRef.current);
                         }}
