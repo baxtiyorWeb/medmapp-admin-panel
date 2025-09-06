@@ -144,10 +144,11 @@ const StatusCard: React.FC = () => {
   const [showSuccessNotification, setShowSuccessNotification] =
     useState<boolean>(false);
   const { fetchProfile } = useProfile();
-
-  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
+  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
+    null
+  );
   const [phoneInput, setPhoneInput] = useState<string>("");
-
+  const phoneInputRef = useRef<HTMLInputElement | null>(null);
   const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => await fetchProfile(),
@@ -197,9 +198,10 @@ const StatusCard: React.FC = () => {
       if (!formData.dob) newErrors.dob = "Tug'ilgan sana kiritilishi shart";
       if (!formData.gender) newErrors.gender = "Jins tanlanishi shart";
       if (!formData.phone) newErrors.phone = "Telefon raqami kiritilishi shart";
+      if (!formData.phone) newErrors.phone = "Telefon raqami kiritilishi shart";
       else if (!/^\d{9}$/.test(formData.phone))
         newErrors.phone =
-          "Telefon raqami +998(90) 12 345 67 formatida bo'lishi kerak";
+          "Telefon raqami +998 (90) 123-45-67 formatida bo'lishi kerak";
     } else if (step === 2) {
       if (!formData.complaint)
         newErrors.complaint = "Shikoyat kiritilishi shart";
@@ -228,32 +230,54 @@ const StatusCard: React.FC = () => {
     setErrors({});
   };
 
-  // onChange handler
-  const handleInputChange = useCallback(
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >
-    ) => {
-      const { id, value } = e.target;
-      const field = id.replace("input-", "");
+  const handleInputChange = useCallback((e: HTMLInputElement | any) => {
+    const { id, value } = e.target;
+    const field = id.replace("input-", "");
 
-      if (field === "phone") {
-        // Faqat raqamlarni ajratib olish
-        const digits = value.replace(/[^\d]/g, "").slice(0, 9);
-        setFormData((prev) => ({
-          ...prev,
-          phone: digits, // faqat raqamlarni saqlaymiz
-        }));
-      } else {
-        setFormData((prev) => ({
-          ...prev,
-          [field]: value,
-        }));
+    if (field === "phone") {
+      // Telefon uchun maxsus formatlash
+      const phoneNumber = value.replace(/[^\d]/g, "");
+      const cleanPhone = phoneNumber.startsWith("998")
+        ? phoneNumber.slice(3)
+        : phoneNumber;
+      const limitedPhone = cleanPhone.slice(0, 9);
+
+      if (value === "") {
+        setFormData((prev) => ({ ...prev, phone: "" }));
+        setPhoneInput("");
+        return;
       }
-    },
-    []
-  );
+
+      // Formatlash
+      let formatted = "";
+      if (limitedPhone.length <= 2) {
+        formatted = `+998 (${limitedPhone}`;
+      } else if (limitedPhone.length <= 5) {
+        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+          2
+        )}`;
+      } else if (limitedPhone.length <= 7) {
+        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+          2,
+          5
+        )}-${limitedPhone.slice(5)}`;
+      } else {
+        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+          2,
+          5
+        )}-${limitedPhone.slice(5, 7)}-${limitedPhone.slice(7, 9)}`;
+      }
+
+      setFormData((prev) => ({ ...prev, phone: limitedPhone })); // Backend uchun raw
+      setPhoneInput(formatted); // UI uchun formatted
+    } else {
+      // Boshqa maydonlar
+      setFormData((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
+  }, []);
 
   const handleFileUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -494,28 +518,6 @@ const StatusCard: React.FC = () => {
     setPercent(callPercent);
   }, [stepCallback]);
 
-
-  useEffect(() => {
-    const inputEl = document.getElementById(
-      "input-phone"
-    ) as HTMLInputElement | null;
-
-    if (inputEl) {
-      loginPhoneMaskRef.current = IMask(inputEl, {
-        mask: "(00) 000-00-00",
-      });
-
-      loginPhoneMaskRef.current.on("accept", () => {
-        setPhoneInput(loginPhoneMaskRef.current?.unmaskedValue || "");
-      });
-    }
-
-    return () => {
-      loginPhoneMaskRef.current?.destroy();
-      loginPhoneMaskRef.current = null;
-    };
-  }, []);
-
   const renderStep = (): JSX.Element => {
     const steps: Step[] = [
       {
@@ -563,13 +565,13 @@ const StatusCard: React.FC = () => {
                 <InputField
                   id="phone"
                   label="Telefon"
-                  type="text"
-                  placeholder="+998(90) 123-45-67"
+                  placeholder="+998 (##) ###-##-##"
                   icon="phone"
-                  value={phoneInput} // faqat UI uchun
+                  value={phoneInput} // <- controlled input, state bilan bog‘lanadi
+                  required
+                  onChange={handleInputChange}
+                  inputRef={phoneInputRef}
                   error={errors.phone}
-                  onChange={(e) => setPhoneInput(e.target.value)}
-                  
                 />
                 <InputField
                   id="email"

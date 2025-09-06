@@ -11,7 +11,7 @@ export default function PatientsDashboard() {
       <div className="container">
         <StatusCard />
         <Stepper />
-        <ServiceCard />
+        s
         {/* <OrderedService /> */}
       </div>
     </div>
