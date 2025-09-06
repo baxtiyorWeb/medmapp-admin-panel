@@ -53,7 +53,7 @@ export default function NewPatientModal({
     updateWizardControls();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const name = (
       document.getElementById("new-patient-name") as HTMLInputElement
@@ -117,6 +117,72 @@ export default function NewPatientModal({
     setFiles([]);
     setCurrentStep(1);
     // Hide modal (handled in parent)
+  };
+  const handleSubmitWithoutEvent = () => {
+    // event preventDefault kerak emas, chunki onClick orqali chaqiriladi
+    const name = (
+      document.getElementById("new-patient-name") as HTMLInputElement
+    ).value;
+    const phone = (
+      document.getElementById("new-patient-phone") as HTMLInputElement
+    ).value;
+
+    if (!name || !phone) {
+      goToStep(1);
+      return;
+    }
+
+    if (
+      !(document.getElementById("form-agreement") as HTMLInputElement).checked
+    ) {
+      return;
+    }
+
+    const operatorName = "Operator #1";
+    const newPatient: Patient = {
+      id: patients.length > 0 ? Math.max(...patients.map((p) => p.id)) + 1 : 1,
+      name,
+      tagId: 1,
+      stageId: "stage1",
+      source: operatorName,
+      createdBy: operatorName,
+      history: [
+        {
+          date: new Date().toISOString(),
+          author: operatorName,
+          text: "Bemor profili anketa orqali yaratildi.",
+        },
+      ],
+      details: {
+        passport:
+          (document.getElementById("new-patient-passport") as HTMLInputElement)
+            .value || "-",
+        dob:
+          (document.getElementById("new-patient-dob") as HTMLInputElement)
+            .value || "-",
+        gender:
+          (document.getElementById("new-patient-gender") as HTMLSelectElement)
+            .value || "-",
+        phone,
+        email:
+          (document.getElementById("new-patient-email") as HTMLInputElement)
+            .value || "-",
+        complaints:
+          (
+            document.getElementById(
+              "new-patient-complaints"
+            ) as HTMLTextAreaElement
+          ).value || "Kiritilmagan",
+        previousDiagnosis:
+          (document.getElementById("new-patient-diagnosis") as HTMLInputElement)
+            .value || "Kiritilmagan",
+        documents: files.map((f) => ({ name: f.name, url: "#" })),
+      },
+    };
+
+    setPatients([newPatient, ...patients]);
+    setFiles([]);
+    setCurrentStep(1);
   };
 
   return (
@@ -279,19 +345,22 @@ export default function NewPatientModal({
             >
               Orqaga
             </button>
-            <button
-              type="button"
-              className="btn btn-primary"
-              onClick={() =>
-                currentStep < totalSteps
-                  ? goToStep(currentStep + 1)
-                  : handleSubmit(new Event("submit"))
-              }
-            >
-              {currentStep === totalSteps
-                ? "Tasdiqlash va Yuborish"
-                : "Keyingisi"}
-            </button>
+            <form  onSubmit={handleSubmit}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={
+                  () =>
+                    currentStep < totalSteps
+                      ? goToStep(currentStep + 1)
+                      : handleSubmitWithoutEvent() // event yuborish shart emas
+                }
+              >
+                {currentStep === totalSteps
+                  ? "Tasdiqlash va Yuborish"
+                  : "Keyingisi"}
+              </button>
+            </form>
           </div>
         </div>
       </div>

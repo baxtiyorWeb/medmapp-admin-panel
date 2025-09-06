@@ -1,11 +1,9 @@
-
 "use client";
 
 import React, { useState, useRef, Component, ReactNode } from "react";
 import "./style.css";
 import api from "@/utils/api";
-
-type ServiceId = "visa" | "transfer" | "hotel" | "translator" | "simcard";
+import { AxiosError } from "axios";
 
 // Error Boundary Component
 class ErrorBoundary extends Component<
@@ -25,7 +23,8 @@ class ErrorBoundary extends Component<
     if (this.state.hasError) {
       return (
         <div className="text-red-600 text-center p-4">
-          Xatolik yuz berdi. Iltimos, sahifani yangilang yoki administrator bilan bog'laning.
+          Xatolik yuz berdi. Iltimos, sahifani yangilang yoki administrator
+          bilan bog&apos;laning.
         </div>
       );
     }
@@ -48,11 +47,15 @@ export default function ServiceCard() {
   // State for form fields
   const [visaPassportScan, setVisaPassportScan] = useState<File | null>(null);
   const [visaNote, setVisaNote] = useState("");
-  const [simcardPassportScan, setSimcardPassportScan] = useState<File | null>(null);
+  const [simcardPassportScan, setSimcardPassportScan] = useState<File | null>(
+    null
+  );
   const [simcardNote, setSimcardNote] = useState("");
   const [transferFlightNumber, setTransferFlightNumber] = useState("");
   const [transferArrivalDatetime, setTransferArrivalDatetime] = useState("");
-  const [transferTicketScan, setTransferTicketScan] = useState<File | null>(null);
+  const [transferTicketScan, setTransferTicketScan] = useState<File | null>(
+    null
+  );
   const [translatorLanguage, setTranslatorLanguage] = useState("");
   const [translatorRequirements, setTranslatorRequirements] = useState("");
   const [hotelNotes, setHotelNotes] = useState("");
@@ -143,22 +146,29 @@ export default function ServiceCard() {
   };
 
   // Helper to extract error messages
-  const getErrorMessage = (err: any): string => {
-    if (err.response?.data) {
-      const data = err.response.data;
-      // Handle array-based errors (e.g., { flight_number: ["error"] })
-      if (typeof data === "object") {
-        const errors = Object.values(data)
-          .flat()
+  const getErrorMessage = (err: unknown): string => {
+    // Agar bu Axios xatosi bo'lsa
+    if ((err as AxiosError)?.response?.data) {
+      const data = (err as AxiosError).response?.data;
+
+      // Agar data object bo'lsa
+      if (typeof data === "object" && data !== null) {
+        const errors = Object.values(data as Record<string, string[] | string>)
+          .flatMap((v) => (Array.isArray(v) ? v : [v]))
           .join("; ");
         return errors || "API xatosi: Buyurtma yuborilmadi.";
       }
-      // Handle single error message (e.g., "Hech qanday fayl yuborilmadi.")
-      return data.detail || data || "API xatosi: Buyurtma yuborilmadi.";
+
+      // Agar data string yoki detail mavjud bo'lsa
+      return (
+        (data as { detail?: string })?.detail ||
+        String(data) ||
+        "API xatosi: Buyurtma yuborilmadi."
+      );
     }
+
     return "API xatosi: Buyurtma yuborilmadi.";
   };
-
   // Handle form submissions with Axios
   const handleVisaSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -191,7 +201,7 @@ export default function ServiceCard() {
         setSuccess("Murojaatingiz yuborildi");
         setTimeout(closeVisaModal, 2000);
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       console.error("Visa submission error:", err);
@@ -229,7 +239,7 @@ export default function ServiceCard() {
         setSuccess("Murojaatingiz yuborildi");
         setTimeout(closeSimcardModal, 2000);
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       console.error("Simcard submission error:", err);
@@ -273,7 +283,7 @@ export default function ServiceCard() {
         setSuccess("Murojaatingiz yuborildi");
         setTimeout(closeTransferModal, 2000);
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       console.error("Transfer submission error:", err);
@@ -315,7 +325,7 @@ export default function ServiceCard() {
         setSuccess("Murojaatingiz yuborildi");
         setTimeout(closeTranslatorModal, 2000);
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       console.error("Translator submission error:", err);
@@ -345,7 +355,7 @@ export default function ServiceCard() {
         setSuccess("Murojaatingiz yuborildi");
         setTimeout(closeHotelModal, 2000);
       }
-    } catch (err: any) {
+    } catch (err) {
       const errorMessage = getErrorMessage(err);
       setError(errorMessage);
       console.error("Hotel submission error:", err);
@@ -364,7 +374,9 @@ export default function ServiceCard() {
             {showNotification && (
               <div className="notification warning flex items-center gap-2 p-4 mb-4 bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-lg">
                 <i className="bi bi-exclamation-triangle-fill text-2xl"></i>
-                <span>Iltimos, avval asosiy anketani to&apos;ldirib yuboring.</span>
+                <span>
+                  Iltimos, avval asosiy anketani to&apos;ldirib yuboring.
+                </span>
               </div>
             )}
 
@@ -398,7 +410,8 @@ export default function ServiceCard() {
                   Taklifnoma & Viza
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Klinikadan taklifnoma oling va viza masalalarida yordam so&apos;rang.
+                  Klinikadan taklifnoma oling va viza masalalarida yordam
+                  so&apos;rang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -420,7 +433,8 @@ export default function ServiceCard() {
                   Transfer Xizmati
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Aeroportdan kutib olish va klinikaga qulay yetib borishni ta&apos;minlang.
+                  Aeroportdan kutib olish va klinikaga qulay yetib borishni
+                  ta&apos;minlang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -464,7 +478,8 @@ export default function ServiceCard() {
                   Tarjimon Xizmati
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Davolanish jarayonida til bilan bog&apos;liq muammolarga duch kelmang.
+                  Davolanish jarayonida til bilan bog&apos;liq muammolarga duch
+                  kelmang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -563,8 +578,14 @@ export default function ServiceCard() {
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
-                        {error && <div className="text-red-600 text-sm">{error}</div>}
-                        {success && <div className="text-green-600 text-sm">{success}</div>}
+                        {error && (
+                          <div className="text-red-600 text-sm">{error}</div>
+                        )}
+                        {success && (
+                          <div className="text-green-600 text-sm">
+                            {success}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end space-x-3 mt-4">
                           <button
                             type="button"
@@ -653,8 +674,14 @@ export default function ServiceCard() {
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
-                        {error && <div className="text-red-600 text-sm">{error}</div>}
-                        {success && <div className="text-green-600 text-sm">{success}</div>}
+                        {error && (
+                          <div className="text-red-600 text-sm">{error}</div>
+                        )}
+                        {success && (
+                          <div className="text-green-600 text-sm">
+                            {success}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end space-x-3 mt-4">
                           <button
                             type="button"
@@ -713,7 +740,9 @@ export default function ServiceCard() {
                             minLength={1}
                             required
                             value={transferFlightNumber}
-                            onChange={(e) => setTransferFlightNumber(e.target.value)}
+                            onChange={(e) =>
+                              setTransferFlightNumber(e.target.value)
+                            }
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
@@ -729,7 +758,9 @@ export default function ServiceCard() {
                             type="datetime-local"
                             required
                             value={transferArrivalDatetime}
-                            onChange={(e) => setTransferArrivalDatetime(e.target.value)}
+                            onChange={(e) =>
+                              setTransferArrivalDatetime(e.target.value)
+                            }
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
@@ -756,12 +787,21 @@ export default function ServiceCard() {
                             onChange={(e) => {
                               const file = e.target.files?.[0] || null;
                               setTransferTicketScan(file);
-                              console.log("Transfer file selected:", file?.name);
+                              console.log(
+                                "Transfer file selected:",
+                                file?.name
+                              );
                             }}
                           />
                         </div>
-                        {error && <div className="text-red-600 text-sm">{error}</div>}
-                        {success && <div className="text-green-600 text-sm">{success}</div>}
+                        {error && (
+                          <div className="text-red-600 text-sm">{error}</div>
+                        )}
+                        {success && (
+                          <div className="text-green-600 text-sm">
+                            {success}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end space-x-3 mt-4">
                           <button
                             type="button"
@@ -803,7 +843,10 @@ export default function ServiceCard() {
                     </button>
                   </div>
                   <div className="p-6 overflow-y-auto">
-                    <form id="translator-form" onSubmit={handleTranslatorSubmit}>
+                    <form
+                      id="translator-form"
+                      onSubmit={handleTranslatorSubmit}
+                    >
                       <div className="space-y-4">
                         <div>
                           <label
@@ -820,7 +863,9 @@ export default function ServiceCard() {
                             minLength={1}
                             required
                             value={translatorLanguage}
-                            onChange={(e) => setTranslatorLanguage(e.target.value)}
+                            onChange={(e) =>
+                              setTranslatorLanguage(e.target.value)
+                            }
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
@@ -837,12 +882,20 @@ export default function ServiceCard() {
                             rows={3}
                             maxLength={500}
                             value={translatorRequirements}
-                            onChange={(e) => setTranslatorRequirements(e.target.value)}
+                            onChange={(e) =>
+                              setTranslatorRequirements(e.target.value)
+                            }
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
-                        {error && <div className="text-red-600 text-sm">{error}</div>}
-                        {success && <div className="text-green-600 text-sm">{success}</div>}
+                        {error && (
+                          <div className="text-red-600 text-sm">{error}</div>
+                        )}
+                        {success && (
+                          <div className="text-green-600 text-sm">
+                            {success}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end space-x-3 mt-4">
                           <button
                             type="button"
@@ -895,7 +948,7 @@ export default function ServiceCard() {
                           </label>
                           <textarea
                             id="hotel-notes"
-                            placeholder="Masalan, mehmonxona turi yoki qo&apos;shimcha xizmatlar"
+                            placeholder="Masalan, mehmonxona turi yoki qo'shimcha xizmatlar"
                             rows={3}
                             maxLength={500}
                             value={hotelNotes}
@@ -903,8 +956,14 @@ export default function ServiceCard() {
                             className="w-full p-3 bg-slate-100 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary outline-none transition"
                           />
                         </div>
-                        {error && <div className="text-red-600 text-sm">{error}</div>}
-                        {success && <div className="text-green-600 text-sm">{success}</div>}
+                        {error && (
+                          <div className="text-red-600 text-sm">{error}</div>
+                        )}
+                        {success && (
+                          <div className="text-green-600 text-sm">
+                            {success}
+                          </div>
+                        )}
                         <div className="flex items-center justify-end space-x-3 mt-4">
                           <button
                             type="button"
