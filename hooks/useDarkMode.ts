@@ -4,6 +4,8 @@ export default function useDarkMode(): [boolean, () => void] {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
+    if (typeof window === "undefined") return; // serverda ishlamasin
+
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
@@ -19,6 +21,8 @@ export default function useDarkMode(): [boolean, () => void] {
   }, []);
 
   const toggleDarkMode = () => {
+    if (typeof document === "undefined") return;
+
     setIsDarkMode((prevMode) => {
       const newMode = !prevMode;
       if (newMode) {

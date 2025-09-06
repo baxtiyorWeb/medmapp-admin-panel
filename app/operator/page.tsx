@@ -9,13 +9,15 @@ const OperatorPage = () => {
   const [isDarkMode, toggleDarkMode] = useDarkMode();
   const [isSidebarOpen, toggleSidebar] = useSidebarToggle();
 
-  useEffect(() => {
-    if (isSidebarOpen) {
-      document.body.classList.remove("toggle-sidebar");
-    } else {
-      document.body.classList.add("toggle-sidebar");
-    }
-  }, [isSidebarOpen]);
+ useEffect(() => {
+  if (typeof document === "undefined") return; // serverda ishlamasin
+
+  if (isSidebarOpen) {
+    document.body.classList.remove("toggle-sidebar");
+  } else {
+    document.body.classList.add("toggle-sidebar");
+  }
+}, [isSidebarOpen])
 
   return (
     <div className={`wrapper ${isSidebarOpen ? "" : "sidebar-closed"}`}>
