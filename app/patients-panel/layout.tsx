@@ -15,7 +15,7 @@ import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
-import "components/patients-components/style.css";
+import "./../../components/patients-components/style.css";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;

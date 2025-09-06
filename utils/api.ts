@@ -60,7 +60,7 @@ api.interceptors.response.use(
           removeAuthTokens();
           setTimeout(() => {
             window.location.href = "/login";
-          }, 300);
+          }, 500);
           return Promise.reject(error);
         }
 
@@ -82,7 +82,7 @@ api.interceptors.response.use(
         removeAuthTokens();
         setTimeout(() => {
           window.location.href = "/login";
-        }, 300);
+        }, 500);
         return Promise.reject(refreshError);
       }
     }
