@@ -1,4 +1,5 @@
 // app/layout.js
+"use client";
 import "./layout.css";
 import Script from "next/script";
 
@@ -10,7 +11,7 @@ export const metadata = {
     "medmap, operator, call center, admin, dashboard, requests, kanban, crm",
 };
 
-export default function RootLayout({ children }: React.PropsWithChildren) {
+export default function OperatorLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="uz">
       <head>
