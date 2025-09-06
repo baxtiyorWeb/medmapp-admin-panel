@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import React, { useEffect } from "react";
 import Head from "next/head";
 import KanbanBoard from "./components/KanbanBoard";
@@ -18,7 +18,7 @@ const OperatorPage = () => {
   }, [isSidebarOpen]);
 
   return (
-    <div className={`wrapper ${isSidebarOpen ? '' : 'sidebar-closed'}`}>
+    <div className={`wrapper ${isSidebarOpen ? "" : "sidebar-closed"}`}>
       <Head>
         <title>MedMap.uz Boshqaruv Paneli</title>
       </Head>
@@ -88,7 +88,9 @@ const OperatorPage = () => {
               data-bs-placement="bottom"
               title="Tungi/Kunduzgi rejim"
             >
-              <i className={`bi ${isDarkMode ? "bi-sun" : "bi-moon-stars"}`}></i>
+              <i
+                className={`bi ${isDarkMode ? "bi-sun" : "bi-moon-stars"}`}
+              ></i>
             </a>
             {/* ... qolgan header elementlari ... */}
             <a
@@ -131,7 +133,10 @@ const OperatorPage = () => {
               </a>
               <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                 <li>
-                  <a className="dropdown-item d-flex align-items-center" href="#">
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="#"
+                  >
                     <i className="bi bi-person"></i>
                     <span>Profil</span>
                   </a>
@@ -140,7 +145,10 @@ const OperatorPage = () => {
                   <hr className="dropdown-divider" />
                 </li>
                 <li>
-                  <a className="dropdown-item d-flex align-items-center" href="#">
+                  <a
+                    className="dropdown-item d-flex align-items-center"
+                    href="#"
+                  >
                     <i className="bi bi-box-arrow-right"></i>
                     <span>Chiqish</span>
                   </a>
