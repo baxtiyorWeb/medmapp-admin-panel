@@ -58,9 +58,7 @@ api.interceptors.response.use(
        
         if (!refreshToken) {
           removeAuthTokens();
-          setTimeout(() => {
             window.location.href = "/login";
-          }, 500);
           return Promise.reject(error);
         }
 
@@ -80,9 +78,7 @@ api.interceptors.response.use(
       } catch (refreshError) {
         // refresh ham ishlamadi → login sahifaga
         removeAuthTokens();
-        setTimeout(() => {
           window.location.href = "/login";
-        }, 500);
         return Promise.reject(refreshError);
       }
     }
