@@ -16,14 +16,22 @@ interface StageChangeModalProps {
   patients: Patient[];
   setPatients: (patients: Patient[]) => void;
   stages: Stage[];
-  showToast: (message: string, type: 'success' | 'error' | 'warning') => void;
+  showToast: (message: string, type: "success" | "error" | "warning") => void;
 }
 
-export default function StageChangeModal({ tempMoveData, patients, setPatients, stages, showToast }: StageChangeModalProps) {
+export default function StageChangeModal({
+  tempMoveData,
+  patients,
+  setPatients,
+  stages,
+  showToast,
+}: StageChangeModalProps) {
   const handleSave = () => {
-    const comment = (document.getElementById('stage-change-comment') as HTMLTextAreaElement).value;
+    const comment = (
+      document.getElementById("stage-change-comment") as HTMLTextAreaElement
+    ).value;
     if (!comment.trim()) {
-      showToast("Iltimos, izoh yozing!", 'error');
+      showToast("Iltimos, izoh yozing!", "error");
       return;
     }
     if (tempMoveData) {
@@ -32,12 +40,19 @@ export default function StageChangeModal({ tempMoveData, patients, setPatients, 
           ? {
               ...p,
               stageId: tempMoveData.newStageId,
-              history: [...p.history, { date: new Date().toISOString(), author: 'Operator #1', text: comment }],
+              history: [
+                ...p.history,
+                {
+                  date: new Date().toISOString(),
+                  author: "Operator #1",
+                  text: comment,
+                },
+              ],
             }
           : p
       );
       setPatients(updatedPatients);
-      showToast("Bosqich muvaffaqiyatli o'zgartirildi");
+      showToast("Bosqich muvaffaqiyatli o'zgartirildi","success");
     }
     // Hide modal (handled in parent)
   };
@@ -53,22 +68,42 @@ export default function StageChangeModal({ tempMoveData, patients, setPatients, 
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Bosqichni O&apos;zgartirish</h5>
-            <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
+            <button
+              type="button"
+              className="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
           </div>
           <div className="modal-body">
             <p>
-              Bemor <strong>{patient?.name}</strong> uchun yangi bosqich: <strong>{newStage?.title}</strong>
+              Bemor <strong>{patient?.name}</strong> uchun yangi bosqich:{" "}
+              <strong>{newStage?.title}</strong>
             </p>
             <div className="mb-3">
-              <label htmlFor="stage-change-comment" className="form-label">Izoh (majburiy)</label>
-              <textarea className="form-control" id="stage-change-comment" rows={3} required></textarea>
+              <label htmlFor="stage-change-comment" className="form-label">
+                Izoh (majburiy)
+              </label>
+              <textarea
+                className="form-control"
+                id="stage-change-comment"
+                rows={3}
+                required
+              ></textarea>
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
               Bekor qilish
             </button>
-            <button type="button" className="btn btn-primary" onClick={handleSave}>
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={handleSave}
+            >
               Saqlash
             </button>
           </div>
