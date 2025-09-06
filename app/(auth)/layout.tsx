@@ -321,7 +321,7 @@ export default function Home() {
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
-      setOtpError(true); // Set error state on failed submission
+      setOtpError(true); 
       const errorMessage =
         err.response?.data?.phone_number ||
         err.response?.data?.detail ||
