@@ -1,12 +1,20 @@
 "use client";
 
-import React, { useState, useEffect, useCallback, memo, JSX } from "react";
+import React, {
+  useState,
+  useEffect,
+  useCallback,
+  memo,
+  JSX,
+  useRef,
+} from "react";
 import { BsCheckCircleFill, BsPencilSquare, BsSendCheck } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/utils/api";
 import useProfile from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import { useQuery } from "@tanstack/react-query";
+import IMask, { InputMask, MaskedPatternOptions } from "imask";
 
 interface InputFieldProps {
   id: string;
@@ -23,7 +31,8 @@ interface InputFieldProps {
     >
   ) => void;
   error?: string;
-  pattern?: string; // Telefon formati uchun qo'shildi
+  inputRef?: React.RefObject<HTMLInputElement | null>;
+  onFocus?: () => void;
 }
 
 const InputField = memo<InputFieldProps>(
@@ -38,7 +47,8 @@ const InputField = memo<InputFieldProps>(
     selectOptions = null,
     onChange,
     error,
-    pattern,
+    inputRef,
+    onFocus,
   }) => (
     <div>
       <label
@@ -86,10 +96,11 @@ const InputField = memo<InputFieldProps>(
             type={type}
             placeholder={placeholder}
             required={required}
-            pattern={pattern} // Telefon formati uchun qo'shildi
             className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
             value={value}
             onChange={onChange}
+            ref={inputRef}
+            onFocus={onFocus}
           />
         )}
       </div>
@@ -130,12 +141,17 @@ const StatusCard: React.FC = () => {
   const [percent, setPercent] = useState<number>(0);
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [direction, setDirection] = useState<number>(0);
+  const [showSuccessNotification, setShowSuccessNotification] =
+    useState<boolean>(false);
   const { fetchProfile } = useProfile();
+
+  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
+  const [phoneInput, setPhoneInput] = useState<string>("");
 
   const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
 
   const isData = isArray(data) ? data : [data];
@@ -145,7 +161,7 @@ const StatusCard: React.FC = () => {
     fullName: `${dataItem?.full_name || ""}`,
     dob: `${dataItem?.dob || ""}`,
     gender: `${dataItem?.gender || ""}`,
-    phone: `${dataItem?.phone || ""}`,
+    phone: `${dataItem?.phone?.replace(/^\+998/, "") || ""}`, // Strip +998 if present
     email: "",
     complaint: "",
     diagnosis: "",
@@ -165,12 +181,13 @@ const StatusCard: React.FC = () => {
   const closeModal = (): void => {
     setIsModalOpen(false);
     setCurrentStep(1);
-    setFormData((prev) => ({ ...prev, documents: [] }));
+    setFormData((prev) => ({ ...prev, documents: [], phone: "" }));
     setErrors({});
     setConfirmChecked(false);
     setSubmitError(null);
   };
 
+  // Validate phone number
   const validateStep = (step: number): boolean => {
     const newErrors: Errors = {};
 
@@ -179,10 +196,10 @@ const StatusCard: React.FC = () => {
         newErrors.fullName = "Ism-familiya kiritilishi shart";
       if (!formData.dob) newErrors.dob = "Tug'ilgan sana kiritilishi shart";
       if (!formData.gender) newErrors.gender = "Jins tanlanishi shart";
-      if (!formData.phone)
-        newErrors.phone = "Telefon raqami kiritilishi shart";
-      else if (!/^\+998\(\d{2}\)\s\d{3}-\d{2}-\d{2}$/.test(formData.phone))
-        newErrors.phone = "Telefon raqami +998(90) 123-45-67 formatida bo'lishi kerak";
+      if (!formData.phone) newErrors.phone = "Telefon raqami kiritilishi shart";
+      else if (!/^\d{9}$/.test(formData.phone))
+        newErrors.phone =
+          "Telefon raqami +998(90) 12 345 67 formatida bo'lishi kerak";
     } else if (step === 2) {
       if (!formData.complaint)
         newErrors.complaint = "Shikoyat kiritilishi shart";
@@ -211,50 +228,27 @@ const StatusCard: React.FC = () => {
     setErrors({});
   };
 
-  const formatPhoneNumber = (value: string): string => {
-    const digits = value.replace(/\D/g, "");
-
-    let formatted = "+998";
-
-    if (digits.length > 3) {
-      formatted += `(${digits.slice(3, 5)}`;
-    }
-    if (digits.length > 5) {
-      formatted += `) ${digits.slice(5, 8)}`;
-    }
-    if (digits.length > 8) {
-      formatted += `-${digits.slice(8, 10)}`;
-    }
-    if (digits.length > 10) {
-      formatted += `-${digits.slice(10, 12)}`;
-    }
-
-    return formatted;
-  };
-
+  // onChange handler
   const handleInputChange = useCallback(
     (
       e: React.ChangeEvent<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >
-    ): void => {
+    ) => {
       const { id, value } = e.target;
+      const field = id.replace("input-", "");
 
-      if (id === "input-phone") {
-        // faqat raqamlarni olish (bazaga saqlash uchun)
-        const digits = value.replace(/\D/g, "").slice(0, 12); // max 12 ta raqam (998xx...)
-        // formatlangan ko‘rinish
-        const formatted = formatPhoneNumber(digits);
-
+      if (field === "phone") {
+        // Faqat raqamlarni ajratib olish
+        const digits = value.replace(/[^\d]/g, "").slice(0, 9);
         setFormData((prev) => ({
           ...prev,
-          phone: digits, // ← bazaga ketadigan formatsiz raqam
-          phoneFormatted: formatted, // ← inputda ko‘rinadigan
+          phone: digits, // faqat raqamlarni saqlaymiz
         }));
       } else {
         setFormData((prev) => ({
           ...prev,
-          [id.replace("input-", "")]: value,
+          [field]: value,
         }));
       }
     },
@@ -265,7 +259,9 @@ const StatusCard: React.FC = () => {
     (e: React.ChangeEvent<HTMLInputElement>): void => {
       const files = Array.from(e.target.files || []);
       const newDocuments = files.map((file) => {
-        const id = `file_${Date.now()}_${Math.random().toString(36).substring(7)}`;
+        const id = `file_${Date.now()}_${Math.random()
+          .toString(36)
+          .substring(7)}`;
         return new Promise<DocumentFile>((resolve) => {
           const reader = new FileReader();
           reader.onload = (ev) =>
@@ -305,12 +301,12 @@ const StatusCard: React.FC = () => {
             documents: prev.documents.map((doc) =>
               doc.id === id
                 ? {
-                  ...doc,
-                  name: file.name,
-                  size: file.size,
-                  type: file.type,
-                  dataUrl: ev.target?.result as string,
-                }
+                    ...doc,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    dataUrl: ev.target?.result as string,
+                  }
                 : doc
             ),
           }));
@@ -333,34 +329,56 @@ const StatusCard: React.FC = () => {
       setIsSubmitting(true);
       setSubmitError(null);
 
+      const normalizePhone = (rawPhone?: string | null): string | null => {
+        if (!rawPhone) return null; // Agar bo'sh bo'lsa
+        let phone = rawPhone.trim();
+
+        // 1. Agar allaqachon +998 bilan boshlangan bo‘lsa
+        if (phone.startsWith("+998")) {
+          return phone;
+        }
+
+        // 2. Agar 998 bilan boshlangan bo‘lsa (lekin + yo‘q)
+        if (phone.startsWith("998")) {
+          return `+${phone}`;
+        }
+
+        // 3. Agar faqat raqamlar kiritilgan bo‘lsa (masalan 90 123 45 67)
+        //    => boshiga +998 qo‘shamiz
+        return `+998${phone}`;
+      };
+
       try {
         const profilePayload = {
           patient_profile: {
             full_name: formData.fullName,
             dob: formData.dob,
             gender: formData.gender,
-            phone: formData.phone,
+            phone: normalizePhone(phoneInput || formData.phone), // normalize qilingan raqam
             email: formData.email,
           },
           complaint: formData.complaint,
           diagnosis: formData.diagnosis,
-          
         };
 
-        const profileResponse = await api.patch("/patients/profile/me/", profilePayload);
+        const profileResponse = await api.patch(
+          "/patients/profile/me/",
+          profilePayload
+        );
 
-        // Create application
         const appPayload = {
           complaint: formData.complaint,
           diagnosis: formData.diagnosis,
-          clinic_name: "clinick name ni remove qilish kerak "
+          clinic_name: "clinick name",
         };
 
-        const appResponse = await api.post("/applications/application/create/", appPayload);
+        const appResponse = await api.post(
+          "/applications/application/create/",
+          appPayload
+        );
 
         const appId = appResponse.data.id;
 
-        // Upload documents
         for (const doc of formData.documents) {
           const response = await fetch(doc.dataUrl);
           const blob = await response.blob();
@@ -377,7 +395,6 @@ const StatusCard: React.FC = () => {
           });
         }
 
-        // Success handling
         if (profileResponse.status === 200 || profileResponse.status === 201) {
           localStorage.setItem(
             "formData",
@@ -397,9 +414,7 @@ const StatusCard: React.FC = () => {
             })
           );
           closeModal();
-          alert(
-            "Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada shaxsiy kabinetingizga xabar yuboriladi!"
-          );
+          setShowSuccessNotification(true);
         }
       } catch (error) {
         console.error("API xatosi:", error);
@@ -479,6 +494,28 @@ const StatusCard: React.FC = () => {
     setPercent(callPercent);
   }, [stepCallback]);
 
+
+  useEffect(() => {
+    const inputEl = document.getElementById(
+      "input-phone"
+    ) as HTMLInputElement | null;
+
+    if (inputEl) {
+      loginPhoneMaskRef.current = IMask(inputEl, {
+        mask: "(00) 000-00-00",
+      });
+
+      loginPhoneMaskRef.current.on("accept", () => {
+        setPhoneInput(loginPhoneMaskRef.current?.unmaskedValue || "");
+      });
+    }
+
+    return () => {
+      loginPhoneMaskRef.current?.destroy();
+      loginPhoneMaskRef.current = null;
+    };
+  }, []);
+
   const renderStep = (): JSX.Element => {
     const steps: Step[] = [
       {
@@ -525,15 +562,14 @@ const StatusCard: React.FC = () => {
                 />
                 <InputField
                   id="phone"
-                  label="Telefon raqami"
-                  type="tel"
+                  label="Telefon"
+                  type="text"
                   placeholder="+998(90) 123-45-67"
-                  icon="telephone"
-                  value={formData.phone}
-                  required
-                  pattern="\+998\(\d{2}\)\s\d{3}-\d{2}-\d{2}"
-                  onChange={handleInputChange}
+                  icon="phone"
+                  value={phoneInput} // faqat UI uchun
                   error={errors.phone}
+                  onChange={(e) => setPhoneInput(e.target.value)}
+                  
                 />
                 <InputField
                   id="email"
@@ -597,7 +633,8 @@ const StatusCard: React.FC = () => {
                   Fayl yuklash
                 </p>
                 <p className="text-sm text-slate-500">
-                  yoki fayllarni shu yerga tashlang (kamida bitta fayl yuklash shart)
+                  yoki fayllarni shu yerga tashlang (kamida bitta fayl yuklash
+                  shart)
                 </p>
               </label>
               <input
@@ -705,7 +742,10 @@ const StatusCard: React.FC = () => {
                   { label: "Ism-familiya", value: formData.fullName },
                   { label: "Tug'ilgan sana", value: formData.dob },
                   { label: "Jins", value: formData.gender },
-                  { label: "Telefon", value: formData.phone },
+                  {
+                    label: "Telefon",
+                    value: formData.phone,
+                  }, // Display formatted phone
                   { label: "Pochta", value: formData.email || "Kiritilmagan" },
                 ].map((item, idx) => (
                   <div
@@ -853,12 +893,13 @@ const StatusCard: React.FC = () => {
             <div className="text-center mb-8">
               <div className="w-16 h-16 mx-auto bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
                 <i
-                  className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${currentStep === 2
-                    ? "text-red-500"
-                    : currentStep === 4
+                  className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${
+                    currentStep === 2
+                      ? "text-red-500"
+                      : currentStep === 4
                       ? "text-teal-500"
                       : "text-primary-500"
-                    }`}
+                  }`}
                 ></i>
               </div>
               <h4 className="text-xl font-semibold mt-4 text-slate-800 dark:text-slate-200">
@@ -877,8 +918,15 @@ const StatusCard: React.FC = () => {
 
   return (
     <div className="relative">
+      {showSuccessNotification && (
+        <div className="notification success flex items-center gap-2 p-4 mb-4 rounded-lg">
+          Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
+          shaxsiy kabinetingizga xabar yuboriladi!
+          <i className="bi bi-check-circle text-success"></i>
+        </div>
+      )}
       {typeof window !== "undefined" &&
-        window.localStorage.getItem("formData") ? (
+      window.localStorage.getItem("formData") ? (
         <div
           id="status-card"
           className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl p-6 md:p-8 shadow-lg mb-8 transition-all duration-500"
@@ -918,7 +966,7 @@ const StatusCard: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2" id="status-text">
-                Assalomu alaykum, {dataItem!.full_name} !
+                Assalomu alaykum, {dataItem?.full_name || "Foydalanuvchi"}!
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
                 Tibbiy konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
@@ -947,13 +995,15 @@ const StatusCard: React.FC = () => {
       {(isModalOpen || isClosing) && (
         <div
           onClick={handleClose}
-          className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 transition-opacity duration-100 ${isClosing ? "opacity-0" : "visible"
-            }`}
+          className={`fixed z-50 inset-0 flex items-center justify-center bg-black/80 transition-opacity duration-100 ${
+            isClosing ? "opacity-0" : "visible"
+          }`}
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${isClosing ? "scale-95" : "scale-100"
-              }`}
+            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
+              isClosing ? "scale-95" : "scale-100"
+            }`}
           >
             <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
               <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
@@ -979,8 +1029,9 @@ const StatusCard: React.FC = () => {
               <button
                 type="button"
                 id="prev-btn"
-                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${currentStep === 1 ? "invisible" : ""
-                  }`}
+                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
+                  currentStep === 1 ? "invisible" : ""
+                }`}
                 onClick={prevStep}
               >
                 Orqaga

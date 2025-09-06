@@ -103,7 +103,7 @@ const Portal = () => {
             </a>
           </div>
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a href="admin/index.html" className="portal-card operator-card">
+            <a href="/operator" className="portal-card operator-card">
               <div className="icon-wrapper">
                 <i className="bi bi-headset"></i>
               </div>

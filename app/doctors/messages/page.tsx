@@ -76,6 +76,7 @@ const Chat = () => {
     }
   }, [isMobile, users, selectedUser]);
 
+
   return (
     <div className="wrapper flex h-[80dvh] bg-gray-100 font-sans relative">
       {(!selectedUser || !isMobile) && (

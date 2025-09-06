@@ -12,7 +12,7 @@ export default function PatientsDashboard() {
         <StatusCard />
         <Stepper />
         <ServiceCard />
-        <OrderedService />
+        {/* <OrderedService /> */}
       </div>
     </div>
   );
