@@ -148,7 +148,6 @@ const StatusCard: React.FC = () => {
   const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
     null
   );
-  const [phoneInput, setPhoneInput] = useState<string>("");
   const phoneInputRef = useRef<HTMLInputElement | null>(null);
   const { data } = useQuery({
     queryKey: ["profile"],
@@ -159,6 +158,7 @@ const StatusCard: React.FC = () => {
   const isData = isArray(data) ? data : [data];
   const dataItem = isData && isData.length > 0 ? isData[0] : null;
 
+  const [phoneInput, setPhoneInput] = useState<string>(`${dataItem.phone}`);
   const [formData, setFormData] = useState<FormData>({
     fullName: `${dataItem?.full_name || ""}`,
     dob: `${dataItem?.dob || ""}`,
@@ -173,7 +173,35 @@ const StatusCard: React.FC = () => {
   const [confirmChecked, setConfirmChecked] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  useEffect(() => {
+    if (!dataItem.phone) return;
 
+    const phoneNumber = dataItem.phone.replace(/[^\d]/g, "");
+    const cleanPhone = phoneNumber.startsWith("998")
+      ? phoneNumber.slice(3)
+      : phoneNumber;
+    const limitedPhone = cleanPhone.slice(0, 9);
+
+    let formatted = "";
+    if (limitedPhone.length <= 2) {
+      formatted = `+998 (${limitedPhone}`;
+    } else if (limitedPhone.length <= 5) {
+      formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(2)}`;
+    } else if (limitedPhone.length <= 7) {
+      formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+        2,
+        5
+      )}-${limitedPhone.slice(5)}`;
+    } else {
+      formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+        2,
+        5
+      )}-${limitedPhone.slice(5, 7)}-${limitedPhone.slice(7, 9)}`;
+    }
+
+    setFormData((prev) => ({ ...prev, phone: limitedPhone }));
+    setPhoneInput(formatted);
+  }, [dataItem.phone]);
   const openModal = (): void => {
     setIsModalOpen(true);
     setCurrentStep(1);
