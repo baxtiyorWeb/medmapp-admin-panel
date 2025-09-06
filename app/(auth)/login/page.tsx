@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { toast } from "react-hot-toast"; 
+import { toast } from "react-hot-toast";
 
 const LoginPage = () => {
   const [isPhoneStep, setIsPhoneStep] = useState(true);

@@ -51,7 +51,7 @@ export default function Home() {
   const [loginOtp, setLoginOtp] = useState<string[]>(Array(6).fill(""));
   const [registerOtp, setRegisterOtp] = useState<string[]>(Array(6).fill(""));
   const [otpError, setOtpError] = useState<boolean>(false); // New state for error feedback
-  const route = useRouter();
+  const [otpSubmitted, setOtpSubmitted] = useState(false);
   const switchForms = (formToShow: "login" | "register") => {
     setActiveForm(formToShow);
     setLoginStep("phone");
@@ -134,7 +134,7 @@ export default function Home() {
 
     // Auto-submit when all 6 digits are entered
     if (newOtp.join("").length === 6) {
-      setOtpError(false); // Reset error state
+      setOtpError(false);
       if (activeForm === "login") {
         handleLoginSubmit({
           preventDefault: () => {},
@@ -261,8 +261,10 @@ export default function Home() {
     }
   };
 
+  // remove this
   useEffect(() => {
     if (loginOtp.every((d) => d !== "")) {
+      setOtpError(false);
       handleLoginSubmit({
         preventDefault: () => {},
       } as React.FormEvent<HTMLFormElement>);
@@ -272,31 +274,44 @@ export default function Home() {
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
+    setOtpError(false);
     const otpCode = loginOtp.join("");
     const cleanedPhone = cleanPhoneNumber(loginPhone);
+
+    // Validate OTP length
+    if (otpCode.length !== 6) {
+      setLoading(false);
+      setOtpError(true);
+
+      setOtpSubmitted(false); // Allow retry
+      return;
+    }
 
     try {
       const response = await api.post("/auth/auth/login/", {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
-
+      setOtpError(false);
       if (response.status === 200) {
+        setOtpError(false);
         setLoading(false);
+        setOtpError(false);
         showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
         setAuthTokens(response.data.access, response.data.refresh);
-        setTimeout(() => (window.location.href = "/patients-panel"), 500);
+        setTimeout(() => (window.location.href = "/patients-panel"), 800);
       }
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
-      setOtpError(true); // Set error state on failed submission
+      setOtpError(true);
       showToast(
-        err.response?.data?.phone_number ||
-          err.response?.data?.detail ||
+        err.response?.data?.detail ||
+          err.response?.data?.phone_number ||
           "Kod noto'g'ri kiritildi!",
         "error"
       );
+      setOtpSubmitted(false); // Allow retry
     }
   };
 
@@ -306,27 +321,39 @@ export default function Home() {
     const otpCode = registerOtp.join("");
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
+    // Validate OTP length
+    if (otpCode.length !== 6) {
+      setLoading(false);
+      setOtpError(true);
+      showToast("6 xonali kodni kiriting!", "error");
+      setOtpSubmitted(false); // Allow retry
+      return;
+    }
+
     try {
       const verifyResponse = await api.post("/auth/auth/verify-otp/", {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
-
+      setOtpError(false);
       if (verifyResponse.status === 200) {
+        setOtpError(false);
         setLoading(false);
+        setOtpError(false);
         showToast("Muvaffaqiyatli ro'yxatdan o'tdingiz!", "success");
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
-        setTimeout(() => (window.location.href = "/patients-panel"), 500);
+        setTimeout(() => (window.location.href = "/patients-panel"), 800);
       }
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
-      setOtpError(true); 
+      setOtpError(true);
       const errorMessage =
-        err.response?.data?.phone_number ||
         err.response?.data?.detail ||
+        err.response?.data?.phone_number ||
         "Ro'yxatdan o'tishda xato yuz berdi!";
       showToast(errorMessage, "error");
+      setOtpSubmitted(false); // Allow retry
     }
   };
 
@@ -489,13 +516,18 @@ export default function Home() {
                             : "otp-complete"
                           : ""
                       }`}
-                      id="login-otp-container"
                     >
                       {loginOtp.map((digit, index) => (
                         <input
                           key={index}
                           type="tel"
-                          className="otp-input"
+                          className={`otp-input ${
+                            otpError
+                              ? "error"
+                              : loginOtp.join("").length === 6
+                              ? "success"
+                              : ""
+                          }`}
                           maxLength={1}
                           inputMode="numeric"
                           value={digit}
@@ -537,7 +569,9 @@ export default function Home() {
                         disabled={loginOtp.join("").length !== 6}
                       >
                         {isLoading ? (
-                          <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                          <p className="flex justify-center items-center w-full relative top-3">
+                            <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                          </p>
                         ) : (
                           <span className="btn-text">Kirish</span>
                         )}
@@ -735,13 +769,18 @@ export default function Home() {
                             : "otp-complete"
                           : ""
                       }`}
-                      id="register-otp-container"
                     >
                       {registerOtp.map((digit, index) => (
                         <input
                           key={index}
                           type="tel"
-                          className="otp-input"
+                          className={`otp-input ${
+                            otpError
+                              ? "error"
+                              : registerOtp.join("").length === 6
+                              ? "success"
+                              : ""
+                          }`}
                           maxLength={1}
                           inputMode="numeric"
                           value={digit}

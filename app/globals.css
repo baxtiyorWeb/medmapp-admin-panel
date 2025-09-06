@@ -555,6 +555,92 @@ body {
   outline-width: 1px;
   outline-offset: 3.5px;
 }
+.otp-input-fields {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.otp-input {
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  font-size: 18px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+/* Fokus holati */
+.otp-input:focus {
+  outline: none; /* default focus chizig'ini olib tashlaymiz */
+  border-color: #5c99f4;
+  box-shadow: 0 0 0 3px rgba(92, 153, 244, 0.3);
+  transform: scale(1.05);
+}
+
+/* Success holati */
+.otp-input.success {
+  border-color: #28a745;
+  background-color: #e6f4ea;
+  animation: pulse-green 0.6s ease-in-out;
+}
+
+.otp-input.success:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
+}
+
+/* Error holati */
+.otp-input.error {
+  border-color: #dc3545;
+  background-color: #fff5f5;
+  animation: shake 0.3s ease-in-out;
+}
+
+.otp-input.error:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+}
+
+/* Animatsiyalar */
+
+/* Pulsating green for success */
+@keyframes pulse-green {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(40, 167, 69, 0.2);
+  }
+  50% {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(40, 167, 69, 0.2);
+  }
+}
+
+/* Shake animation for error */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-5px);
+  }
+  40% {
+    transform: translateX(5px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+}
 
 .form-control,
 .form-select {
