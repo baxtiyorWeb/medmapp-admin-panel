@@ -654,7 +654,7 @@ const StatusCard: React.FC = () => {
       },
       {
         icon: "file-earmark-arrow-up",
-        title: "Tibbiy Hujjatlar",
+        title: "Tibbiy hujjatlar",
         description:
           "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun kamida bitta tibbiy hujjat (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
         content: (
@@ -688,12 +688,7 @@ const StatusCard: React.FC = () => {
               />
               <div id="file-list-container" className="mt-6 space-y-4">
                 {formData.documents.length === 0 ? (
-                  <div className="text-center py-8 bg-slate-100 dark:bg-slate-800 rounded-lg">
-                    <i className="bi bi-folder2-open text-4xl text-slate-400"></i>
-                    <p className="mt-2 text-slate-500">
-                      Hozircha hujjatlar yuklanmagan.
-                    </p>
-                  </div>
+                  <></>
                 ) : (
                   formData.documents.map((doc) => (
                     <div
@@ -870,7 +865,7 @@ const StatusCard: React.FC = () => {
                 <input
                   type="checkbox"
                   id="confirm-checkbox"
-                  className="h-5 w-5 rounded border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-700 text-primary-600 focus:ring-primary-500 mt-0.5 flex-shrink-0"
+                  className="h-5 w-5 cursor-pointer rounded border-slate-400 dark:border-slate-500 bg-white dark:bg-slate-700 text-primary-600 focus:ring-primary-500 mt-0.5 flex-shrink-0"
                   checked={confirmChecked}
                   onChange={(e) => setConfirmChecked(e.target.checked)}
                 />
@@ -1090,7 +1085,7 @@ const StatusCard: React.FC = () => {
                   disabled={!confirmChecked || isSubmitting}
                   onClick={handleSubmit}
                 >
-                  {isSubmitting ? "Yuborilmoqda..." : "Tasdiqlash va Yuborish"}{" "}
+                  {isSubmitting ? "Yuborilmoqda..." : "Tasdiqlash va yuborish"}{" "}
                   <BsSendCheck />
                 </button>
               )}
