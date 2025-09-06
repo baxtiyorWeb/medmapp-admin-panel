@@ -1,9 +1,8 @@
-"use client";
+// app/operator/page.tsx
 import dynamic from "next/dynamic";
 
 const OperatorPageClient = dynamic(
-  () => import("./components/OperatorPageClient"),
-  { ssr: false } // serverda render qilinmaydi
+  () => import("./components/OperatorPageClient")
 );
 
 export default function OperatorPage() {
