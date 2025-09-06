@@ -7,6 +7,7 @@ import React, {
   memo,
   JSX,
   useRef,
+  ChangeEvent,
 } from "react";
 import { BsCheckCircleFill, BsPencilSquare, BsSendCheck } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
@@ -230,54 +231,59 @@ const StatusCard: React.FC = () => {
     setErrors({});
   };
 
-  const handleInputChange = useCallback((e: HTMLInputElement | any) => {
-    const { id, value } = e.target;
-    const field = id.replace("input-", "");
+  const handleInputChange = useCallback(
+    (
+      e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+    ) => {
+      const { id, value } = e.target;
+      const field = id.replace("input-", "");
 
-    if (field === "phone") {
-      // Telefon uchun maxsus formatlash
-      const phoneNumber = value.replace(/[^\d]/g, "");
-      const cleanPhone = phoneNumber.startsWith("998")
-        ? phoneNumber.slice(3)
-        : phoneNumber;
-      const limitedPhone = cleanPhone.slice(0, 9);
+      if (field === "phone") {
+        // Telefon uchun maxsus formatlash
+        const phoneNumber = value.replace(/[^\d]/g, "");
+        const cleanPhone = phoneNumber.startsWith("998")
+          ? phoneNumber.slice(3)
+          : phoneNumber;
+        const limitedPhone = cleanPhone.slice(0, 9);
 
-      if (value === "") {
-        setFormData((prev) => ({ ...prev, phone: "" }));
-        setPhoneInput("");
-        return;
-      }
+        if (value === "") {
+          setFormData((prev) => ({ ...prev, phone: "" }));
+          setPhoneInput("");
+          return;
+        }
 
-      // Formatlash
-      let formatted = "";
-      if (limitedPhone.length <= 2) {
-        formatted = `+998 (${limitedPhone}`;
-      } else if (limitedPhone.length <= 5) {
-        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
-          2
-        )}`;
-      } else if (limitedPhone.length <= 7) {
-        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
-          2,
-          5
-        )}-${limitedPhone.slice(5)}`;
+        // Formatlash
+        let formatted = "";
+        if (limitedPhone.length <= 2) {
+          formatted = `+998 (${limitedPhone}`;
+        } else if (limitedPhone.length <= 5) {
+          formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+            2
+          )}`;
+        } else if (limitedPhone.length <= 7) {
+          formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+            2,
+            5
+          )}-${limitedPhone.slice(5)}`;
+        } else {
+          formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
+            2,
+            5
+          )}-${limitedPhone.slice(5, 7)}-${limitedPhone.slice(7, 9)}`;
+        }
+
+        setFormData((prev) => ({ ...prev, phone: limitedPhone })); // Backend uchun raw
+        setPhoneInput(formatted); // UI uchun formatted
       } else {
-        formatted = `+998 (${limitedPhone.slice(0, 2)}) ${limitedPhone.slice(
-          2,
-          5
-        )}-${limitedPhone.slice(5, 7)}-${limitedPhone.slice(7, 9)}`;
+        // Boshqa maydonlar
+        setFormData((prev) => ({
+          ...prev,
+          [field]: value,
+        }));
       }
-
-      setFormData((prev) => ({ ...prev, phone: limitedPhone })); // Backend uchun raw
-      setPhoneInput(formatted); // UI uchun formatted
-    } else {
-      // Boshqa maydonlar
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    }
-  }, []);
+    },
+    []
+  );
 
   const handleFileUpload = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -355,7 +361,7 @@ const StatusCard: React.FC = () => {
 
       const normalizePhone = (rawPhone?: string | null): string | null => {
         if (!rawPhone) return null; // Agar bo'sh bo'lsa
-        let phone = rawPhone.trim();
+        const phone = rawPhone.trim();
 
         // 1. Agar allaqachon +998 bilan boshlangan bo‘lsa
         if (phone.startsWith("+998")) {

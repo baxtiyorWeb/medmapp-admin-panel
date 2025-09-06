@@ -31,12 +31,12 @@ export default function DeleteConfirmModal({ patients, setPatients, selectedPati
             <button type="button" className="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div className="modal-body">
-            <p>Rostdan ham <strong>{patient.name}</strong> ismli bemorni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.</p>
+            <p>Rostdan ham <strong>{patient.name}</strong> ismli bemorni o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib bo&apos;lmaydi.</p>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Yo'q</button>
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Yo&apos;q</button>
             <button type="button" className="btn btn-danger" onClick={handleDelete}>
-              Ha, o'chirish
+              Ha, o&apos;chirish
             </button>
           </div>
         </div>

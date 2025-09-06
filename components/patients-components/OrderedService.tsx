@@ -1,5 +1,4 @@
 import React from "react";
-import { BsCartX } from "react-icons/bs";
 
 const OrderedService = () => {
   return (

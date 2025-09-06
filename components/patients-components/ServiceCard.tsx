@@ -243,7 +243,7 @@ export default function ServiceCard() {
       return;
     }
     if (transferFlightNumber.length > 50 || transferFlightNumber.length < 1) {
-      setError("Parvoz raqami 1-50 belgi oralig'ida bo'lishi kerak.");
+      setError("Parvoz raqami 1-50 belgi oralig'ida bo&apos;lishi kerak.");
       return;
     }
     if (!transferArrivalDatetime) {
@@ -287,7 +287,7 @@ export default function ServiceCard() {
       return;
     }
     if (translatorLanguage.length > 50 || translatorLanguage.length < 1) {
-      setError("Til 1-50 belgi oralig'ida bo'lishi kerak.");
+      setError("Til 1-50 belgi oralig'ida bo&apos;lishi kerak.");
       return;
     }
     if (translatorRequirements.length > 500) {
@@ -358,13 +358,13 @@ export default function ServiceCard() {
         <div className="container">
           <div className="p-4">
             <h1 className="text-xl my-4 font-bold text-slate-800 dark:text-white">
-              Qo'shimcha xizmatlar
+              Qo&apos;shimcha xizmatlar
             </h1>
 
             {showNotification && (
               <div className="notification warning flex items-center gap-2 p-4 mb-4 bg-yellow-100 text-yellow-800 border border-yellow-300 rounded-lg">
                 <i className="bi bi-exclamation-triangle-fill text-2xl"></i>
-                <span>Iltimos, avval asosiy anketani to'ldirib yuboring.</span>
+                <span>Iltimos, avval asosiy anketani to&apos;ldirib yuboring.</span>
               </div>
             )}
 
@@ -398,7 +398,7 @@ export default function ServiceCard() {
                   Taklifnoma & Viza
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Klinikadan taklifnoma oling va viza masalalarida yordam so'rang.
+                  Klinikadan taklifnoma oling va viza masalalarida yordam so&apos;rang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -420,7 +420,7 @@ export default function ServiceCard() {
                   Transfer Xizmati
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Aeroportdan kutib olish va klinikaga qulay yetib borishni ta'minlang.
+                  Aeroportdan kutib olish va klinikaga qulay yetib borishni ta&apos;minlang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -464,7 +464,7 @@ export default function ServiceCard() {
                   Tarjimon Xizmati
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Davolanish jarayonida til bilan bog'liq muammolarga duch kelmang.
+                  Davolanish jarayonida til bilan bog&apos;liq muammolarga duch kelmang.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -486,7 +486,7 @@ export default function ServiceCard() {
                   SIM-karta
                 </h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400 flex-grow mb-4">
-                  Borgan davlatingizda yaqinlaringiz bilan aloqada bo'ling.
+                  Borgan davlatingizda yaqinlaringiz bilan aloqada bo&apos;ling.
                 </p>
                 <button
                   className="service-btn w-full bg-primary-50 dark:bg-primary-800/50 text-primary-600 dark:text-primary-200 font-semibold py-2 px-4 rounded-lg text-sm hover:bg-primary-100 dark:hover:bg-primary-700 transition"
@@ -551,7 +551,7 @@ export default function ServiceCard() {
                             htmlFor="visa-note"
                             className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1 block"
                           >
-                            Qo'shimcha izoh
+                            Qo&apos;shimcha izoh
                           </label>
                           <textarea
                             id="visa-note"
@@ -641,7 +641,7 @@ export default function ServiceCard() {
                             htmlFor="simcard-note"
                             className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1 block"
                           >
-                            Qo'shimcha izoh
+                            Qo&apos;shimcha izoh
                           </label>
                           <textarea
                             id="simcard-note"
@@ -891,11 +891,11 @@ export default function ServiceCard() {
                             htmlFor="hotel-notes"
                             className="text-sm font-medium text-slate-600 dark:text-slate-300 mb-1 block"
                           >
-                            Qo'shimcha izoh
+                            Qo&apos;shimcha izoh
                           </label>
                           <textarea
                             id="hotel-notes"
-                            placeholder="Masalan, mehmonxona turi yoki qo'shimcha xizmatlar"
+                            placeholder="Masalan, mehmonxona turi yoki qo&apos;shimcha xizmatlar"
                             rows={3}
                             maxLength={500}
                             value={hotelNotes}

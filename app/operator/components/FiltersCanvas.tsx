@@ -24,7 +24,7 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
       </div>
       <div className="offcanvas-body">
         <div className="mb-3">
-          <label className="form-label">Tegi bo'yicha</label>
+          <label className="form-label">Tegi bo&apos;yicha</label>
           <div id="filter-tags-container">
             {tags.map((tag) => (
               <div key={tag.id} className="form-check">
@@ -49,7 +49,7 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="filter-stage" className="form-label">Bosqich bo'yicha</label>
+          <label htmlFor="filter-stage" className="form-label">Bosqich bo&apos;yicha</label>
           <select
             className="form-select"
             id="filter-stage"
@@ -63,7 +63,7 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
         </div>
         <div className="mt-4">
           <button className="btn btn-primary w-full" onClick={() => { /* Apply filters (handled in parent) */ }}>
-            Qo'llash
+            Qo&apos;llash
           </button>
           <button
             className="btn btn-light w-full mt-2"

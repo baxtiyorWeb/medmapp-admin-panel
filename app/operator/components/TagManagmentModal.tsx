@@ -46,17 +46,17 @@ export default function TagManagementModal({ tags, setTags }: TagManagementModal
                 </li>
               ))}
             </ul>
-            <h6>Yangi Holat Qo'shish</h6>
+            <h6>Yangi Holat Qo&apos;shish</h6>
             <div className="input-group">
               <input type="text" id="new-tag-name" className="form-control" placeholder="Yangi holat nomi..." />
               <select id="new-tag-color" className="form-select w-auto">
                 <option value="success">Yashil</option>
                 <option value="warning">Sariq</option>
                 <option value="danger">Qizil</option>
-                <option value="primary">Ko'k</option>
+                <option value="primary">Ko&apos;k</option>
                 <option value="secondary">Kulrang</option>
               </select>
-              <button className="btn btn-primary" onClick={handleAddTag}>Qo'shish</button>
+              <button className="btn btn-primary" onClick={handleAddTag}>Qo&apos;shish</button>
             </div>
           </div>
         </div>
