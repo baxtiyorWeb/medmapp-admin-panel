@@ -1,5 +1,9 @@
 "use client";
+import api from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
+import { isArray } from "lodash";
 import React from "react";
+import { get } from "sortablejs";
 
 const appointments = [
   {
@@ -20,7 +24,7 @@ const appointments = [
   },
   {
     id: 3,
-    name: "Sarvinoz Karimova",
+    name: "Sarvinos Karimova",
     title: "Takroriy koʻrik",
     time: "14:00 - 14:30",
     status: "Kutilmoqda",
@@ -29,6 +33,10 @@ const appointments = [
 ];
 
 const AppointmentTable = () => {
+  
+
+  // const usersitems = isArray(data?.data) ? get("data", {}) : [];
+
   return (
     <div className="w-full max-w-full bg-white rounded-xl p-6 border border-gray-200 shadow-md">
       <div className="flex justify-between items-center mb-6">

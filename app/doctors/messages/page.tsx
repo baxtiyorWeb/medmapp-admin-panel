@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { Paperclip, Send } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/utils/api";
 
 const usersData = [
   {
@@ -15,7 +17,7 @@ const usersData = [
   },
   {
     id: 2,
-    name: "Sarvinoz Karimova",
+    name: "Sarvinoz Karimovas",
     initials: "S",
     lastMessage: "Rahmat, aytganlaringizni qilyapman.",
     time: "Kecha",
@@ -60,6 +62,8 @@ const Chat = () => {
     typeof window !== "undefined" ? window.innerWidth < 640 : false
   );
 
+
+
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 640;
@@ -75,7 +79,6 @@ const Chat = () => {
       setSelectedUser(users[0]);
     }
   }, [isMobile, users, selectedUser]);
-
 
   return (
     <div className="wrapper flex h-[80dvh] bg-gray-100 font-sans relative">

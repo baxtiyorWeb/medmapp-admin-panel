@@ -4,6 +4,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Sortable, { SortableEvent } from "sortablejs"; // 🔑 default import
 import { Offcanvas, Modal, Toast } from "bootstrap";
+import { useQuery } from "@tanstack/react-query";
+import api from "@/utils/api";
+import { get, isArray } from "lodash";
 
 // Data interfaces
 interface Tag {
@@ -207,6 +210,11 @@ const KanbanBoard: React.FC = () => {
     toastEl.addEventListener("hidden.bs.toast", () => toastEl.remove());
   }, []);
 
+  const { data } = useQuery({
+    queryKey: ["users"],
+    queryFn: async () => await api.get("/auth/users/"),
+  });
+  const usersItems = isArray(data?.data) ? get(data, "data", []) : [];
   // Bemor ma'lumotlarini tahrirlash rejimiga o'tish
   const toggleEditMode = (
     cardType: "personal" | "medical",
@@ -466,8 +474,8 @@ const KanbanBoard: React.FC = () => {
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title" id="patientDetailsOffcanvasLabel">
-              <i className="bi bi-person-fill-gear me-2"></i>Bemor ma&apos;lumotlari:{" "}
-              {activePatient.name}
+              <i className="bi bi-person-fill-gear me-2"></i>Bemor
+              ma&apos;lumotlari: {activePatient.name}
             </h5>
             <button
               type="button"
