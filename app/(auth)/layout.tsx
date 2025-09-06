@@ -7,17 +7,19 @@ import Script from "next/script";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import api, { setAuthTokens } from "@/utils/api";
+import { AiOutlineLoading } from "react-icons/ai";
+import { useRouter } from "next/navigation";
 
 // Define interface for API error response
 interface ApiError {
   response?: {
     data?: {
       phone_number?: string;
+      detail?: string; // Added to handle generic error messages
     };
+    status?: number;
   };
 }
-
-
 
 export default function Home() {
   const progressBarRef = useRef<HTMLDivElement>(null);
@@ -26,8 +28,12 @@ export default function Home() {
   const registerFormWrapperRef = useRef<HTMLDivElement>(null);
   const tabLoginRef = useRef<HTMLButtonElement>(null);
   const tabRegisterRef = useRef<HTMLButtonElement>(null);
-  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
-  const registerPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(null);
+  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
+    null
+  );
+  const registerPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
+    null
+  );
   const loginOtpInputsRef = useRef<HTMLInputElement[]>([]);
   const registerOtpInputsRef = useRef<HTMLInputElement[]>([]);
 
@@ -44,14 +50,16 @@ export default function Home() {
   const [registerRegion, setRegisterRegion] = useState<string>("");
   const [loginOtp, setLoginOtp] = useState<string[]>(Array(6).fill(""));
   const [registerOtp, setRegisterOtp] = useState<string[]>(Array(6).fill(""));
-
+  const [otpError, setOtpError] = useState<boolean>(false); // New state for error feedback
+  const route = useRouter();
   const switchForms = (formToShow: "login" | "register") => {
     setActiveForm(formToShow);
     setLoginStep("phone");
     setRegisterStep("phone");
-    setLoginPhone(""); // Reset login phone when switching forms
-    setLoginOtp(Array(6).fill("")); // Reset OTP
+    setLoginPhone("");
+    setLoginOtp(Array(6).fill(""));
     setRegisterOtp(Array(6).fill(""));
+    setOtpError(false); // Reset error state
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
   };
 
@@ -87,7 +95,8 @@ export default function Home() {
 
     const toast = document.createElement("div");
     toast.className = `toast-notification ${type}`;
-    const icon = type === "success" ? "bi-check-circle-fill" : "bi-x-circle-fill";
+    const icon =
+      type === "success" ? "bi-check-circle-fill" : "bi-x-circle-fill";
     toast.innerHTML = `<span class="toast-icon"><i class="bi ${icon}"></i></span><span class="toast-message">${message}</span>`;
     toastContainer.appendChild(toast);
 
@@ -118,6 +127,23 @@ export default function Home() {
 
     if (value && index < inputsRef.current.length - 1) {
       inputsRef.current[index + 1]?.focus();
+    } else if (index === inputsRef.current.length - 1 && value) {
+      // Ensure focus stays on the last input if all digits are entered
+      inputsRef.current[index]?.focus();
+    }
+
+    // Auto-submit when all 6 digits are entered
+    if (newOtp.join("").length === 6) {
+      setOtpError(false); // Reset error state
+      if (activeForm === "login") {
+        handleLoginSubmit({
+          preventDefault: () => {},
+        } as React.FormEvent<HTMLFormElement>);
+      } else {
+        handleRegisterSubmit({
+          preventDefault: () => {},
+        } as React.FormEvent<HTMLFormElement>);
+      }
     }
   };
 
@@ -128,7 +154,7 @@ export default function Home() {
     setOtpState: React.Dispatch<React.SetStateAction<string[]>>,
     inputsRef: React.MutableRefObject<HTMLInputElement[]>
   ) => {
-    if (e.key === "Backspace" && index > 0 && otpState[index] === "") {
+    if (e.key === "Backspace" && index > 0 && !otpState[index]) {
       const newOtp = [...otpState];
       newOtp[index - 1] = "";
       setOtpState(newOtp);
@@ -141,11 +167,35 @@ export default function Home() {
     setOtpState: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     e.preventDefault();
-    const pastedData = e.clipboardData.getData("text/plain").slice(0, 6);
-    if (/^\d{6}$/.test(pastedData)) {
+    let pastedData = e.clipboardData.getData("text/plain").slice(0, 6);
+    pastedData = pastedData.replace(/\D/g, "");
+
+    if (pastedData.length > 0) {
       const newOtp = pastedData.split("");
-      setOtpState(newOtp);
+      setOtpState((prev) => {
+        const updatedOtp = [...prev];
+        // Yangilangan OTP ni faqat 6 ta raqam uchun o'rnating
+        for (let i = 0; i < newOtp.length && i < 6; i++) {
+          updatedOtp[i] = newOtp[i];
+        }
+        return updatedOtp;
+      });
+
       showToast("SMS-kod nusxalandi!", "success");
+      setOtpError(false);
+
+      // Avtomatik submit qilish
+      if (newOtp.length === 6) {
+        if (activeForm === "login") {
+          handleLoginSubmit({
+            preventDefault: () => {},
+          } as React.FormEvent<HTMLFormElement>);
+        } else {
+          handleRegisterSubmit({
+            preventDefault: () => {},
+          } as React.FormEvent<HTMLFormElement>);
+        }
+      }
     } else {
       showToast("Nusxalanadigan kod formati noto'g'ri!", "error");
     }
@@ -155,7 +205,8 @@ export default function Home() {
     const isFirstNameValid = registerFirstName.trim() !== "";
     const isLastNameValid = registerLastName.trim() !== "";
     const isRegionValid = registerRegion !== "";
-    const isPhoneValid = registerPhoneMaskRef.current?.masked.isComplete ?? false;
+    const isPhoneValid =
+      registerPhoneMaskRef.current?.masked.isComplete ?? false;
     return isFirstNameValid && isLastNameValid && isRegionValid && isPhoneValid;
   };
 
@@ -210,6 +261,14 @@ export default function Home() {
     }
   };
 
+  useEffect(() => {
+    if (loginOtp.every((d) => d !== "")) {
+      handleLoginSubmit({
+        preventDefault: () => {},
+      } as React.FormEvent<HTMLFormElement>);
+    }
+  }, [loginOtp]);
+
   const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -226,13 +285,16 @@ export default function Home() {
         setLoading(false);
         showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
         setAuthTokens(response.data.access, response.data.refresh);
-        setTimeout(() => (window.location.href = "/patients-panel"), 500);
+         setTimeout(() => route.push("/patients-panel"), 500);
       }
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
+      setOtpError(true); // Set error state on failed submission
       showToast(
-        err.response?.data?.phone_number || "Kod noto'g'ri kiritildi!",
+        err.response?.data?.phone_number ||
+          err.response?.data?.detail ||
+          "Kod noto'g'ri kiritildi!",
         "error"
       );
     }
@@ -254,13 +316,16 @@ export default function Home() {
         setLoading(false);
         showToast("Muvaffaqiyatli ro'yxatdan o'tdingiz!", "success");
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
-        setTimeout(() => (window.location.href = "/patients-panel"), 500);
+        setTimeout(() => route.push("/patients-panel"), 500);
       }
     } catch (error: unknown) {
       setLoading(false);
       const err = error as ApiError;
+      setOtpError(true); // Set error state on failed submission
       const errorMessage =
-        err.response?.data?.phone_number || "Ro'yxatdan o'tishda xato yuz berdi!";
+        err.response?.data?.phone_number ||
+        err.response?.data?.detail ||
+        "Ro'yxatdan o'tishda xato yuz berdi!";
       showToast(errorMessage, "error");
     }
   };
@@ -317,7 +382,7 @@ export default function Home() {
           <div className="auth-left">
             <div className="icon relative left-7 -top-10">
               <Image
-                src={'/assets/login.png'}
+                src={"/assets/login.png"}
                 width={250}
                 height={100}
                 style={{ marginBottom: "15px" }}
@@ -333,7 +398,7 @@ export default function Home() {
           <div className="auth-right">
             <div className="mobile-logo-container">
               <Image
-                src={'/assets/login.png'}
+                src={"/assets/login.png"}
                 width={150}
                 height={50}
                 alt="MedMapp Mobil Logotipi"
@@ -343,7 +408,9 @@ export default function Home() {
               <button
                 id="tab-login"
                 ref={tabLoginRef}
-                className={`auth-tab-btn ${activeForm === "login" ? "active" : ""}`}
+                className={`auth-tab-btn ${
+                  activeForm === "login" ? "active" : ""
+                }`}
                 type="button"
                 onClick={() => switchForms("login")}
               >
@@ -352,7 +419,9 @@ export default function Home() {
               <button
                 id="tab-register"
                 ref={tabRegisterRef}
-                className={`auth-tab-btn ${activeForm === "register" ? "active" : ""}`}
+                className={`auth-tab-btn ${
+                  activeForm === "register" ? "active" : ""
+                }`}
                 type="button"
                 onClick={() => switchForms("register")}
               >
@@ -362,7 +431,9 @@ export default function Home() {
 
             <div
               id="login-form-wrapper"
-              className={`form-wrapper ${activeForm === "login" ? "active" : ""}`}
+              className={`form-wrapper ${
+                activeForm === "login" ? "active" : ""
+              }`}
               ref={loginFormWrapperRef}
             >
               {loginStep === "phone" && (
@@ -406,10 +477,20 @@ export default function Home() {
                 <div id="login-otp-step" className="step">
                   <h3 className="fw-bold mb-2">Tasdiqlash</h3>
                   <p className="text-secondary mb-3" id="login-otp-message">
-                    +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni kiriting.
+                    +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni
+                    kiriting.
                   </p>
                   <form id="login-otp-form" onSubmit={handleLoginSubmit}>
-                    <div className="otp-input-fields" id="login-otp-container">
+                    <div
+                      className={`otp-input-fields ${
+                        loginOtp.join("").length === 6
+                          ? otpError
+                            ? "otp-error"
+                            : "otp-complete"
+                          : ""
+                      }`}
+                      id="login-otp-container"
+                    >
                       {loginOtp.map((digit, index) => (
                         <input
                           key={index}
@@ -446,16 +527,20 @@ export default function Home() {
                       ))}
                     </div>
                     <div className="validation-message" id="login-otp-error">
-                      Kod noto&apos;g&apos;ri kiritildi.
+                      {otpError && "Kod noto'g'ri kiritildi."}
                     </div>
                     <div className="d-grid my-3">
                       <button
                         type="submit"
                         id="login-verify-btn"
-                        className="btn btn-primary btn-lg"
+                        className="btn btn-primary btn-lg flex justify-center items-center"
                         disabled={loginOtp.join("").length !== 6}
                       >
-                        <span className="btn-text">Kirish</span>
+                        {isLoading ? (
+                          <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                        ) : (
+                          <span className="btn-text">Kirish</span>
+                        )}
                       </button>
                     </div>
                     <div className="text-center small text-secondary mb-2">
@@ -478,7 +563,7 @@ export default function Home() {
                           onClick={(e) => {
                             e.preventDefault();
                             startTimer();
-                            handleLoginSendCode(); // Re-send OTP
+                            handleLoginSendCode();
                           }}
                         >
                           Qayta yuborish
@@ -494,7 +579,8 @@ export default function Home() {
                           e.preventDefault();
                           setLoginStep("phone");
                           setLoginOtp(Array(6).fill(""));
-                          setLoginPhone(""); // Reset phone number
+                          setLoginPhone("");
+                          setOtpError(false); // Reset error state
                           if (timerIntervalRef.current)
                             clearInterval(timerIntervalRef.current);
                         }}
@@ -510,7 +596,9 @@ export default function Home() {
 
             <div
               id="register-form-wrapper"
-              className={`form-wrapper ${activeForm === "register" ? "active" : ""}`}
+              className={`form-wrapper ${
+                activeForm === "register" ? "active" : ""
+              }`}
               ref={registerFormWrapperRef}
             >
               {registerStep === "phone" && (
@@ -640,7 +728,13 @@ export default function Home() {
                   </p>
                   <form id="register-otp-form" onSubmit={handleRegisterSubmit}>
                     <div
-                      className="otp-input-fields"
+                      className={`otp-input-fields ${
+                        registerOtp.join("").length === 6
+                          ? otpError
+                            ? "otp-error"
+                            : "otp-complete"
+                          : ""
+                      }`}
                       id="register-otp-container"
                     >
                       {registerOtp.map((digit, index) => (
@@ -679,7 +773,7 @@ export default function Home() {
                       ))}
                     </div>
                     <div className="validation-message" id="register-otp-error">
-                      Kod noto&apos;g&apos;ri kiritildi.
+                      {otpError && "Kod noto'g'ri kiritildi."}
                     </div>
                     <div className="d-grid my-3">
                       <button
@@ -727,6 +821,7 @@ export default function Home() {
                           e.preventDefault();
                           setRegisterStep("phone");
                           setRegisterOtp(Array(6).fill(""));
+                          setOtpError(false); // Reset error state
                           if (timerIntervalRef.current)
                             clearInterval(timerIntervalRef.current);
                         }}
