@@ -446,7 +446,7 @@ const KanbanBoard: React.FC = () => {
                   ) : (
                     <div className="text-center text-muted p-5">
                       <i className="bi bi-moon-stars fs-2"></i>
-                      <p className="mt-2">Bemorlar yo'q</p>
+                      <p className="mt-2">Bemorlar yo&apos;q</p>
                     </div>
                   )}
                 </div>
@@ -466,7 +466,7 @@ const KanbanBoard: React.FC = () => {
         >
           <div className="offcanvas-header">
             <h5 className="offcanvas-title" id="patientDetailsOffcanvasLabel">
-              <i className="bi bi-person-fill-gear me-2"></i>Bemor ma'lumotlari:{" "}
+              <i className="bi bi-person-fill-gear me-2"></i>Bemor ma&apos;lumotlari:{" "}
               {activePatient.name}
             </h5>
             <button
