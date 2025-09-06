@@ -1,15 +1,5 @@
-// app/layout.js
-"use client";
 import "./layout.css";
 import Script from "next/script";
-
-export const metadata = {
-  title: "Takomillashtirilgan Boshqaruv Paneli - MedMap.uz",
-  description:
-    "Bemorlar murojaatlarini qabul qilish, klinikalarga yo'naltirish va jarayonni boshqarish",
-  keywords:
-    "medmap, operator, call center, admin, dashboard, requests, kanban, crm",
-};
 
 export default function OperatorLayout({ children }: React.PropsWithChildren) {
   return (
