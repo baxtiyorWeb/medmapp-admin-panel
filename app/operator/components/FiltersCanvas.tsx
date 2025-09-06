@@ -13,14 +13,25 @@ interface FiltersOffcanvasProps {
   tags: Tag[];
   setSelectedStage: (stage: string) => void;
   setSelectedTags: (tags: number[]) => void;
+  selectedTags: number[];
 }
 
-export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSelectedTags }: FiltersOffcanvasProps) {
+export default function FiltersOffcanvas({
+  stages,
+  tags,
+  selectedTags,
+  setSelectedStage,
+  setSelectedTags,
+}: FiltersOffcanvasProps) {
   return (
     <div className="offcanvas offcanvas-end" id="filtersOffcanvas">
       <div className="offcanvas-header border-bottom">
         <h5 className="offcanvas-title">Filtrlar</h5>
-        <button type="button" className="btn-close" data-bs-dismiss="offcanvas"></button>
+        <button
+          type="button"
+          className="btn-close"
+          data-bs-dismiss="offcanvas"
+        ></button>
       </div>
       <div className="offcanvas-body">
         <div className="mb-3">
@@ -41,7 +52,10 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
                     );
                   }}
                 />
-                <label className="form-check-label" htmlFor={`filter-tag-${tag.id}`}>
+                <label
+                  className="form-check-label"
+                  htmlFor={`filter-tag-${tag.id}`}
+                >
                   {tag.text}
                 </label>
               </div>
@@ -49,7 +63,9 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
           </div>
         </div>
         <div className="mb-3">
-          <label htmlFor="filter-stage" className="form-label">Bosqich bo&apos;yicha</label>
+          <label htmlFor="filter-stage" className="form-label">
+            Bosqich bo&apos;yicha
+          </label>
           <select
             className="form-select"
             id="filter-stage"
@@ -57,19 +73,26 @@ export default function FiltersOffcanvas({ stages, tags, setSelectedStage, setSe
           >
             <option value="">Barchasi</option>
             {stages.map((stage) => (
-              <option key={stage.id} value={stage.id}>{stage.title}</option>
+              <option key={stage.id} value={stage.id}>
+                {stage.title}
+              </option>
             ))}
           </select>
         </div>
         <div className="mt-4">
-          <button className="btn btn-primary w-full" onClick={() => { /* Apply filters (handled in parent) */ }}>
+          <button
+            className="btn btn-primary w-full"
+            onClick={() => {
+              /* Apply filters (handled in parent) */
+            }}
+          >
             Qo&apos;llash
           </button>
           <button
             className="btn btn-light w-full mt-2"
             onClick={() => {
               setSelectedTags([]);
-              setSelectedStage('');
+              setSelectedStage("");
             }}
           >
             Tozalash
