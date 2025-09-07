@@ -87,7 +87,7 @@ const InputField = memo<InputFieldProps>(
             rows={5}
             required={required}
             placeholder={placeholder}
-            className="pl-10 w-full p-3 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className="pl-3 w-full p-3 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
             value={value}
             onChange={onChange}
           ></textarea>
@@ -97,7 +97,7 @@ const InputField = memo<InputFieldProps>(
             type={type}
             placeholder={placeholder}
             required={required}
-            className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className="pl-3 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
             value={value}
             onChange={onChange}
             ref={inputRef}
@@ -556,7 +556,7 @@ const StatusCard: React.FC = () => {
     const steps: Step[] = [
       {
         icon: "person-vcard",
-        title: "Shaxsiy Ma'lumotlar",
+        title: "Shaxsiy ma'lumotlar",
         description: "Iltimos, barcha maydonlarni to'ldiring.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
@@ -634,6 +634,7 @@ const StatusCard: React.FC = () => {
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
                 type="textarea"
+                
                 placeholder="Yurak sohasidagi og'riq, nafas qisishi, tez charchash..."
                 value={formData.complaint}
                 required
@@ -659,7 +660,7 @@ const StatusCard: React.FC = () => {
           "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun kamida bitta tibbiy hujjat (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-2 md:p-4 rounded-2xl shadow-sm">
               <label
                 htmlFor="file-upload-input-multiple"
                 className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:border-primary-500 dark:hover:border-primary-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
@@ -686,7 +687,7 @@ const StatusCard: React.FC = () => {
                 className="hidden"
                 onChange={handleFileUpload}
               />
-              <div id="file-list-container" className="mt-6 space-y-4">
+              <div id="file-list-container" className="mt-0 space-y-4">
                 {formData.documents.length === 0 ? (
                   <></>
                 ) : (
@@ -1060,7 +1061,7 @@ const StatusCard: React.FC = () => {
               <button
                 type="button"
                 id="prev-btn"
-                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
+                className={`bg-slate-200 cursor-pointer dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
                   currentStep === 1 ? "invisible" : ""
                 }`}
                 onClick={prevStep}
@@ -1072,7 +1073,7 @@ const StatusCard: React.FC = () => {
                 <button
                   type="button"
                   id="next-btn"
-                  className="bg-[#4f45e4] text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
+                  className="bg-[#4f45e4] cursor-pointer text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
                   onClick={nextStep}
                 >
                   Keyingisi <i className="bi bi-arrow-right"></i>
@@ -1081,7 +1082,7 @@ const StatusCard: React.FC = () => {
                 <button
                   type="button"
                   id="submit-btn"
-                  className="disabled:bg-[#96cab3] bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="disabled:bg-[#96cab3] cursor-pointer bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!confirmChecked || isSubmitting}
                   onClick={handleSubmit}
                 >
