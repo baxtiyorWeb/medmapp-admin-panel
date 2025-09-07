@@ -59,15 +59,17 @@ const InputField = memo<InputFieldProps>(
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+        {/* Icon chapda */}
+        <span className="absolute inset-y-0 left-0 flex items-center justify-center w-9 text-slate-400">
           <i className={`bi bi-${icon}`}></i>
         </span>
+
         {selectOptions ? (
           <>
             <select
               id={`input-${id}`}
               required={required}
-              className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none appearance-none transition"
+              className="pl-9 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none appearance-none transition"
               value={value}
               onChange={onChange}
             >
@@ -77,7 +79,9 @@ const InputField = memo<InputFieldProps>(
                 </option>
               ))}
             </select>
-            <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 pointer-events-none">
+
+            {/* Select oxiridagi icon */}
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 pointer-events-none">
               <i className="bi bi-chevron-down"></i>
             </span>
           </>
@@ -97,7 +101,7 @@ const InputField = memo<InputFieldProps>(
             type={type}
             placeholder={placeholder}
             required={required}
-            className="pl-3 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className="pl-9 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
             value={value}
             onChange={onChange}
             ref={inputRef}
@@ -105,6 +109,7 @@ const InputField = memo<InputFieldProps>(
           />
         )}
       </div>
+
       <div id={`error-${id}`} className="h-5 text-red-500 text-xs mt-1">
         {error}
       </div>
@@ -634,7 +639,6 @@ const StatusCard: React.FC = () => {
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
                 type="textarea"
-                
                 placeholder="Yurak sohasidagi og'riq, nafas qisishi, tez charchash..."
                 value={formData.complaint}
                 required
