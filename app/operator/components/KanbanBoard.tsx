@@ -216,6 +216,8 @@ const KanbanBoard: React.FC = () => {
   });
   const usersItems = isArray(data?.data) ? get(data, "data", []) : [];
   // Bemor ma'lumotlarini tahrirlash rejimiga o'tish
+  console.log(usersItems);
+  
   const toggleEditMode = (
     cardType: "personal" | "medical",
     isEditing: boolean
