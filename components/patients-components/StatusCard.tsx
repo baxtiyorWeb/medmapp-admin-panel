@@ -59,11 +59,9 @@ const InputField = memo<InputFieldProps>(
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
-        {/* Icon chapda */}
         <span className="absolute inset-y-0 left-0 flex items-center justify-center w-9 text-slate-400">
           <i className={`bi bi-${icon}`}></i>
         </span>
-
         {selectOptions ? (
           <>
             <select

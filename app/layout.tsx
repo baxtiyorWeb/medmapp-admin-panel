@@ -10,10 +10,10 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "Next.js app with Inter font",
+  title: "MedApp Loyihasi",
+  description:
+    "MedApp — zamonaviy tibbiy xizmatlarni boshqarish va bemorlar bilan shifokorlar o‘rtasidagi aloqani yengillashtirish uchun yaratilgan innovatsion platforma.",
 };
-
 export default function RootLayout({
   children,
 }: {
