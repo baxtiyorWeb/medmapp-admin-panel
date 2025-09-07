@@ -17,13 +17,12 @@ import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
-import "./../../components/patients-components/style.css";
+import "./../../components/patients/style.css";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
 
-// Komponent nomi o'zgartirildi
 const DashboardClientLayout: React.FC<DashboardLayoutProps> = ({
   children,
 }) => {
@@ -75,7 +74,6 @@ const DashboardClientLayout: React.FC<DashboardLayoutProps> = ({
 
   return (
     <div className="flex h-screen bg-slate-100 text-slate-800 overflow-hidden">
-      {/* Sidebar Backdrop */}
       {isMobile && (
         <div
           id="sidebar-backdrop"
@@ -86,7 +84,6 @@ const DashboardClientLayout: React.FC<DashboardLayoutProps> = ({
         />
       )}
 
-      {/* Sidebar */}
       <aside
         id="sidebar"
         className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 ease-in-out
@@ -239,7 +236,6 @@ const DashboardClientLayout: React.FC<DashboardLayoutProps> = ({
           </div>
         </header>
 
-        {/* Asosiy kontent shu yerda ko'rsatiladi */}
         <main className="flex-1 relative overflow-y-auto p-6 md:p-8 bg-slate-100">
           {isLoading ? <LoadingOverlay /> : children}
         </main>
@@ -248,7 +244,6 @@ const DashboardClientLayout: React.FC<DashboardLayoutProps> = ({
   );
 };
 
-// SidebarItem o'zgarishsiz qoladi
 interface SidebarItemProps {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   text: string;
@@ -291,4 +286,4 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   </Link>
 );
 
-export default DashboardClientLayout; // O'zgartirilgan nom bilan eksport qilinadi
+export default DashboardClientLayout; 

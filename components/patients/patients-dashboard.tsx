@@ -1,7 +1,7 @@
 "use client";
 
-import StatusCard from "./StatusCard";
-import Stepper from "./Stepper";
+import StatusCard from "./status-card";
+import Stepper from "./stepper-section";
 
 export default function PatientsDashboard() {
   return (
