@@ -16,6 +16,7 @@ import useProfile from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 import IMask, { InputMask, MaskedPatternOptions } from "imask";
+import clsx from "clsx";
 
 interface InputFieldProps {
   id: string;
@@ -33,8 +34,14 @@ interface InputFieldProps {
   ) => void;
   error?: string;
   inputRef?: React.RefObject<HTMLInputElement | null>;
+  className?: string; // qo‘shildi
   onFocus?: () => void;
 }
+
+
+
+const baseClasses =
+  "w-full bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition";
 
 const InputField = memo<InputFieldProps>(
   ({
@@ -50,6 +57,7 @@ const InputField = memo<InputFieldProps>(
     error,
     inputRef,
     onFocus,
+    className,
   }) => (
     <div>
       <label
@@ -58,16 +66,24 @@ const InputField = memo<InputFieldProps>(
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
+
       <div className="relative">
-        <span className="absolute inset-y-0 left-0 flex items-center justify-center w-9 text-slate-400">
-          <i className={`bi bi-${icon}`}></i>
-        </span>
+        {icon && (
+          <span className="absolute inset-y-0 left-0 flex items-center justify-center w-9 text-slate-400">
+            <i className={`bi bi-${icon}`}></i>
+          </span>
+        )}
+
         {selectOptions ? (
           <>
             <select
               id={`input-${id}`}
               required={required}
-              className="pl-9 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none appearance-none transition"
+              className={clsx(
+                baseClasses,
+                "pl-9 p-2.5 appearance-none",
+                className
+              )}
               value={value}
               onChange={onChange}
             >
@@ -78,7 +94,6 @@ const InputField = memo<InputFieldProps>(
               ))}
             </select>
 
-            {/* Select oxiridagi icon */}
             <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 pointer-events-none">
               <i className="bi bi-chevron-down"></i>
             </span>
@@ -89,17 +104,17 @@ const InputField = memo<InputFieldProps>(
             rows={5}
             required={required}
             placeholder={placeholder}
-            className="pl-3 w-full p-3 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className={clsx(baseClasses, "pl-3 p-3", className)}
             value={value}
             onChange={onChange}
-          ></textarea>
+          />
         ) : (
           <input
             id={`input-${id}`}
             type={type}
             placeholder={placeholder}
             required={required}
-            className="pl-9 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className={clsx(baseClasses, "pl-8 p-2.5", className)}
             value={value}
             onChange={onChange}
             ref={inputRef}
@@ -564,7 +579,7 @@ const StatusCard: React.FC = () => {
         content: (
           <div className="w-full max-w-3xl mx-auto">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
                 <InputField
                   id="fullName"
                   label="Ism-familiya"
@@ -649,6 +664,8 @@ const StatusCard: React.FC = () => {
                 placeholder="Tashxislarni vergul bilan ajratib kiriting"
                 value={formData.diagnosis}
                 onChange={handleInputChange}
+                className="-pl-10"
+                icon="stethoscope"
                 error={errors.diagnosis}
               />
             </div>
@@ -762,7 +779,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(1);
@@ -802,7 +819,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(2);
@@ -836,7 +853,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(3);
