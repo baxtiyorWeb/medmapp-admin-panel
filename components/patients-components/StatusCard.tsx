@@ -15,8 +15,8 @@ import api from "@/utils/api";
 import useProfile from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import IMask, { InputMask, MaskedPatternOptions } from "imask";
-
+import "./application.css";
+import Modal from "@/exports/modal";
 interface InputFieldProps {
   id: string;
   label: string;
@@ -154,9 +154,7 @@ const StatusCard: React.FC = () => {
   const [showSuccessNotification, setShowSuccessNotification] =
     useState<boolean>(false);
   const { fetchProfile } = useProfile();
-  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
-    null
-  );
+
   const phoneInputRef = useRef<HTMLInputElement | null>(null);
   const { data } = useQuery({
     queryKey: ["profile"],
@@ -959,12 +957,16 @@ const StatusCard: React.FC = () => {
   return (
     <div className="relative">
       {showSuccessNotification && (
-        <div className="notification success flex items-center gap-2 p-4 mb-4 rounded-lg">
-          Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
-          shaxsiy kabinetingizga xabar yuboriladi!
-          <i className="bi bi-check-circle text-success"></i>
-        </div>
+        <Modal
+          isOpen={showSuccessNotification}
+          onClose={() => setShowSuccessNotification(false)}
+          title="Muvaffaqiyatli!"
+          message="Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
+        shaxsiy kabinetingizga xabar yuboriladi! ✅"
+          type="success"
+        />
       )}
+
       {typeof window !== "undefined" &&
       window.localStorage.getItem("formData") ? (
         <div
