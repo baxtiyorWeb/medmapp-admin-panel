@@ -768,7 +768,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(1);
@@ -808,7 +808,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(2);
@@ -842,7 +842,7 @@ const StatusCard: React.FC = () => {
                 </h3>
                 <button
                   type="button"
-                  className="edit-btn text-sm text-primary-600 hover:underline font-semibold"
+                  className="edit-btn cursor-pointer text-sm text-primary-600 hover:underline font-semibold"
                   onClick={() => {
                     setDirection(-1);
                     setCurrentStep(3);
@@ -1069,7 +1069,7 @@ const StatusCard: React.FC = () => {
               <button
                 type="button"
                 id="prev-btn"
-                className={`bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
+                className={`bg-slate-200 cursor-pointer dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
                   currentStep === 1 ? "invisible" : ""
                 }`}
                 onClick={prevStep}
@@ -1081,7 +1081,7 @@ const StatusCard: React.FC = () => {
                 <button
                   type="button"
                   id="next-btn"
-                  className="bg-[#4f45e4] text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
+                  className="bg-[#4f45e4] cursor-pointer text-white font-bold py-3 px-6 rounded-lg hover:bg-primary-700 transition flex items-center gap-2"
                   onClick={nextStep}
                 >
                   Keyingisi <i className="bi bi-arrow-right"></i>
@@ -1090,7 +1090,7 @@ const StatusCard: React.FC = () => {
                 <button
                   type="button"
                   id="submit-btn"
-                  className="disabled:bg-[#96cab3] bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="disabled:bg-[#96cab3] cursor-pointer bg-[#069668] text-white font-bold py-3 px-6 rounded-lg hover:bg-success-700 transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={!confirmChecked || isSubmitting}
                   onClick={handleSubmit}
                 >
