@@ -530,7 +530,7 @@ export default function ServiceCard() {
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-6 overflow-y-auto">
+                  <div className="p-1 mt-1 overflow-y-auto">
                     <form id="visa-form" onSubmit={handleVisaSubmit}>
                       <div className="space-y-4">
                         <div>
@@ -626,7 +626,7 @@ export default function ServiceCard() {
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-6 overflow-y-auto">
+                  <div className="p-1 my-1 overflow-y-auto">
                     <form id="simcard-form" onSubmit={handleSimcardSubmit}>
                       <div className="space-y-4">
                         <div>
@@ -722,7 +722,7 @@ export default function ServiceCard() {
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-6 overflow-y-auto">
+                  <div className="p-1 my-1 overflow-y-auto">
                     <form id="transfer-form" onSubmit={handleTransferSubmit}>
                       <div className="space-y-4">
                         <div>
@@ -842,7 +842,7 @@ export default function ServiceCard() {
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-6 overflow-y-auto">
+                  <div className="p-1 my-1 overflow-y-auto">
                     <form
                       id="translator-form"
                       onSubmit={handleTranslatorSubmit}
@@ -936,7 +936,7 @@ export default function ServiceCard() {
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-6 overflow-y-auto">
+                  <div className="p-1 my-1 overflow-y-auto">
                     <form id="hotel-form" onSubmit={handleHotelSubmit}>
                       <div className="space-y-4">
                         <div>
