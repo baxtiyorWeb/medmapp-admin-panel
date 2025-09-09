@@ -59,15 +59,20 @@ const InputField = memo<InputFieldProps>(
         {label} {required && <span className="text-red-500">*</span>}
       </label>
       <div className="relative">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
-          <i className={`bi bi-${icon}`}></i>
-        </span>
+        {icon && (
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
+            <i className={`bi bi-${icon}`}></i>
+          </span>
+        )}
+
         {selectOptions ? (
           <>
             <select
               id={`input-${id}`}
               required={required}
-              className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none appearance-none transition"
+              className={`w-full p-2 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+                icon ? "pl-9" : "pl-3"
+              }`}
               value={value}
               onChange={onChange}
             >
@@ -77,7 +82,7 @@ const InputField = memo<InputFieldProps>(
                 </option>
               ))}
             </select>
-            <span className="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 pointer-events-none">
+            <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 pointer-events-none">
               <i className="bi bi-chevron-down"></i>
             </span>
           </>
@@ -87,7 +92,9 @@ const InputField = memo<InputFieldProps>(
             rows={5}
             required={required}
             placeholder={placeholder}
-            className="pl-10 w-full p-3 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className={`w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+              icon ? "pl-9" : "pl-3"
+            }`}
             value={value}
             onChange={onChange}
           ></textarea>
@@ -97,7 +104,9 @@ const InputField = memo<InputFieldProps>(
             type={type}
             placeholder={placeholder}
             required={required}
-            className="pl-10 w-full p-2.5 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition"
+            className={`w-full p-2 bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+              icon ? "pl-9" : "pl-3"
+            }`}
             value={value}
             onChange={onChange}
             ref={inputRef}
@@ -561,7 +570,7 @@ const StatusCard: React.FC = () => {
         content: (
           <div className="w-full max-w-3xl mx-auto">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                 <InputField
                   id="fullName"
                   label="Ism-familiya"
@@ -659,7 +668,7 @@ const StatusCard: React.FC = () => {
           "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun kamida bitta tibbiy hujjat (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl shadow-sm">
+            <div className="bg-white dark:bg-slate-800 p-3 md:p-5 rounded-2xl shadow-sm">
               <label
                 htmlFor="file-upload-input-multiple"
                 className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:border-primary-500 dark:hover:border-primary-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
@@ -686,7 +695,7 @@ const StatusCard: React.FC = () => {
                 className="hidden"
                 onChange={handleFileUpload}
               />
-              <div id="file-list-container" className="mt-6 space-y-4">
+              <div id="file-list-container" className="mt-0 space-y-4">
                 {formData.documents.length === 0 ? (
                   <></>
                 ) : (
