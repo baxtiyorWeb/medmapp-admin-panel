@@ -75,7 +75,7 @@ const Settings = () => {
                       alt="Profil rasmi"
                     />
                     <div>
-                      <button className="bg-[#4153F1] text-[var(--text-color)] text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
+                      <button className="bg-[#4153F1] cursor-pointer text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
                         Rasm yuklash
                       </button>
                       <button className="text-sm text-[var(--text-color)] hover:text-danger ml-3">
@@ -157,7 +157,7 @@ const Settings = () => {
                   </div>
                 </div>
                 <div className="p-6 bg-[var(--card-background)] rounded-b-2xl text-right">
-                  <button className="bg-primary text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
+                  <button className="bg-primary text-white cursor-pointer font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
                     O&apos;zgarishlarni saqlash
                   </button>
                 </div>

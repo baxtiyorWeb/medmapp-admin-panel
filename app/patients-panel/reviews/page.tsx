@@ -119,7 +119,7 @@ const Home = () => {
                     </h2>
                     <button
                       onClick={() => setIsReviewModalOpen(true)}
-                      className="bg-primary text-[var(--text-color)] font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2"
+                      className="bg-primary text-white cursor-pointer font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2"
                     >
                       <i className="bi bi-pencil-square"></i> Izoh qoldirish
                     </button>
@@ -265,11 +265,11 @@ const Home = () => {
               <div className="flex items-center justify-end p-5 border-t border-[var(--border-color)] bg-slate-50 rounded-b-2xl space-x-3">
                 <button
                   onClick={() => setIsReviewModalOpen(false)}
-                  className="bg-[var(--input-bg)] text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition"
+                  className="bg-[var(--input-bg)] cursor-pointer text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition"
                 >
                   Bekor qilish
                 </button>
-                <button className="bg-primary text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
+                <button className="bg-primary cursor-pointer text-white font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
                   Yuborish
                 </button>
               </div>

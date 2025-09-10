@@ -145,7 +145,7 @@ const Table = () => {
     <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg main-content">
       <div className="main-content-header p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h2 className="text-lg font-bold main-content-title">
-          Mening Arizalarim
+          Mening arizalarim
         </h2>
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="relative flex-grow">
@@ -237,7 +237,7 @@ const Table = () => {
                     </td>
                     <td className="px-6 py-4 h-[61px] text-right">
                       <button
-                        className="view-details-btn hover:underline"
+                        className="view-details-btn cursor-pointer hover:underline"
                         onClick={() => openModal(app.id)}
                       >
                         Batafsil
@@ -283,7 +283,6 @@ const Table = () => {
                 <h3 className="text-xl font-semibold modal-title">
                   Ariza #{selectedApp.id}
                 </h3>
-                <p className="text-sm modal-subtitle">{selectedApp.clinic}</p>
               </div>
               <button
                 onClick={closeModal}
@@ -421,6 +420,7 @@ const Table = () => {
                   fontWeight: "bold",
                   padding: "0.5rem 1.25rem",
                   borderRadius: "0.5rem",
+                  cursor: "pointer",
                 }}
               >
                 Yopish

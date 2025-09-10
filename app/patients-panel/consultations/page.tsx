@@ -273,7 +273,7 @@ const ConsultationPage: React.FC = () => {
             <p className="text-sm text-slate-500 truncate">
               Retseptni yubordim, ko&apos;rib chiqing.
             </p>
-            <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4152f1] text-[var(--text-color)] text-xs flex items-center justify-center rounded-full">
+            <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4152f1] text-white text-xs flex items-center justify-center rounded-full">
               1
             </span>
           </div>
@@ -349,7 +349,7 @@ const ConsultationPage: React.FC = () => {
             <div
               className={`message-content py-2 px-4 rounded-2xl ${
                 msg.from === "patient"
-                  ? "bg-[#4152f1] text-[var(--text-color)] rounded-br-lg"
+                  ? "bg-[#4152f1] text-white rounded-br-lg"
                   : "bg-[var(--input-bg)] rounded-bl-lg"
               }`}
             >
