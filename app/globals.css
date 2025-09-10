@@ -438,6 +438,7 @@ body {
   transform: scale(1.05);
 }
 
+
 .otp-input.success {
   border-color: #28a745;
   background-color: #e6f4ea;
@@ -969,3 +970,10 @@ body {
   }
 }
 /* ----- Moslashuvchanlik bo'limi tugadi ----- */
+
+.pagetitle h1 {
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  color: var(--secondary-color) !important;
+  margin-bottom: 0;
+}
