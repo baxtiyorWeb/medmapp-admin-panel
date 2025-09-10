@@ -12,8 +12,8 @@
   --card-background: #ffffff;
   --text-color: #344054;
   --text-light: #667085;
-  --border-color: #eaecf0;
-  --input-fields-bg: #f4f6fc;
+  --border-color: #e2e8f0;
+  --input-bg: #f4f6fc;
 }
 
 
@@ -60,16 +60,15 @@ html.dark {
   --primary-light: rgba(65, 84, 241, 0.1);
   --secondary-color: #dbe2ff;
   --background-color: #0F172A;
-  --card-background: #334155;
+  --card-background: #1E293B;
   --text-color: #e0e0e0;
   --text-light: #a0a0a0;
-  --opacity-border: ""
-  --border-color: #333333;
+  --border-color: #334155;
   --danger-light: #4a2724;
   --success-light: rgba(18, 183, 106, 0.1);
   --warning-light: rgba(247, 144, 9, 0.1);
   --info-light: rgba(13, 202, 240, 0.1);
-  --input-fields-bg: #1E293B;
+  --input-bg: #293548;
 }
 /* ----- O'zgaruvchilar bo'limi tugadi ----- */
 

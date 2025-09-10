@@ -310,7 +310,7 @@ export default function ServiceCard() {
       <div className="container">
         <div className="p-4">
           {/* Main Title */}
-          <h1 className="text-xl my-4 font-bold text-slate-800 dark:text-slate-100">
+          <h1 className="text-xl my-4 font-bold text-[var(--text-color)]">
             Qo&apos;shimcha xizmatlar
           </h1>
 
@@ -519,7 +519,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={visaNote}
                           onChange={(e) => setVisaNote(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {/* Error & Success */}
@@ -618,7 +618,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={simcardNote}
                           onChange={(e) => setSimcardNote(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (
@@ -692,7 +692,7 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTransferFlightNumber(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
@@ -710,7 +710,7 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTransferArrivalDatetime(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
@@ -810,7 +810,7 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTranslatorLanguage(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
@@ -829,7 +829,7 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTranslatorRequirements(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (
@@ -888,7 +888,7 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="hotel-notes"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Qo&apos;shimcha izoh
                         </label>
@@ -899,7 +899,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={hotelNotes}
                           onChange={(e) => setHotelNotes(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (

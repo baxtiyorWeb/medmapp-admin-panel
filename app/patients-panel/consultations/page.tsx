@@ -252,7 +252,7 @@ const ConsultationPage: React.FC = () => {
   const renderConsultationList = () => (
     <div id="consultation-list" className="overflow-y-auto flex-grow p-2">
       <div
-        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors bg-[#EEF2FF] "
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors bg-[var(--card-background)] "
         data-id="1"
       >
         <div className="relative flex-shrink-0">
@@ -273,7 +273,7 @@ const ConsultationPage: React.FC = () => {
             <p className="text-sm text-slate-500 truncate">
               Retseptni yubordim, ko&apos;rib chiqing.
             </p>
-            <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4152f1] text-white text-xs flex items-center justify-center rounded-full">
+            <span className="flex-shrink-0 ml-2 w-5 h-5 bg-[#4152f1] text-[var(--text-color)] text-xs flex items-center justify-center rounded-full">
               1
             </span>
           </div>
@@ -281,7 +281,7 @@ const ConsultationPage: React.FC = () => {
       </div>
 
       <div
-        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-[#EEF2FF]/50"
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-[var(--input-bg)]"
         data-id="2"
       >
         <div className="relative flex-shrink-0">
@@ -292,7 +292,7 @@ const ConsultationPage: React.FC = () => {
         </div>
         <div className="flex-grow overflow-hidden">
           <div className="flex justify-between items-center">
-            <h4 className="font-bold text-sm truncate text-slate-800 ">
+            <h4 className="font-bold text-sm truncate text-[var(--text-color)] hover:text-[var(--text-color)] ">
               Dr. Anvar Jo&apos;rayev
             </h4>
             <span className="text-xs text-slate-500 flex-shrink-0">Kecha</span>
@@ -306,7 +306,7 @@ const ConsultationPage: React.FC = () => {
       </div>
 
       <div
-        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-slate-100 dark:hover:bg-[#EEF2FF]/50"
+        className="consultation-item cursor-pointer p-3 flex items-center gap-4 rounded-xl transition-colors hover:bg-[var(--input-bg)]"
         data-id="3"
       >
         <div className="relative flex-shrink-0">
@@ -317,7 +317,7 @@ const ConsultationPage: React.FC = () => {
         </div>
         <div className="flex-grow overflow-hidden">
           <div className="flex justify-between items-center">
-            <h4 className="font-bold text-sm truncate text-slate-800 ">
+            <h4 className="font-bold text-sm truncate text-[var(--text-color)] hover:text-[var(--text-color)]">
               Dr. Malika Ahmedova
             </h4>
             <span className="text-xs text-slate-500 flex-shrink-0">
@@ -349,8 +349,8 @@ const ConsultationPage: React.FC = () => {
             <div
               className={`message-content py-2 px-4 rounded-2xl ${
                 msg.from === "patient"
-                  ? "bg-[#4152f1] text-white rounded-br-lg"
-                  : "bg-slate-200 rounded-bl-lg"
+                  ? "bg-[#4152f1] text-[var(--text-color)] rounded-br-lg"
+                  : "bg-[var(--input-bg)] rounded-bl-lg"
               }`}
             >
               {msg.text}
@@ -491,8 +491,8 @@ const ConsultationPage: React.FC = () => {
         id="chat-panel"
         className="col-span-12 lg:col-span-8 xl:col-span-9 h-full flex flex-col"
       >
-        <div className="bg-white rounded-2xl shadow-lg h-full flex flex-col">
-          <div className="p-4 border-b border-slate-200 flex items-center gap-4 flex-shrink-0">
+        <div className="bg-[var(--card-background)] rounded-2xl shadow-lg h-full flex flex-col">
+          <div className="p-4 border-b border-[var(--border-color)] flex items-center gap-4 flex-shrink-0">
             <Image
               width={100}
               height={100}
@@ -501,7 +501,7 @@ const ConsultationPage: React.FC = () => {
               alt=""
             />
             <div>
-              <h3 className="font-bold text-slate-800">
+              <h3 className="font-bold text-[var(--text-color)]">
                 {selectedConsultation.doctor.name}
               </h3>
               <p className="text-sm text-slate-500">
@@ -579,14 +579,14 @@ const ConsultationPage: React.FC = () => {
           {activeTab === "chat" && (
             <div
               id="chat-footer"
-              className="p-4 border-t border-slate-200 bg-slate-50 flex-shrink-0"
+              className="p-4 border-t border-[var(--border-color)] bg-[var(--input-bg)] flex-shrink-0"
             >
               <div className="relative">
                 <input
                   id="chat-input"
                   type="text"
                   placeholder="Xabar yozing..."
-                  className="w-full pl-4 pr-20 py-3 bg-white border border-slate-300 rounded-full focus:ring-2 focus:ring-[#4152f1] focus:outline-none"
+                  className="w-full placeholder:text-[var(--text-color)] pl-4 pr-20 py-3 bg-[var(--background-color)] border border-[var(--border-color)] rounded-full focus:ring-2 focus:ring-[#4152f1] focus:outline-none"
                   ref={chatInputRef}
                   onKeyPress={handleKeyPress}
                 />
@@ -596,7 +596,7 @@ const ConsultationPage: React.FC = () => {
                   </button>
                   <button
                     id="send-btn"
-                    className="ml-1 w-10 h-10 bg-[#4152f1] text-white rounded-full flex items-center justify-center hover:bg-[#4152f1]-600 transition"
+                    className="ml-1 w-10 h-10 bg-[#4152f1] text-[var(--text-color)] rounded-full flex items-center justify-center hover:bg-[#4152f1]-600 transition"
                     onClick={handleSendMessage}
                   >
                     <i className="bi bi-send-fill"></i>
@@ -615,9 +615,9 @@ const ConsultationPage: React.FC = () => {
       <main className="flex-1 overflow-hidden ">
         <div className="h-full grid grid-cols-12 gap-6">
           <div className="col-span-12 lg:col-span-4 xl:col-span-3 h-full">
-            <div className="bg-white rounded-2xl shadow-lg h-full flex flex-col">
-              <div className="p-4 border-b border-slate-200">
-                <h2 className="font-bold text-slate-800">Suhbatlar</h2>
+            <div className="bg-[var(--card-background)] rounded-2xl shadow-lg h-full flex flex-col">
+              <div className="p-4 border-b border-[var(--border-color)]">
+                <h2 className="font-bold text-[var(--text-color)]">Suhbatlar</h2>
               </div>
               {renderConsultationList()}
             </div>

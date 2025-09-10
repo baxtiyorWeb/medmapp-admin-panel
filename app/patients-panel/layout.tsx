@@ -86,7 +86,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)] border-r border-[var(--border-color)] flex flex-col transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)]  flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -278,7 +278,7 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
     className={`flex items-center py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 ${
       active
         ? "bg-[var(--color-primary)] text-white"
-        : "text-[var(--text-light)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--color-primary)] dark:hover:text-white"
+        : "text-[var(--text-light)] hover:bg-[var(--input-bg)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--text-color)]"
     } ${className}`}
   >
     <div className="flex items-center justify-center">

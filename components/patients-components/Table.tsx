@@ -254,7 +254,7 @@ const Table = () => {
       {/* Pagination Placeholder */}
       <div
         id="pagination-controls"
-        className="p-6 sm:p-8 border-t main-content-header flex justify-end"
+        className="p-6 sm:p-8 border-t border-[var(--border-color)]  main-content-header flex justify-end"
       >
         {/* Add pagination logic here if needed */}
       </div>
@@ -276,7 +276,7 @@ const Table = () => {
           >
             {/* Modal Header */}
             <div
-              className="flex items-start justify-between p-5 border-b"
+              className="flex items-start justify-between p-5 border-b border-[var(--border-color)]"
               style={{ borderColor: "var(--border-color)" }}
             >
               <div>
@@ -411,7 +411,7 @@ const Table = () => {
 
             {/* Modal Footer */}
             <div
-              className="flex items-center justify-end p-5 border-t modal-footer"
+              className="flex items-center justify-end p-5 border-t border-[var(--border-color)] modal-footer"
               style={{
                 borderColor: "var(--border-color)",
                 backgroundColor: "var(--primary-light)",
