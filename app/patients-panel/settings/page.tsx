@@ -7,15 +7,15 @@ import api from "@/utils/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface PatientProfile {
-  id: number;
-  full_name: string;
+  id: number | null;
+  full_name: string | null;
   passport: string | null;
-  dob: string;
-  gender: "male" | "female";
-  phone: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
+  dob: string | null;
+  gender: "male" | "female" | null;
+  phone: string | null;
+  email: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 const getMyProfile = async (): Promise<PatientProfile> => {
@@ -30,7 +30,7 @@ const updateMyProfile = async (
   return response.data;
 };
 
-const formatPhoneNumber = (phoneNumber: string): string => {
+const formatPhoneNumber = (phoneNumber: string | null): string => {
   if (!phoneNumber) return "";
   const cleaned = ("" + phoneNumber).replace(/\D/g, "");
   const match = cleaned.match(/^998(\d{2})(\d{3})(\d{2})(\d{2})$/);
@@ -132,13 +132,12 @@ const Settings = () => {
     setNotification(null);
 
     const changedData: Partial<PatientProfile> = {};
-    for (const key in profile) {
-      if (
-        profile[key as keyof PatientProfile] !==
-        initialProfile[key as keyof PatientProfile]
-      ) {
-        changedData[key as keyof PatientProfile] =
-          profile[key as keyof PatientProfile];
+    const keys = Object.keys(profile) as Array<keyof PatientProfile>;
+
+    for (const key of keys) {
+      if (profile[key] !== initialProfile[key]) {
+        // Xatolikni tuzatish uchun shu qator o'zgartirildi
+        (changedData as any)[key] = profile[key];
       }
     }
 
@@ -236,7 +235,7 @@ const Settings = () => {
                     Profil Sozlamalari
                   </h2>
                   <p className="text-sm text-[var(--text-color)]">
-                    Shaxsiy ma'lumotlaringizni yangilang.
+                    Shaxsiy ma&apos;lumotlaringizni yangilang.
                   </p>
                 </div>
                 <div className="p-6 space-y-3">
@@ -251,7 +250,7 @@ const Settings = () => {
                         Rasm yuklash
                       </button>
                       <button className="text-sm text-[var(--text-color)] hover:text-danger ml-3">
-                        O'chirish
+                        O&apos;chirish
                       </button>
                     </div>
                   </div>
@@ -261,7 +260,7 @@ const Settings = () => {
                         htmlFor="full_name"
                         className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                       >
-                        To'liq ism
+                        To&apos;liq ism
                       </label>
                       <input
                         type="text"
@@ -392,14 +391,14 @@ const Settings = () => {
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <div className="mb-3 sm:mb-0">
                       <h4 className="font-semibold text-[var(--text-color)]">
-                        Hisobni o'chirish
+                        Hisobni o&apos;chirish
                       </h4>
                       <p className="text-sm text-[var(--text-color)]">
-                        Hisobingiz o'chirilgach, uni qayta tiklab bo'lmaydi.
+                        Hisobingiz o&apos;chirilgach, uni qayta tiklab bo&apos;lmaydi.
                       </p>
                     </div>
                     <button className="bg-[#EF4444]/10 text-[#EF4444] text-sm font-bold py-2 px-4 rounded-lg hover:bg-danger/20 transition self-start sm:self-center">
-                      Hisobni o'chirish
+                      Hisobni o&apos;chirish
                     </button>
                   </div>
                 </div>
