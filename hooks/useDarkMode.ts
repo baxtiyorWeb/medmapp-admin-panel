@@ -1,30 +1,31 @@
 import { useState, useEffect } from "react";
 
-export default function useDarkMode(): [boolean, () => void] {
+export default function useDarkMode(): [boolean, () => void, boolean] {
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (typeof window === "undefined") return; // serverda ishlamasin
+    if (typeof window === "undefined") return;
 
+    const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-    const storedTheme = localStorage.getItem("theme");
 
-    if (storedTheme === "dark" || (storedTheme === null && prefersDark)) {
+    if (storedTheme === "dark" || (!storedTheme && prefersDark)) {
       document.documentElement.classList.add("dark");
       setIsDarkMode(true);
     } else {
       document.documentElement.classList.remove("dark");
       setIsDarkMode(false);
     }
+
+    setMounted(true);
   }, []);
 
   const toggleDarkMode = () => {
-    if (typeof document === "undefined") return;
-
-    setIsDarkMode((prevMode) => {
-      const newMode = !prevMode;
+    setIsDarkMode((prev) => {
+      const newMode = !prev;
       if (newMode) {
         document.documentElement.classList.add("dark");
         localStorage.setItem("theme", "dark");
@@ -36,5 +37,5 @@ export default function useDarkMode(): [boolean, () => void] {
     });
   };
 
-  return [isDarkMode, toggleDarkMode];
+  return [isDarkMode, toggleDarkMode, mounted];
 }

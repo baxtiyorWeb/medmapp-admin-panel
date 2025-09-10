@@ -1,22 +1,22 @@
 @import "tailwindcss";
 
-/* ==========================
-   1️⃣ Oddiy CSS variables
-   (custom style uchun)
-=========================== */
+/* =================================================================
+   1. O'ZGARUVCHILAR (VARIABLES)
+   - Umumiy ranglar, shriftlar va boshqa sozlamalar uchun.
+================================================================= */
 :root {
   --font-inter: "Inter", sans-serif;
 
+  /* Asosiy ranglar (Light Mode) */
   --background-color: #f4f6fc;
   --card-background: #ffffff;
-
   --text-color: #344054;
   --text-light: #667085;
-
   --border-color: #eaecf0;
 }
 
 @theme {
+  /* Birlamchi rang (Primary) */
   --color-primary: #4154f1;
   --color-primary-50: #eef2ff;
   --color-primary-100: #e0e7ff;
@@ -29,19 +29,17 @@
   --color-primary-800: #3730a3;
   --color-primary-900: #312e81;
 
-  /* Secondary */
+  /* Ikkilamchi rang (Secondary) */
   --color-secondary: #012970;
 
-  /* Success / Warning / Danger */
+  /* Holat ranglari (Status Colors) */
   --color-success: #10b981;
   --color-success-600: #059669;
-
   --color-warning: #f59e0b;
-
   --color-danger: #ef4444;
   --color-danger-600: #dc2626;
 
-  /* Slate ranglar */
+  /* Neytral ranglar (Slate) */
   --color-slate-50: #f8fafc;
   --color-slate-100: #f1f5f9;
   --color-slate-200: #e2e8f0;
@@ -54,11 +52,12 @@
   --color-slate-900: #0f172a;
 }
 
-html.dark-mode {
+/* Qorong'u rejim (Dark Mode) uchun o'zgaruvchilar */
+html.dark {
   --primary-light: rgba(65, 84, 241, 0.1);
   --secondary-color: #dbe2ff;
-  --background-color: #121212;
-  --card-background: #1e1e1e;
+  --background-color: #0F172A;
+  --card-background: #334155;
   --text-color: #e0e0e0;
   --text-light: #a0a0a0;
   --border-color: #333333;
@@ -67,10 +66,12 @@ html.dark-mode {
   --warning-light: rgba(247, 144, 9, 0.1);
   --info-light: rgba(13, 202, 240, 0.1);
 }
+/* ----- O'zgaruvchilar bo'limi tugadi ----- */
 
-/* ==========================
-   3️⃣ Body stilini o‘rnatish
-=========================== */
+/* =================================================================
+   2. ASOSIY STILLAR (BASE STYLES)
+   - Body, sarlavhalar va umumiy konteynerlar uchun.
+================================================================= */
 body {
   font-family: var(--font-inter);
   background-color: var(--background-color);
@@ -79,21 +80,20 @@ body {
 
 .main-container {
   display: flex;
-
   min-height: 100vh;
-
   align-items: center;
-
   justify-content: center;
-
   padding: 1.5rem;
 }
+/* ----- Asosiy stillar bo'limi tugadi ----- */
 
+/* =================================================================
+   3. PORTAL SAHIFASI STILLARI
+   - Tizimga kirish uchun rollarni tanlash sahifasi.
+================================================================= */
 .portal-container {
   width: 100%;
-
-  max-width: 1200px; /* Kenglik 5 ta kartaga moslandi */
-
+  max-width: 1200px;
   text-align: center;
 }
 
@@ -107,127 +107,87 @@ body {
 
 .portal-card {
   background-color: var(--card-background);
-
   border: 1px solid var(--border-color);
-
   border-radius: 16px;
-
   padding: 2.5rem 2rem;
-
   text-align: center;
-
   transition: all 0.3s ease;
-
   text-decoration: none;
-
   color: var(--text-color);
-
   display: flex;
-
   flex-direction: column;
-
   height: 100%;
 }
 
 .portal-card:hover {
   transform: translateY(-10px);
-
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
     0 8px 10px -6px rgb(0 0 0 / 0.1);
-
-  border-color: var(--primary-color);
+  border-color: var(--color-primary);
 }
 
 .portal-card .icon-wrapper {
   width: 60px;
-
   height: 60px;
-
   border-radius: 50%;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   margin: 0 auto 1.5rem;
-
-  background-color: var(--primary-light);
-
-  color: var(--primary-color);
-
+  background-color: var(--color-primary-50);
+  color: var(--color-primary);
   font-size: 28px;
 }
 
-/* Har bir rol uchun alohida ranglar */
-
+/* Rollarga qarab ikonka ranglari */
 .portal-card.doctor-card .icon-wrapper {
   background-color: #e7f7f0;
-
   color: #12b76a;
 }
-
 .portal-card.operator-card .icon-wrapper {
   background-color: #e4f9f5;
-
   color: #14b8a6;
 }
-
 .portal-card.admin-card .icon-wrapper {
   background-color: #fffbeb;
-
   color: #f79009;
 }
-
 .portal-card.superadmin-card .icon-wrapper {
   background-color: #fdecec;
-
   color: #f04438;
 }
 
 .portal-card h3 {
   font-weight: 600;
-
-  color: var(--secondary-color);
-
+  color: var(--color-secondary);
   font-size: 1.25rem;
 }
 
 .portal-card p {
   color: var(--text-light);
-
   flex-grow: 1;
-
   min-height: 60px;
 }
 
 .portal-card .btn-login {
   margin-top: 1.5rem;
-
   font-weight: 600;
-
-  color: var(--primary-color);
-
+  color: var(--color-primary);
   text-decoration: none;
-
   display: inline-flex;
-
   align-items: center;
 }
 
+/* Rollarga qarab tugma ranglari */
 .portal-card.doctor-card .btn-login {
   color: #12b76a;
 }
-
 .portal-card.operator-card .btn-login {
   color: #14b8a6;
 }
-
 .portal-card.admin-card .btn-login {
   color: #f79009;
 }
-
 .portal-card.superadmin-card .btn-login {
   color: #f04438;
 }
@@ -239,190 +199,115 @@ body {
 .portal-card:hover .btn-login i {
   transform: translateX(5px);
 }
+/* ----- Portal sahifasi stillari tugadi ----- */
 
-.modal-content {
-  background: #f9fafb;
-
-  border-radius: 12px;
-
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal-header {
-  padding: 16px;
-
-  border-bottom: 1px solid #e5e7eb;
-
-  background: #fff;
-}
-
-.progress-bar-container {
-  width: 100%;
-
-  background: #e0e7ff;
-
-  border-radius: 9999px;
-
-  height: 8px;
-
-  overflow: hidden;
-}
-
-#modal-progress-bar {
-  height: 100%;
-
-  background: #4f46e5;
-
-  transition: width 0.3s ease;
+/* =================================================================
+   4. AUTENTIFIKATSIYA SAHIFASI STILLARI
+   - Login va ro'yxatdan o'tish oynasi uchun.
+================================================================= */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background-color: var(--background-color);
 }
 
 .auth-card {
   max-width: 950px;
-
   width: 100%;
-
   display: flex;
-
   background-color: rgba(255, 255, 255, 0.5);
-
   backdrop-filter: blur(5px);
-
   -webkit-backdrop-filter: blur(5px);
-
   border-radius: 20px;
-
   box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
-
   overflow: hidden;
-
   min-height: 600px;
-
   position: relative;
-
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+/* Chap taraf (rasm bilan) */
 .auth-left {
   flex-basis: 55%;
-
   position: relative;
-
   background: linear-gradient(rgba(58, 134, 255, 0.7), rgba(0, 86, 179, 0.8)),
     url("https://images.unsplash.com/photo-1551192017-e5335a94235b?q=80&w=1974&auto=format&fit=crop")
       no-repeat center center;
-
   background-size: cover;
-
   display: flex;
-
   flex-direction: column;
-
   justify-content: center;
-
   padding: 3rem;
-
   color: white;
-
   text-align: center;
 }
 
+.auth-left h2 {
+  font-weight: 700;
+  font-size: 2.2rem;
+  line-height: 1.3;
+}
+
+.auth-left p {
+  opacity: 0.9;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+/* O'ng taraf (forma bilan) */
+.auth-right {
+  flex-basis: 45%;
+  padding: 2.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.mobile-logo-container {
+  display: none;
+}
+
+/* Tablar (Login/Registratsiya) */
 .auth-tabs {
   display: flex;
-
   width: 100%;
-
   background-color: rgba(0, 0, 0, 0.05);
-
   border-radius: 10px;
-
   margin-bottom: 1.5rem;
-
   padding: 4px;
 }
 
 .auth-tab-btn {
   flex: 1;
-
   padding: 0.6rem 0;
-
   border: none;
-
   background-color: transparent;
-
   border-radius: 8px;
-
   font-weight: 600;
-
   color: var(--text-light);
-
   transition: all 0.3s ease;
-
   font-size: 0.9rem;
 }
 
 .auth-tab-btn.active {
   background-color: #fff;
-
-  color: #3a86ff;
-
+  color: var(--color-primary);
   box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.1);
 }
 
-.auth-wrapper {
-  min-height: 100vh;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 1.5rem;
-}
-
-.auth-card {
-  max-width: 950px;
-
-  width: 100%;
-
-  display: flex;
-
-  background-color: rgba(255, 255, 255, 0.5);
-
-  backdrop-filter: blur(5px);
-
-  -webkit-backdrop-filter: blur(5px);
-
-  border-radius: 20px;
-
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.2);
-
-  overflow: hidden;
-
-  min-height: 600px;
-
-  position: relative;
-
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
+/* Yuklanish chizig'i (Progress Bar) */
 .progress-bar-container {
   position: absolute;
-
   top: 0;
-
   left: 0;
-
   width: 100%;
-
   height: 4px;
-
   background-color: transparent;
-
   overflow: hidden;
-
   display: none;
-
   z-index: 10;
 }
 
@@ -432,13 +317,9 @@ body {
 
 .progress-bar-line {
   width: 100%;
-
   height: 100%;
-
-  background-color: var(--primary-color);
-
+  background-color: var(--color-primary);
   transform: translateX(-100%);
-
   animation: loading-progress 1.5s infinite linear;
 }
 
@@ -446,64 +327,16 @@ body {
   from {
     transform: translateX(-100%);
   }
-
   to {
     transform: translateX(100%);
   }
 }
+/* ----- Autentifikatsiya sahifasi stillari tugadi ----- */
 
-.auth-left {
-  flex-basis: 55%;
-
-  position: relative;
-
-  background: linear-gradient(rgba(58, 134, 255, 0.7), rgba(0, 86, 179, 0.8)),
-    url("https://images.unsplash.com/photo-1551192017-e5335a94235b?q=80&w=1974&auto=format&fit=crop")
-      no-repeat center center;
-
-  background-size: cover;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-
-  padding: 3rem;
-
-  color: white;
-
-  text-align: center;
-}
-
-.auth-left h2 {
-  font-weight: 700;
-
-  font-size: 2.2rem;
-
-  line-height: 1.3;
-}
-
-.auth-left p {
-  opacity: 0.9;
-
-  font-size: 1rem;
-
-  margin-top: 1rem;
-}
-
-.auth-right {
-  flex-basis: 45%;
-
-  padding: 2.5rem 3rem;
-
-  display: flex;
-
-  flex-direction: column;
-
-  justify-content: center;
-}
-
+/* =================================================================
+   5. FORMA ELEMENTLARI
+   - Input, tugma, label va boshqa forma qismlari.
+================================================================= */
 .form-wrapper {
   display: none;
 }
@@ -520,93 +353,488 @@ body {
   display: none;
 }
 
+.form-label {
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 0.6rem;
+}
+
+.form-control,
+.form-select {
+  height: 50px;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background-color: rgba(248, 249, 250, 0.8);
+  width: 100%;
+}
+
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+  background-color: #fff;
+  outline: none;
+}
+
+/* Telefon raqam kiritish maydoni */
+.phone-input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background-color: rgba(248, 249, 250, 0.8);
+  transition: all 0.2s ease-in-out;
+}
+
+.phone-input-wrapper:focus-within {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
+}
+
+.phone-prefix {
+  padding-left: 1.25rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.phone-input-wrapper input {
+  border: none;
+  background: transparent;
+  box-shadow: none !important;
+  padding-left: 0.5rem;
+  width: 100%;
+  height: 48px;
+}
+
+/* OTP (bir martalik kod) kiritish maydonlari */
 .otp-input-fields {
   display: flex;
-
-  justify-content: center;
-
   gap: 10px;
-
+  justify-content: center;
   margin: 15px 0;
 }
 
-.otp-input-fields input {
-  width: 45px;
-
-  height: 50px;
-
-  text-align: center;
-
-  font-size: 1.5rem;
-
-  font-weight: 600;
-
-  padding: 0;
-
-  border: 1px solid #ddd;
-
-  border-radius: 8px;
-
-  line-height: 50px;
-
-  background-color: rgba(255, 255, 255, 0.7);
-
-  outline-color: #3a86ff;
-  outline-width: 1px;
-  outline-offset: 3.5px;
-}
-.otp-input-fields {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 15px;
-}
-
 .otp-input {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 50px;
   text-align: center;
-  font-size: 18px;
+  font-size: 1.5rem;
+  font-weight: 600;
   border: 1px solid #ced4da;
-  border-radius: 6px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+  border-radius: 8px;
+  transition: all 0.3s ease;
 }
 
-/* Fokus holati */
 .otp-input:focus {
-  outline: none; /* default focus chizig'ini olib tashlaymiz */
+  outline: none;
   border-color: #5c99f4;
   box-shadow: 0 0 0 3px rgba(92, 153, 244, 0.3);
   transform: scale(1.05);
 }
 
-/* Success holati */
 .otp-input.success {
   border-color: #28a745;
   background-color: #e6f4ea;
   animation: pulse-green 0.6s ease-in-out;
 }
 
-.otp-input.success:focus {
-  border-color: #28a745;
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.3);
-}
-
-/* Error holati */
 .otp-input.error {
   border-color: #dc3545;
   background-color: #fff5f5;
-  animation: shake 0.3s ease-in-out;
+  animation: shake 0.3s;
 }
 
-.otp-input.error:focus {
-  border-color: #dc3545;
-  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.3);
+/* Asosiy tugma */
+.btn-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  font-weight: 600;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  width: 100%;
 }
 
-/* Animatsiyalar */
+.btn-primary:disabled {
+  background-color: #a0c3ff;
+  cursor: not-allowed;
+}
 
-/* Pulsating green for success */
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primary-600);
+  transform: translateY(-2px);
+  box-shadow: 0 7px 14px rgba(58, 134, 255, 0.25);
+}
+
+.form-switch-link {
+  color: var(--color-primary);
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+}
+
+.form-switch-link:hover {
+  text-decoration: none;
+  color: var(--color-primary-600);
+}
+
+/* Xatolik xabarlari */
+.input-error {
+  border-color: #ef4444 !important;
+}
+
+.error-message,
+.validation-message {
+  color: #ef4444;
+  font-size: 0.8rem;
+  text-align: left;
+  margin-top: 4px;
+}
+
+/* OTP qayta yuborish */
+#resend-otp-container {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+#resend-otp-link {
+  display: none;
+}
+
+#resend-otp-link.disabled {
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+#timer {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+/* ----- Forma elementlari bo'limi tugadi ----- */
+
+/* =================================================================
+   6. KOMPONENTLAR
+   - Modal, bildirishnoma (toast), fayl yuklash va boshqalar.
+================================================================= */
+
+/* --- Modal oyna stillari --- */
+.modal-content {
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+#modal-progress-bar {
+  height: 100%;
+  background: #4f46e5;
+  transition: width 0.3s ease;
+}
+
+/* --- Bildirishnoma (Toast/Notification) stillari --- */
+#toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1055;
+  width: 300px;
+}
+
+.toast-notification {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(10px);
+  color: var(--text-color);
+  padding: 16px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  opacity: 0;
+  transform: translateX(100%);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+}
+
+.toast-notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.toast-icon {
+  font-size: 1.6rem;
+  margin-right: 12px;
+}
+
+.toast-message {
+  font-weight: 500;
+}
+
+.toast-notification.success .toast-icon {
+  color: #22c55e;
+}
+
+.toast-notification.error .toast-icon {
+  color: #ef4444;
+}
+
+.notification {
+  position: fixed;
+  top: 5rem;
+  right: 1.5rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.75rem;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.notification.success {
+  background-color: #10b981;
+}
+.notification.warning {
+  background-color: #f59e0b;
+}
+.notification.danger {
+  background-color: #ef4444;
+}
+
+/* --- Fayl yuklash stillari --- */
+.file-card-preview {
+  width: 5rem;
+  height: 5rem;
+  flex-shrink: 0;
+  background-color: #e2e8f0;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.dark .file-card-preview {
+  background-color: #334155;
+}
+
+.file-card-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-card-preview .file-icon {
+  font-size: 2.5rem;
+  color: #64748b;
+}
+
+.dark .file-card-preview .file-icon {
+  color: #94a3b8;
+}
+
+/* --- Mehmonxona tanlash modali stillari --- */
+#hotel-modal .modal-content .overflow-y-auto {
+  background-color: #f1f5f9; /* slate-100 */
+}
+
+.dark #hotel-modal .modal-content .overflow-y-auto {
+  background-color: #1e293b; /* slate-800 */
+}
+
+.hotel-card-image {
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.hotel-card-image::-webkit-scrollbar {
+  display: none;
+}
+
+.hotel-card-image div {
+  scroll-snap-align: start;
+  flex-shrink: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.hotel-image-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.5);
+  transition: background-color 0.3s;
+}
+
+.hotel-image-dot.active {
+  background-color: white;
+}
+
+.hotel-card-image-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, transform 0.2s;
+  z-index: 10;
+}
+
+.hotel-card:hover .hotel-card-image-nav {
+  opacity: 1;
+}
+
+.hotel-card-image-nav:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.amenity-tooltip {
+  position: relative;
+}
+
+.amenity-tooltip:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #334155;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 20;
+}
+
+/* --- Rasm ko'rish oynasi (Lightbox) stillari --- */
+.image-lightbox-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s;
+}
+
+.lightbox-content {
+  position: relative;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+}
+
+.lightbox-content img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 0.75rem;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: absolute;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.lightbox-close {
+  top: 1rem;
+  right: 1rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+}
+
+.lightbox-nav {
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3rem;
+  height: 3rem;
+  font-size: 1.75rem;
+}
+
+.lightbox-prev {
+  left: 1rem;
+}
+.lightbox-next {
+  right: 1rem;
+}
+/* ----- Komponentlar bo'limi tugadi ----- */
+
+/* =================================================================
+   7. ANIMATSIYALAR
+   - Umumiy ishlatiladigan animatsiyalar.
+================================================================= */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
 @keyframes pulse-green {
   0% {
     transform: scale(1);
@@ -622,399 +850,89 @@ body {
   }
 }
 
-/* Shake animation for error */
 @keyframes shake {
   0%,
   100% {
     transform: translateX(0);
   }
-  20% {
-    transform: translateX(-5px);
-  }
-  40% {
-    transform: translateX(5px);
-  }
-  60% {
-    transform: translateX(-5px);
-  }
-  80% {
-    transform: translateX(5px);
-  }
-}
-
-.form-control,
-.form-select {
-  height: 50px;
-
-  padding: 0.75rem 1.25rem;
-
-  border-radius: 12px;
-
-  border: 1px solid var(--border-color);
-
-  background-color: rgba(248, 249, 250, 0.8);
-}
-
-.phone-input-wrapper {
-  display: flex;
-
-  align-items: center;
-
-  border: 1px solid var(--border-color);
-
-  border-radius: 12px;
-
-  background-color: rgba(248, 249, 250, 0.8);
-}
-
-.phone-input-wrapper:focus-within {
-  border-color: var(--primary-color);
-
-  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
-}
-
-.phone-prefix {
-  padding-left: 1.25rem;
-
-  color: var(--text-dark);
-
-  font-weight: 500;
-}
-
-.phone-input-wrapper input {
-  border: none;
-
-  background: transparent;
-
-  box-shadow: none !important;
-
-  padding-left: 0.5rem;
-}
-
-.form-control:focus,
-.form-select:focus {
-  border-color: var(--primary-color);
-
-  box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
-
-  background-color: #fff;
-}
-
-.form-label {
-  font-weight: 600;
-
-  color: var(--text-dark);
-
-  margin-bottom: 0.6rem;
-}
-
-.btn-primary {
-  background-color: var(--primary-color);
-
-  border: none;
-
-  padding: 0.9rem 1rem;
-
-  border-radius: 12px;
-
-  font-weight: 600;
-
-  min-height: 50px;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  transition: all 0.3s ease;
-}
-
-.btn-primary:disabled {
-  background-color: #a0c3ff;
-
-  cursor: not-allowed;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background-color: var(--primary-dark);
-
-  transform: translateY(-2px);
-
-  box-shadow: 0 7px 14px rgba(58, 134, 255, 0.25);
-}
-
-.form-switch-link {
-  color: var(--primary-color);
-
-  font-weight: 600;
-
-  cursor: pointer;
-
-  display: inline-flex;
-
-  align-items: center;
-
-  gap: 5px;
-
-  transition: all 0.2s;
-}
-
-.form-switch-link:hover {
-  text-decoration: none;
-
-  color: var(--primary-dark);
-}
-
-.validation-message {
-  color: var(--error-color);
-
-  font-size: 0.8rem;
-
-  text-align: left;
-
-  margin-top: 4px;
-
-  display: none;
-}
-
-.shake {
-  animation: shake 0.5s;
-}
-
-@keyframes shake {
-  10%,
-  90% {
-    transform: translateX(-1px);
-  }
-
   20%,
-  80% {
-    transform: translateX(2px);
-  }
-
-  30%,
-  50%,
-  70% {
-    transform: translateX(-4px);
-  }
-
-  40%,
   60% {
-    transform: translateX(4px);
+    transform: translateX(-5px);
+  }
+  40%,
+  80% {
+    transform: translateX(5px);
   }
 }
+/* ----- Animatsiyalar bo'limi tugadi ----- */
 
-#resend-otp-container {
-  font-size: 0.9rem;
-}
+/* =================================================================
+   8. MOSLASHUVCHANLIK (RESPONSIVENESS)
+   - Turli ekran o'lchamlari uchun media-so'rovlar.
+================================================================= */
 
-#resend-otp-link {
-  display: none;
-}
-
-#resend-otp-link.disabled {
-  color: var(--text-light);
-
-  pointer-events: none;
-}
-
-#timer {
-  color: var(--error-color);
-
-  font-weight: 700;
-}
-
-#toast-container {
-  position: fixed;
-
-  top: 20px;
-
-  right: 20px;
-
-  z-index: 1055;
-
-  width: 300px;
-}
-
-.toast-notification {
-  background-color: rgba(255, 255, 255, 0.4);
-
-  backdrop-filter: blur(3px);
-
-  -webkit-backdrop-filter: blur(10px);
-
-  color: #fff;
-
-  padding: 16px 20px;
-
-  border-radius: 12px;
-
-  border: 1px solid rgba(255, 255, 255, 0.25);
-
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-
-  display: flex;
-
-  align-items: center;
-
-  margin-bottom: 10px;
-
-  opacity: 0;
-
-  transform: translateX(100%);
-
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-}
-
-.toast-notification.show {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.toast-notification.success .toast-icon {
-  color: #22c55e;
-}
-
-.toast-notification.error .toast-icon {
-  color: #ef4444;
-}
-
-.toast-icon {
-  font-size: 1.6rem;
-
-  margin-right: 12px;
-}
-
-.toast-message {
-  font-weight: 500;
-}
-
-.auth-tabs {
-  display: flex;
-
-  width: 100%;
-
-  background-color: rgba(0, 0, 0, 0.05);
-
-  border-radius: 10px;
-
-  margin-bottom: 1.5rem;
-
-  padding: 4px;
-}
-
-.auth-tab-btn {
-  flex: 1;
-
-  padding: 0.6rem 0;
-
-  border: none;
-
-  background-color: transparent;
-
-  border-radius: 8px;
-
-  font-weight: 600;
-
-  color: var(--text-light);
-
-  transition: all 0.3s ease;
-
-  font-size: 0.9rem;
-}
-
-.auth-tab-btn.active {
-  background-color: #fff;
-
-  color: var(--primary-color);
-
-  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-logo-container {
-  display: none;
-}
-
-/* --- BARCHA QURILMALARGA MOSLASHUVCHANLIK (RESPONSIVENESS) --- */
-
+/* Planchetlar uchun (992px gacha) */
 @media (max-width: 991.98px) {
   .auth-left {
     display: none;
   }
-
   .auth-right {
     flex-basis: 100%;
   }
-
   .auth-card {
     flex-direction: column;
+    max-width: 500px;
   }
-
   .mobile-logo-container {
     display: block;
-
     text-align: center;
-
     margin-bottom: 1.5rem;
   }
-
   .mobile-logo-container img {
     height: 40px;
-
     width: auto;
   }
 }
 
+/* Kichik planchetlar va katta telefonlar uchun (768px gacha) */
 @media (max-width: 767.98px) {
   .auth-card {
     min-height: auto;
   }
-
   .auth-right {
     padding: 2rem;
   }
-
   h3 {
     font-size: 1.6rem;
   }
 }
 
+/* Mobil qurilmalar uchun (576px gacha) */
 @media (max-width: 575.98px) {
   .auth-wrapper {
     padding: 1rem;
   }
-
   .auth-card {
     border-radius: 15px;
   }
-
   .auth-right {
     padding: 1.5rem;
   }
-
   h3 {
     font-size: 1.5rem;
-
     margin-bottom: 0.5rem !important;
   }
-
   p.text-secondary {
     font-size: 0.9rem;
-
     margin-bottom: 1.5rem !important;
   }
-
   .form-wrapper .mb-3 {
     margin-bottom: 0.8rem !important;
   }
-
   .form-wrapper .my-3 {
     margin-top: 1rem !important;
-
     margin-bottom: 1rem !important;
   }
-
   .form-wrapper .mt-3 {
     margin-top: 1rem !important;
   }
@@ -1023,880 +941,26 @@ body {
   .form-select,
   .btn-primary {
     height: 46px;
-
     font-size: 0.9rem;
-
     border-radius: 10px;
   }
 
   .form-label {
     font-weight: 500;
-
     margin-bottom: 0.4rem;
-
     font-size: 0.85rem;
   }
 
   .otp-input-fields {
     gap: 6px;
-
     margin: 1rem 0;
   }
 
-  .otp-input-fields input {
+  .otp-input {
     width: calc((100% - 30px) / 6);
-
     height: 44px;
-
     font-size: 1.2rem;
-
     border-radius: 6px;
   }
 }
-
-#toast-container {
-  position: fixed;
-
-  top: 20px;
-
-  right: 20px;
-
-  z-index: 1055;
-
-  width: 300px;
-}
-
-.auth-wrapper {
-  min-height: 100vh;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  padding: 1.5rem;
-}
-
-/* ... Qolgan barcha stillar shu yerda davom etadi ... */
-
-@media (max-width: 991.98px) {
-  .auth-left {
-    display: none;
-  }
-
-  .auth-right {
-    flex-basis: 100%;
-  }
-
-  .auth-card {
-    flex-direction: column;
-  }
-
-  .mobile-logo-container {
-    display: block;
-
-    text-align: center;
-
-    margin-bottom: 1.5rem;
-  }
-
-  .mobile-logo-container img {
-    height: 40px;
-
-    width: auto;
-  }
-}
-
-@media (max-width: 767.98px) {
-  .auth-card {
-    min-height: auto;
-  }
-
-  .auth-right {
-    padding: 2rem;
-  }
-
-  h3 {
-    font-size: 1.6rem;
-  }
-}
-
-@media (max-width: 575.98px) {
-  .auth-wrapper {
-    padding: 1rem;
-  }
-
-  .auth-card {
-    border-radius: 15px;
-  }
-
-  .auth-right {
-    padding: 1.5rem;
-  }
-
-  h3 {
-    font-size: 1.5rem;
-
-    margin-bottom: 0.5rem !important;
-  }
-
-  p.text-secondary {
-    font-size: 0.9rem;
-
-    margin-bottom: 1.5rem !important;
-  }
-
-  .form-wrapper .mb-3 {
-    margin-bottom: 0.8rem !important;
-  }
-
-  .form-wrapper .my-3 {
-    margin-top: 1rem !important;
-
-    margin-bottom: 1rem !important;
-  }
-
-  .form-wrapper .mt-3 {
-    margin-top: 1rem !important;
-  }
-
-  .form-control,
-  .form-select,
-  .btn-primary {
-    height: 46px;
-
-    font-size: 0.9rem;
-
-    border-radius: 10px;
-  }
-
-  .form-label {
-    font-weight: 500;
-
-    margin-bottom: 0.4rem;
-
-    font-size: 0.85rem;
-  }
-
-  .otp-input-fields {
-    gap: 6px;
-
-    margin: 1rem 0;
-  }
-
-  .otp-input-fields input {
-    width: calc((100% - 30px) / 6);
-
-    height: 44px;
-
-    font-size: 1.2rem;
-
-    border-radius: 6px;
-  }
-}
-
-/* service card */
-
-/* Xatolik uchun stillar */
-
-.input-error {
-  border-color: #ef4444 !important;
-}
-
-.error-message {
-  color: #ef4444;
-
-  font-size: 0.75rem; /* 12px */
-
-  line-height: 1rem; /* 16px */
-
-  margin-top: 4px;
-}
-
-/* Xabarnoma stillari */
-
-.notification {
-  position: fixed;
-
-  top: 5rem; /* Headerdan pastroq */
-
-  right: 1.5rem;
-
-  padding: 1rem 1.5rem;
-
-  border-radius: 0.75rem;
-
-  color: white;
-
-  font-weight: 600;
-
-  z-index: 1000;
-
-  display: flex;
-
-  align-items: center;
-
-  gap: 0.75rem;
-
-  animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
-
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-.notification.success {
-  background-color: #10b981;
-}
-
-.notification.warning {
-  background-color: #f59e0b;
-}
-
-.notification.danger {
-  background-color: #ef4444;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-
-    opacity: 0;
-  }
-
-  to {
-    transform: translateX(0);
-
-    opacity: 1;
-  }
-}
-
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-
-    visibility: hidden;
-  }
-}
-
-/* Fayl yuklash stillari */
-
-.file-card-preview {
-  width: 5rem;
-
-  height: 5rem;
-
-  flex-shrink: 0;
-
-  background-color: #e2e8f0;
-
-  border-radius: 0.5rem;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  overflow: hidden;
-}
-
-.dark .file-card-preview {
-  background-color: #334155;
-}
-
-.file-card-preview img {
-  width: 100%;
-
-  height: 100%;
-
-  object-fit: cover;
-}
-
-.file-card-preview .file-icon {
-  font-size: 2.5rem;
-
-  color: #64748b;
-}
-
-.dark .file-card-preview .file-icon {
-  color: #94a3b8;
-}
-
-/* Mehmonxona tanlash modali uchun stillar */
-
-.hotel-card-image {
-  scroll-snap-type: x mandatory;
-
-  scroll-behavior: smooth;
-
-  -webkit-overflow-scrolling: touch;
-}
-
-.hotel-card-image::-webkit-scrollbar {
-  display: none;
-}
-
-.hotel-card-image div {
-  scroll-snap-align: start;
-
-  flex-shrink: 0;
-
-  width: 100%;
-
-  height: 100%;
-}
-
-.hotel-image-dot {
-  width: 8px;
-
-  height: 8px;
-
-  border-radius: 50%;
-
-  background-color: rgba(255, 255, 255, 0.5);
-
-  transition: background-color 0.3s;
-}
-
-.hotel-image-dot.active {
-  background-color: white;
-}
-
-/* Mehmonxona tanlash modali uchun qo'shimcha stillar */
-
-#hotel-modal .modal-content .overflow-y-auto {
-  background-color: #f1f5f9; /* slate-100 */
-}
-
-.dark #hotel-modal .modal-content .overflow-y-auto {
-  background-color: #1e293b; /* slate-800 */
-}
-
-.hotel-card-image-nav {
-  position: absolute;
-
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 2rem; /* 32px */
-
-  height: 2rem; /* 32px */
-
-  background-color: rgba(0, 0, 0, 0.3);
-
-  color: white;
-
-  border-radius: 50%;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  cursor: pointer;
-
-  opacity: 0;
-
-  transition: opacity 0.2s, transform 0.2s;
-
-  z-index: 10;
-}
-
-.hotel-card:hover .hotel-card-image-nav {
-  opacity: 1;
-}
-
-.hotel-card-image-nav:hover {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.amenity-tooltip:hover::after {
-  content: attr(title);
-
-  position: absolute;
-
-  bottom: 110%;
-
-  left: 50%;
-
-  transform: translateX(-50%);
-
-  background-color: #334155;
-
-  color: white;
-
-  padding: 4px 8px;
-
-  border-radius: 4px;
-
-  font-size: 0.75rem;
-
-  white-space: nowrap;
-
-  z-index: 20;
-}
-
-/* Rasm ko'rish oynasi (Lightbox) uchun stillar */
-
-.image-lightbox-backdrop {
-  position: fixed;
-
-  inset: 0;
-
-  background-color: rgba(0, 0, 0, 0.8);
-
-  z-index: 1001;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
-  animation: fadeIn 0.3s;
-}
-
-.lightbox-content {
-  position: relative;
-
-  width: 90%;
-
-  max-width: 900px;
-
-  max-height: 90vh;
-}
-
-.lightbox-content img {
-  width: 100%;
-
-  height: 100%;
-
-  object-fit: contain;
-
-  border-radius: 0.75rem;
-}
-
-.lightbox-close,
-.lightbox-nav {
-  position: absolute;
-
-  color: white;
-
-  background-color: rgba(0, 0, 0, 0.4);
-
-  border-radius: 50%;
-
-  cursor: pointer;
-
-  transition: background-color 0.2s, transform 0.2s;
-}
-
-.lightbox-close:hover,
-.lightbox-nav:hover {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-
-.lightbox-close {
-  top: 1rem;
-
-  right: 1rem;
-
-  width: 2.5rem;
-
-  height: 2.5rem;
-
-  font-size: 1.5rem;
-
-  line-height: 2.5rem;
-
-  text-align: center;
-}
-
-.lightbox-nav {
-  top: 50%;
-
-  transform: translateY(-50%);
-
-  width: 3rem;
-
-  height: 3rem;
-
-  font-size: 1.75rem;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-}
-
-.lightbox-prev {
-  left: 1rem;
-}
-
-.lightbox-next {
-  right: 1rem;
-}
-
-/* Body va matnlar uchun default font */
-body {
-  font-family: var(--font-inter);
-}
-
-:root {
-  --primary-color: #4154f1;
-  --secondary-color: #012970;
-  --background-color: #f4f6fc;
-  --card-background: #ffffff;
-  --text-color: #344054;
-  --text-light: #667085;
-  --border-color: #eaecf0;
-}
-
-body {
-  font-family: "Inter", sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-.main-container {
-  display: flex;
-  min-height: 100vh;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem;
-}
-
-.portal-container {
-  width: 100%;
-  max-width: 1200px; /* Kenglik 5 ta kartaga moslandi */
-  text-align: center;
-}
-
-.logo-container {
-  margin-bottom: 2rem;
-}
-
-.logo-container img {
-  max-height: 70px;
-}
-
-.portal-card {
-  background-color: var(--card-background);
-  border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  color: var(--text-color);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.portal-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
-    0 8px 10px -6px rgb(0 0 0 / 0.1);
-  border-color: var(--primary-color);
-}
-
-.portal-card .icon-wrapper {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
-  background-color: var(--primary-light);
-  color: var(--primary-color);
-  font-size: 28px;
-}
-
-/* Har bir rol uchun alohida ranglar */
-.portal-card.doctor-card .icon-wrapper {
-  background-color: #e7f7f0;
-  color: #12b76a;
-}
-.portal-card.operator-card .icon-wrapper {
-  background-color: #e4f9f5;
-  color: #14b8a6;
-}
-.portal-card.admin-card .icon-wrapper {
-  background-color: #fffbeb;
-  color: #f79009;
-}
-.portal-card.superadmin-card .icon-wrapper {
-  background-color: #fdecec;
-  color: #f04438;
-}
-
-.portal-card h3 {
-  font-weight: 600;
-  color: var(--secondary-color);
-  font-size: 1.25rem;
-}
-
-.portal-card p {
-  color: var(--text-light);
-  flex-grow: 1;
-  min-height: 60px;
-}
-
-.portal-card .btn-login {
-  margin-top: 1.5rem;
-  font-weight: 600;
-  color: var(--primary-color);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
-
-.portal-card.doctor-card .btn-login {
-  color: #12b76a;
-}
-.portal-card.operator-card .btn-login {
-  color: #14b8a6;
-}
-.portal-card.admin-card .btn-login {
-  color: #f79009;
-}
-.portal-card.superadmin-card .btn-login {
-  color: #f04438;
-}
-
-.portal-card .btn-login i {
-  transition: transform 0.2s;
-}
-
-.portal-card:hover .btn-login i {
-  transform: translateX(5px);
-}
-
-/* service card */
-
-/* Xatolik uchun stillar */
-.input-error {
-  border-color: #ef4444 !important;
-}
-.error-message {
-  color: #ef4444;
-  font-size: 0.75rem; /* 12px */
-  line-height: 1rem; /* 16px */
-  margin-top: 4px;
-}
-
-/* Xabarnoma stillari */
-.notification {
-  position: fixed;
-  top: 5rem; /* Headerdan pastroq */
-  right: 1.5rem;
-  padding: 1rem 1.5rem;
-  border-radius: 0.75rem;
-  color: white;
-  font-weight: 600;
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  animation: slideInRight 0.5s ease-out, fadeOut 0.5s ease-in 3.5s forwards;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-.notification.success {
-  background-color: #10b981;
-}
-.notification.warning {
-  background-color: #f59e0b;
-}
-.notification.danger {
-  background-color: #ef4444;
-}
-
-@keyframes slideInRight {
-  from {
-    transform: translateX(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-@keyframes fadeOut {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0;
-    visibility: hidden;
-  }
-}
-
-/* Fayl yuklash stillari */
-.file-card-preview {
-  width: 5rem;
-  height: 5rem;
-  flex-shrink: 0;
-  background-color: #e2e8f0;
-  border-radius: 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-.dark .file-card-preview {
-  background-color: #334155;
-}
-.file-card-preview img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.file-card-preview .file-icon {
-  font-size: 2.5rem;
-  color: #64748b;
-}
-.dark .file-card-preview .file-icon {
-  color: #94a3b8;
-}
-
-/* Mehmonxona tanlash modali uchun stillar */
-.hotel-card-image {
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-}
-.hotel-card-image::-webkit-scrollbar {
-  display: none;
-}
-.hotel-card-image div {
-  scroll-snap-align: start;
-  flex-shrink: 0;
-  width: 100%;
-  height: 100%;
-}
-.hotel-image-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: background-color 0.3s;
-}
-.hotel-image-dot.active {
-  background-color: white;
-}
-
-/* Mehmonxona tanlash modali uchun qo'shimcha stillar */
-#hotel-modal .modal-content .overflow-y-auto {
-  background-color: #f1f5f9; /* slate-100 */
-}
-.dark #hotel-modal .modal-content .overflow-y-auto {
-  background-color: #1e293b; /* slate-800 */
-}
-.hotel-card-image-nav {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 2rem; /* 32px */
-  height: 2rem; /* 32px */
-  background-color: rgba(0, 0, 0, 0.3);
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  opacity: 0;
-  transition: opacity 0.2s, transform 0.2s;
-  z-index: 10;
-}
-.hotel-card:hover .hotel-card-image-nav {
-  opacity: 1;
-}
-.hotel-card-image-nav:hover {
-  background-color: rgba(0, 0, 0, 0.5);
-}
-.amenity-tooltip:hover::after {
-  content: attr(title);
-  position: absolute;
-  bottom: 110%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: #334155;
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  white-space: nowrap;
-  z-index: 20;
-}
-
-/* Rasm ko'rish oynasi (Lightbox) uchun stillar */
-.image-lightbox-backdrop {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  z-index: 1001;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.3s;
-}
-.lightbox-content {
-  position: relative;
-  width: 90%;
-  max-width: 900px;
-  max-height: 90vh;
-}
-.lightbox-content img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  border-radius: 0.75rem;
-}
-.lightbox-close,
-.lightbox-nav {
-  position: absolute;
-  color: white;
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: 50%;
-  cursor: pointer;
-  transition: background-color 0.2s, transform 0.2s;
-}
-.lightbox-close:hover,
-.lightbox-nav:hover {
-  background-color: rgba(0, 0, 0, 0.6);
-}
-.lightbox-close {
-  top: 1rem;
-  right: 1rem;
-  width: 2.5rem;
-  height: 2.5rem;
-  font-size: 1.5rem;
-  line-height: 2.5rem;
-  text-align: center;
-}
-.lightbox-nav {
-  top: 50%;
-  transform: translateY(-50%);
-  width: 3rem;
-  height: 3rem;
-  font-size: 1.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.lightbox-prev {
-  left: 1rem;
-}
-.lightbox-next {
-  right: 1rem;
-}
+/* ----- Moslashuvchanlik bo'limi tugadi ----- */

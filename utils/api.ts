@@ -64,7 +64,7 @@ api.interceptors.response.use(
 
         // token yangilashga urinish
         const refreshResponse = await axios.post(
-          `${API_BASE_URL}auth/refresh/`,
+          `${API_BASE_URL}auth/auth/refresh/`,
           { refresh: refreshToken }
         );
 

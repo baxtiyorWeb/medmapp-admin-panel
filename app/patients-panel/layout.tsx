@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useEffect } from "react";
 import {
   Calendar,
@@ -16,6 +17,7 @@ import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import "./../../components/patients-components/style.css";
+import useDarkMode from "@/hooks/useDarkMode";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -24,10 +26,11 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false); // New state
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const { fetchProfile } = useProfile();
+  const [isDarkMode, toggleDarkMode] = useDarkMode();
 
+  const { fetchProfile } = useProfile();
   const { data, isLoading } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => await fetchProfile(),
@@ -69,8 +72,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }, [isMobile, isProfileDropdownOpen]);
 
   return (
-    <div className="flex h-screen bg-slate-100 text-slate-800 overflow-hidden">
-      {/* Sidebar Backdrop */}
+    <div className="flex h-screen bg-[var(--background-color)] text-[var(--text-color)] overflow-hidden">
       {isMobile && (
         <div
           id="sidebar-backdrop"
@@ -84,9 +86,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-white border-r border-slate-200 flex flex-col transform transition-transform duration-300 ease-in-out
-          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        `}
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)] border-r border-[var(--border-color)] flex flex-col transform transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
         <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
           <Link href="/">
@@ -149,7 +151,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             icon={LogOut}
             text="Chiqish"
             open={isSidebarOpen}
-            className="text-red-500 absolute bottom-10"
+            className="text-[var(--color-danger)] absolute bottom-10"
             active={pathname === "/login"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
@@ -157,48 +159,53 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </aside>
 
       <div
-        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out
-          ${isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"}
-        `}
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
+          isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"
+        }`}
       >
-        <header className="flex items-center justify-between py-4 px-8 bg-white border-b border-slate-200 h-[89px] flex-shrink-0">
+        {/* Header */}
+        <header className="flex items-center justify-between py-4 px-8 bg-[var(--card-background)] border-b border-[var(--border-color)] h-[89px] flex-shrink-0">
           <div className="flex items-center">
             <button
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               id="sidebar-toggle"
-              className="-ml-2 mr-4 text-slate-500 hover:text-slate-700"
+              className="text-[var(--text-light)] hover:text-[var(--text-color)] -ml-2 mr-4"
             >
               <i className="bi bi-list text-3xl"></i>
             </button>
-            <h1 className="hidden md:block text-2xl font-semibold text-slate-800">
+            <h1 className="hidden md:block text-2xl font-semibold text-[var(--text-color)]">
               Boshqaruv Paneli
             </h1>
           </div>
           <div className="flex items-center space-x-3 md:space-x-5">
-            {/* Language, dark mode, and bell buttons remain the same */}
             <div className="relative">
-              <button className="lang-toggle cursor-pointer text-slate-500 hover:text-primary">
+              <button className="lang-toggle cursor-pointer text-[var(--text-light)] hover:text-[var(--color-primary)]">
                 <i className="bi bi-translate text-xl"></i>
               </button>
             </div>
             <button
               id="dark-mode-toggle"
-              className="text-slate-500 cursor-pointer hover:text-primary"
+              className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]"
+              onClick={toggleDarkMode}
             >
-              <i className="bi bi-moon-stars-fill text-xl"></i>
+              {isDarkMode ? (
+                <i className="bi bi-sun-fill text-xl"></i>
+              ) : (
+                <i className="bi bi-moon-stars-fill text-xl"></i>
+              )}
             </button>
-            <button className="text-slate-500 cursor-pointer hover:text-primary">
+            <button className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]">
               <i className="bi bi-bell text-xl"></i>
             </button>
 
-            {/* Profile section with the dropdown logic */}
+            {/* Profile section */}
             <div className="relative">
               <button
                 className="profile-toggle cursor-pointer flex items-center space-x-3"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
                 {dataItem && dataItem.full_name ? (
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-gray-200 text-gray-800 font-bold">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[var(--color-slate-200)] dark:bg-[var(--color-slate-600)] text-[var(--text-color)] dark:text-[var(--text-light)] font-bold">
                     {dataItem.full_name.charAt(0).toUpperCase()}
                   </div>
                 ) : (
@@ -209,25 +216,25 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   />
                 )}
                 <div className="hidden md:block text-left">
-                  <div className="font-bold text-slate-700">
+                  <div className="font-bold text-[var(--text-color)]">
                     {get(dataItem, "full_name", "Bemor")}
                   </div>
-                  <div className="text-sm text-slate-500">Bemor</div>
+                  <div className="text-sm text-[var(--text-light)]">Bemor</div>
                 </div>
               </button>
               {isProfileDropdownOpen && (
-                <div className="profile-dropdown absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                <div className="profile-dropdown absolute right-0 mt-2 w-48 bg-[var(--card-background)] rounded-md shadow-lg py-1 z-10 border border-[var(--border-color)]">
                   <Link
                     href="#"
-                    className="flex items-center px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                    className="flex items-center px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >
-                    <i className="bi bi-gear-fill mr-2 text-slate-500"></i>
+                    <i className="bi bi-gear-fill mr-2 text-[var(--text-light)]"></i>
                     Sozlamalar
                   </Link>
-                  <div className="border-t border-slate-200 my-1"></div>
+                  <div className="border-t border-[var(--border-color)] my-1"></div>
                   <Link
                     href="#"
-                    className="flex items-center px-4 py-2 text-sm text-red-500 hover:bg-slate-100"
+                    className="flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >
                     <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
                   </Link>
@@ -238,7 +245,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         </header>
 
         {/* Main Content */}
-        <main className="flex-1 relative overflow-y-auto p-6 md:p-8 bg-slate-100">
+        <main className="flex-1 relative overflow-y-auto p-6 md:p-8">
           {isLoading ? <LoadingOverlay /> : children}
         </main>
       </div>
@@ -246,7 +253,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   );
 };
 
-// SidebarItem component remains unchanged
 interface SidebarItemProps {
   icon: React.ComponentType<{ size?: number; className?: string }>;
   text: string;
@@ -269,23 +275,23 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
   <Link
     href={link}
     onClick={onClick}
-    className={`flex items-center py-4 px-4 text-base font-semibold text-white rounded-lg ${
+    className={`flex items-center py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 ${
       active
-        ? "bg-[#4153F1] text-white leading-[6px] font-[Inter] font-semibold"
-        : "text-slate-500 hover:bg-primary-50 hover:text-primary"
+        ? "bg-[var(--color-primary)] text-white"
+        : "text-[var(--text-light)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--color-primary)] dark:hover:text-white"
     } ${className}`}
   >
     <div className="flex items-center justify-center">
       <Icon
         size={20}
-        className={`mr-3 text-xl ${active ? "text-white" : "text-slate-500"}`}
+        className={`mr-3 text-xl transition-colors duration-200 ${
+          active
+            ? "text-white"
+            : "text-[var(--text-light)] hover:text-[var(--color-primary)] dark:hover:text-white"
+        }`}
       />
     </div>
-    {open && (
-      <span className={`${active ? "text-white" : "text-slate-500"}`}>
-        {text}
-      </span>
-    )}
+    {open && <span className="transition-colors duration-200">{text}</span>}
   </Link>
 );
 

@@ -22,7 +22,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        {/* Favicons */}
         <link
           href="https://placehold.co/32x32/3a86ff/ffffff?text=✈"
           rel="icon"
