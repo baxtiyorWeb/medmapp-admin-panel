@@ -871,7 +871,7 @@ const StatusCard: React.FC = () => {
                   to&apos;g&apos;riligini tasdiqlayman hamda{" "}
                   <a
                     target="_blank"
-                    href="https://medmapp.uz/public-offer-uz"
+                    href="https://medmapp.uz/public-offer"
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Ommaviy oferta
@@ -879,7 +879,7 @@ const StatusCard: React.FC = () => {
                   va{" "}
                   <a
                     target="_blank"
-                    href="https://medmapp.uz/user-agreement-uz"
+                    href="https://medmapp.uz/privacy-policy"
                     onClick={(e) => {
                       e.preventDefault();
                     }}

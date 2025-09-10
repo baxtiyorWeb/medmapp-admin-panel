@@ -343,7 +343,7 @@ export default function ServiceCard() {
           >
             {/* Visa Card */}
             <div
-              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
+              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center  hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
               data-service-id="visa"
             >
               <div className="w-16 h-16 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]/50 flex items-center justify-center mb-4">
@@ -366,7 +366,7 @@ export default function ServiceCard() {
 
             {/* Transfer Card */}
             <div
-              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
+              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center  hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
               data-service-id="transfer"
             >
               <div className="w-16 h-16 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]/50 flex items-center justify-center mb-4">
@@ -389,7 +389,7 @@ export default function ServiceCard() {
 
             {/* Hotel Card */}
             <div
-              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
+              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center  hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
               data-service-id="hotel"
             >
               <div className="w-16 h-16 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]/50 flex items-center justify-center mb-4">
@@ -411,7 +411,7 @@ export default function ServiceCard() {
 
             {/* Translator Card */}
             <div
-              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
+              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center  hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
               data-service-id="translator"
             >
               <div className="w-16 h-16 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]/50 flex items-center justify-center mb-4">
@@ -434,7 +434,7 @@ export default function ServiceCard() {
 
             {/* SIM Card */}
             <div
-              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
+              className="service-card bg-[var(--card-background)] rounded-2xl p-5 text-center flex flex-col items-center  hover:shadow-xl hover:-translate-y-1 transition-all duration-300 border border-[var(--border-color)]"
               data-service-id="simcard"
             >
               <div className="w-16 h-16 rounded-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-900)]/50 flex items-center justify-center mb-4">
