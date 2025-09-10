@@ -508,7 +508,6 @@ export default function DashboardPage() {
                       </button>
                     </div>
 
-                    {/* Offcanvas Filter Button */}
                     <button
                       className="btn btn-light border w-[150px]"
                       type="button"

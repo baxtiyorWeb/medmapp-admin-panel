@@ -218,12 +218,19 @@ const StatusCard: React.FC = () => {
   const closeModal = (): void => {
     setIsModalOpen(false);
     setCurrentStep(1);
-    setFormData((prev) => ({ ...prev, documents: [], phone: "" }));
+    // Faqat ariza uchun maxsus maydonlarni tozalaymiz.
+    // Shaxsiy ma'lumotlar (fullName, dob, gender, phone) saqlanib qoladi.
+    setFormData((prev) => ({
+      ...prev,
+      email: "", // Pochta profildan olinmaydi, shuning uchun tozalaymiz
+      complaint: "",
+      diagnosis: "",
+      documents: [],
+    }));
     setErrors({});
     setConfirmChecked(false);
     setSubmitError(null);
   };
-
   // Validate phone number
   const validateStep = (step: number): boolean => {
     const newErrors: Errors = {};
@@ -514,10 +521,10 @@ const StatusCard: React.FC = () => {
   };
 
   const stepVariants = {
-  enter: { opacity: 0, position: "absolute" },
-  center: { opacity: 1, position: "relative" },
-  exit: { opacity: 0, position: "absolute" },
-};
+    enter: { opacity: 0, position: "absolute" },
+    center: { opacity: 1, position: "relative" },
+    exit: { opacity: 0, position: "absolute" },
+  };
   interface Step {
     icon: string;
     title: string;
@@ -880,7 +887,6 @@ const StatusCard: React.FC = () => {
                   <a
                     target="_blank"
                     href="https://medmapp.uz/privacy-policy"
-                   
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Foydalanish shartlari
@@ -900,7 +906,7 @@ const StatusCard: React.FC = () => {
     return (
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
-        layout
+          layout
           key={currentStep}
           custom={direction}
           variants={stepVariants}
@@ -908,7 +914,7 @@ const StatusCard: React.FC = () => {
           animate="top"
           exit="exit"
           transition={{ type: "tween", duration: 0.1, ease: "easeInOut" }}
-           className="form-step active " // yoki kerakli balandlik
+          className="form-step active " // yoki kerakli balandlik
           data-step={currentStep}
         >
           <div className="w-full max-w-3xl mx-auto">
