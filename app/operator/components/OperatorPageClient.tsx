@@ -760,7 +760,7 @@ Moliya"
                           ) : (
                             <div className="text-center text-muted p-5">
                               <i className="bi bi-moon-stars fs-2"></i>
-                              <p className="mt-2">Bemorlar yo'q</p>
+                              <p className="mt-2">Bemorlar yo&apos;q</p>
                             </div>
                           )}
                         </div>
@@ -803,7 +803,7 @@ Moliya"
                 <div className="details-card-header">
                   <h6>
                     <i className="bi bi-person-badge me-2"></i>Shaxsiy
-                    ma'lumotlar
+                    ma&apos;lumotlar
                   </h6>
                   {editingSection !== "personal" ? (
                     <button
@@ -843,7 +843,7 @@ Moliya"
                         />
                       </div>
                       <div className="details-info-item">
-                        <span className="label">Tug'ilgan sana</span>
+                        <span className="label">Tug&apos;ilgan sana</span>
                         <input
                           type="date"
                           className="form-control form-control-sm"
@@ -895,7 +895,7 @@ Moliya"
                         </span>
                       </div>
                       <div className="details-info-item">
-                        <span className="label">Tug'ilgan sana</span>
+                        <span className="label">Tug&apos;ilgan sana</span>
                         <span className="value">
                           {selectedPatient.details.dob}
                         </span>
@@ -925,7 +925,7 @@ Moliya"
               <div className="details-card">
                 <div className="details-card-header">
                   <h6>
-                    <i className="bi bi-heart-pulse me-2"></i>Tibbiy ma'lumotlar
+                    <i className="bi bi-heart-pulse me-2"></i>Tibbiy ma&apos;lumotlar
                   </h6>
                   {editingSection !== "medical" ? (
                     <button
@@ -1036,7 +1036,7 @@ Moliya"
                   className="btn btn-outline-danger w-100"
                   onClick={() => setPatientToDelete(selectedPatient)}
                 >
-                  <i className="bi bi-trash me-2"></i>Bemorni o'chirish
+                  <i className="bi bi-trash me-2"></i>Bemorni o&apos;chirish
                 </button>
               </div>
             </>
@@ -1057,7 +1057,7 @@ Moliya"
           ></button>
         </div>
         <div className="offcanvas-body">
-          <p>Bu yerda filtrlar bo'ladi...</p>
+          <p>Bu yerda filtrlar bo&apos;ladi...</p>
         </div>
       </div>
       <div className="modal fade" id="newPatientModal" tabIndex={-1}>
@@ -1106,7 +1106,7 @@ Moliya"
                 <div
                   className={`wizard-step ${wizardStep === 1 ? "active" : ""}`}
                 >
-                  <h6 className="mb-3">Shaxsiy ma'lumotlar</h6>
+                  <h6 className="mb-3">Shaxsiy ma&apos;lumotlar</h6>
                   <div className="row g-3">
                     <div className="col-md-6">
                       <label className="form-label">Ism-familiya</label>
@@ -1126,7 +1126,7 @@ Moliya"
                       />
                     </div>
                     <div className="col-md-6">
-                      <label className="form-label">Tug'ilgan sana</label>
+                      <label className="form-label">Tug&apos;ilgan sana</label>
                       <input type="date" name="dob" className="form-control" />
                     </div>
                     <div className="col-md-6">
@@ -1159,7 +1159,7 @@ Moliya"
                 <div
                   className={`wizard-step ${wizardStep === 2 ? "active" : ""}`}
                 >
-                  <h6 className="mb-3">Tibbiy ma'lumotlar</h6>
+                  <h6 className="mb-3">Tibbiy ma&apos;lumotlar</h6>
                   <div className="row g-3">
                     <div className="col-12">
                       <label className="form-label">Shikoyatlar</label>
@@ -1210,7 +1210,7 @@ Moliya"
                       className="form-check-label"
                       htmlFor="form-agreement"
                     >
-                      Men kiritgan barcha ma'lumotlarning to'g'riligini
+                      Men kiritgan barcha ma&apos;lumotlarning to&apos;g&apos;riligini
                       tasdiqlayman.
                     </label>
                   </div>
@@ -1241,7 +1241,7 @@ Moliya"
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Bosqichni O'zgartirish</h5>
+              <h5 className="modal-title">Bosqichni O&apos;zgartirish</h5>
               <button
                 type="button"
                 className="btn-close"
@@ -1329,7 +1329,7 @@ Moliya"
                   </li>
                 ))}
               </ul>
-              <h6>Yangi Holat Qo'shish</h6>
+              <h6>Yangi Holat Qo&apos;shish</h6>
               <div className="input-group">
                 <input
                   type="text"
@@ -1346,11 +1346,11 @@ Moliya"
                   <option value="success">Yashil</option>
                   <option value="warning">Sariq</option>
                   <option value="danger">Qizil</option>
-                  <option value="primary">Ko'k</option>
+                  <option value="primary">Ko&apos;k</option>
                   <option value="secondary">Kulrang</option>
                 </select>
                 <button className="btn btn-primary" onClick={handleAddNewTag}>
-                  Qo'shish
+                  Qo&apos;shish
                 </button>
               </div>
             </div>
@@ -1371,7 +1371,7 @@ Moliya"
             <div className="modal-body">
               <p>
                 Rostdan ham <strong>{patientToDelete?.name}</strong> ismli
-                bemorni o'chirmoqchimisiz? Bu amalni orqaga qaytarib bo'lmaydi.
+                bemorni o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib bo&apos;lmaydi.
               </p>
             </div>
             <div className="modal-footer">
@@ -1380,14 +1380,14 @@ Moliya"
                 className="btn btn-secondary"
                 onClick={() => setPatientToDelete(null)}
               >
-                Yo'q
+                Yo&apos;q
               </button>
               <button
                 type="button"
                 className="btn btn-danger"
                 onClick={confirmDeletePatient}
               >
-                Ha, o'chirish
+                Ha, o&apos;chirish
               </button>
             </div>
           </div>
