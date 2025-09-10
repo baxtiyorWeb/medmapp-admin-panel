@@ -151,7 +151,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             icon={LogOut}
             text="Chiqish"
             open={isSidebarOpen}
-            className="text-[var(--color-danger)] absolute bottom-10"
+            className="text-white w-[80%]  bg-[var(--color-danger)]/30  absolute bottom-10"
             active={pathname === "/login"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
@@ -233,7 +233,11 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   </Link>
                   <div className="border-t border-[var(--border-color)] my-1"></div>
                   <Link
-                    href="#"
+                    href="/login"
+                    onClick={() => {
+                      localStorage.removeItem("access_token")
+                      localStorage.removeItem("refresh_token")
+                    }}
                     className="flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >
                     <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
@@ -291,7 +295,17 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
         }`}
       />
     </div>
-    {open && <span className="transition-colors duration-200">{text}</span>}
+    {open && (
+      <span
+        className={`mr-3 transition-colors duration-200 ${
+          active
+            ? "text-white"
+            : "text-[var(--text-light)] hover:text-[var(--color-primary)] dark:hover:text-white"
+        }`}
+      >
+        {text}
+      </span>
+    )}
   </Link>
 );
 

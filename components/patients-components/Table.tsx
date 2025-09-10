@@ -206,9 +206,9 @@ const Table = () => {
                   <th scope="col" className="px-6 py-3">
                     Ariza ID
                   </th>
-                  <th scope="col" className="px-6 py-3">
+                  {/* <th scope="col" className="px-6 py-3">
                     Klinika
-                  </th>
+                  </th> */}
                   <th scope="col" className="px-6 py-3">
                     Sana
                   </th>
@@ -226,9 +226,9 @@ const Table = () => {
                     <td className="px-6 py-4 h-[61px] font-bold main-content-table-cell id">
                       {app.id}
                     </td>
-                    <td className="px-6 py-4 h-[61px] main-content-table-cell">
+                    {/* <td className="px-6 py-4 h-[61px] main-content-table-cell">
                       {app.clinic}
-                    </td>
+                    </td> */}
                     <td className="px-6 py-4 h-[61px] main-content-table-cell">
                       {app.date}
                     </td>

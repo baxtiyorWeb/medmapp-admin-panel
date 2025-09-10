@@ -631,7 +631,7 @@ const StatusCard: React.FC = () => {
         description: "Bizga yordam berish uchun bu ma'lumotlar juda muhim.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-[var(--card-background)] p-6 md:p-8 rounded-2xl space-y-4 shadow-sm">
+            <div className="bg-[var(--card-background)] px-4 pt-4  rounded-2xl  shadow-sm">
               <InputField
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
@@ -885,9 +885,9 @@ const StatusCard: React.FC = () => {
                   <a
                     target="_blank"
                     href="https://medmapp.uz/privacy-policy"
-                    className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+                    className="font-semibold underline text-primary-600 dark:text-primary-400 hover:underline"
                   >
-                    Foydalanish shartlari
+                  Maxfiylik siyosat
                   </a>
                   bilan tanishib chiqdim.
                 </span>
@@ -916,7 +916,7 @@ const StatusCard: React.FC = () => {
           data-step={currentStep}
         >
           <div className="w-full max-w-3xl mx-auto">
-            <div className="text-center mb-8">
+            <div className="text-center mb-4">
               <div className="w-16 h-16 mx-auto bg-[var(--card-background)] rounded-full flex items-center justify-center">
                 <i
                   className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${
@@ -928,10 +928,10 @@ const StatusCard: React.FC = () => {
                   }`}
                 ></i>
               </div>
-              <h4 className="text-xl font-semibold mt-4 text-[var(--text-color)]">
+              <h4 className="text-xl font-semibold  text-[var(--text-color)]">
                 {steps[currentStep - 1].title}
               </h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-sm text-slate-500 dark:text-slate-400 ">
                 {steps[currentStep - 1].description}
               </p>
             </div>
@@ -950,7 +950,7 @@ const StatusCard: React.FC = () => {
           onClose={() => setShowSuccessNotification(false)}
           title="Muvaffaqiyatli!"
           message="Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
-        shaxsiy kabinetingizga xabar yuboriladi! ✅"
+        shaxsiy kabinetingizga xabar yuboriladi!"
           type="success"
         />
       )}
@@ -1054,7 +1054,7 @@ const StatusCard: React.FC = () => {
                 ></div>
               </div>
             </div>
-            <div className="p-6 overflow-y-auto flex-grow bg-[var(--background-color)] ">
+            <div className="p-3 overflow-y-auto flex-grow bg-[var(--background-color)] ">
               {renderStep()}
             </div>
             <div className="flex items-center justify-between p-4 bg-[var(--background-color)] border-t border-[var(--border-color)] rounded-b-2xl">
