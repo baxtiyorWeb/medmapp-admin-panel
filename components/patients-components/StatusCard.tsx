@@ -1031,7 +1031,7 @@ const StatusCard: React.FC = () => {
               isClosing ? "scale-95" : "scale-100"
             }`}
           >
-            <div className="flex bg-[var(--background-color)] items-center justify-between p-4 border-b border-[var(--border-color)]">
+            <div className="flex  rounded-2xl bg-[var(--background-color)] items-center justify-between p-4 border-b border-[var(--border-color)]">
               <h3 className="text-xl font-semibold text-[var(--text-color)]">
                 Tibbiy konsultatsiya uchun anketa
               </h3>

@@ -10,12 +10,12 @@ import api, { setAuthTokens } from "@/utils/api";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useRouter } from "next/navigation";
 
-// Define interface for API error response
+// API xatolik javobi uchun interfeys
 interface ApiError {
   response?: {
     data?: {
       phone_number?: string;
-      detail?: string; // Added to handle generic error messages
+      detail?: string;
     };
     status?: number;
   };
@@ -50,8 +50,9 @@ export default function Home() {
   const [registerRegion, setRegisterRegion] = useState<string>("");
   const [loginOtp, setLoginOtp] = useState<string[]>(Array(6).fill(""));
   const [registerOtp, setRegisterOtp] = useState<string[]>(Array(6).fill(""));
-  const [otpError, setOtpError] = useState<boolean>(false); // New state for error feedback
+  const [otpError, setOtpError] = useState<boolean>(false);
   const [otpSubmitted, setOtpSubmitted] = useState(false);
+
   const switchForms = (formToShow: "login" | "register") => {
     setActiveForm(formToShow);
     setLoginStep("phone");
@@ -59,7 +60,7 @@ export default function Home() {
     setLoginPhone("");
     setLoginOtp(Array(6).fill(""));
     setRegisterOtp(Array(6).fill(""));
-    setOtpError(false); // Reset error state
+    setOtpError(false);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
   };
 
@@ -127,22 +128,19 @@ export default function Home() {
 
     if (value && index < inputsRef.current.length - 1) {
       inputsRef.current[index + 1]?.focus();
-    } else if (index === inputsRef.current.length - 1 && value) {
-      // Ensure focus stays on the last input if all digits are entered
-      inputsRef.current[index]?.focus();
     }
 
-    // Auto-submit when all 6 digits are entered
     if (newOtp.join("").length === 6) {
       setOtpError(false);
+      const completeOtp = newOtp.join("");
+      const mockEvent = {
+        preventDefault: () => {},
+      } as React.FormEvent<HTMLFormElement>;
+
       if (activeForm === "login") {
-        handleLoginSubmit({
-          preventDefault: () => {},
-        } as React.FormEvent<HTMLFormElement>);
+        handleLoginSubmit(mockEvent, completeOtp);
       } else {
-        handleRegisterSubmit({
-          preventDefault: () => {},
-        } as React.FormEvent<HTMLFormElement>);
+        handleRegisterSubmit(mockEvent, completeOtp);
       }
     }
   };
@@ -155,9 +153,6 @@ export default function Home() {
     inputsRef: React.MutableRefObject<HTMLInputElement[]>
   ) => {
     if (e.key === "Backspace" && index > 0 && !otpState[index]) {
-      const newOtp = [...otpState];
-      newOtp[index - 1] = "";
-      setOtpState(newOtp);
       inputsRef.current[index - 1]?.focus();
     }
   };
@@ -171,29 +166,22 @@ export default function Home() {
     pastedData = pastedData.replace(/\D/g, "");
 
     if (pastedData.length > 0) {
-      const newOtp = pastedData.split("");
-      setOtpState((prev) => {
-        const updatedOtp = [...prev];
-        // Yangilangan OTP ni faqat 6 ta raqam uchun o'rnating
-        for (let i = 0; i < newOtp.length && i < 6; i++) {
-          updatedOtp[i] = newOtp[i];
-        }
-        return updatedOtp;
-      });
-
+      const newOtp = Array(6).fill("");
+      for (let i = 0; i < pastedData.length; i++) {
+        newOtp[i] = pastedData[i];
+      }
+      setOtpState(newOtp);
       showToast("SMS-kod nusxalandi!", "success");
       setOtpError(false);
 
-      // Avtomatik submit qilish
-      if (newOtp.length === 6) {
+      if (pastedData.length === 6) {
+        const mockEvent = {
+          preventDefault: () => {},
+        } as React.FormEvent<HTMLFormElement>;
         if (activeForm === "login") {
-          handleLoginSubmit({
-            preventDefault: () => {},
-          } as React.FormEvent<HTMLFormElement>);
+          handleLoginSubmit(mockEvent, pastedData);
         } else {
-          handleRegisterSubmit({
-            preventDefault: () => {},
-          } as React.FormEvent<HTMLFormElement>);
+          handleRegisterSubmit(mockEvent, pastedData);
         }
       }
     } else {
@@ -261,29 +249,19 @@ export default function Home() {
     }
   };
 
-  // remove this
-  useEffect(() => {
-    if (loginOtp.every((d) => d !== "")) {
-      setOtpError(false);
-      handleLoginSubmit({
-        preventDefault: () => {},
-      } as React.FormEvent<HTMLFormElement>);
-    }
-  }, [loginOtp]);
-
-  const handleLoginSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLoginSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    otpCode: string
+  ) => {
     e.preventDefault();
+    if (isLoading) return;
     setLoading(true);
     setOtpError(false);
-    const otpCode = loginOtp.join("");
     const cleanedPhone = cleanPhoneNumber(loginPhone);
 
-    // Validate OTP length
     if (otpCode.length !== 6) {
       setLoading(false);
       setOtpError(true);
-
-      setOtpSubmitted(false); // Allow retry
       return;
     }
 
@@ -292,11 +270,10 @@ export default function Home() {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
-      setOtpError(false);
+
       if (response.status === 200) {
         setOtpError(false);
         setLoading(false);
-        setOtpError(false);
         showToast("Tizimga muvaffaqiyatli kirdingiz!", "success");
         setAuthTokens(response.data.access, response.data.refresh);
         setTimeout(() => (window.location.href = "/patients-panel"), 800);
@@ -306,27 +283,26 @@ export default function Home() {
       const err = error as ApiError;
       setOtpError(true);
       showToast(
-        err.response?.data?.detail ||
-          err.response?.data?.phone_number ||
-          "Kod noto'g'ri kiritildi!",
+        err.response?.data?.detail || "Kod noto'g'ri kiritildi!",
         "error"
       );
-      setOtpSubmitted(false); // Allow retry
     }
   };
 
-  const handleRegisterSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleRegisterSubmit = async (
+    e: React.FormEvent<HTMLFormElement>,
+    otpCode: string
+  ) => {
     e.preventDefault();
+    if (isLoading) return;
     setLoading(true);
-    const otpCode = registerOtp.join("");
+    setOtpError(false);
     const cleanedPhone = cleanPhoneNumber(registerPhone);
 
-    // Validate OTP length
     if (otpCode.length !== 6) {
       setLoading(false);
       setOtpError(true);
       showToast("6 xonali kodni kiriting!", "error");
-      setOtpSubmitted(false); // Allow retry
       return;
     }
 
@@ -335,11 +311,10 @@ export default function Home() {
         phone_number: `+998${cleanedPhone}`,
         code: otpCode,
       });
-      setOtpError(false);
+
       if (verifyResponse.status === 200) {
         setOtpError(false);
         setLoading(false);
-        setOtpError(false);
         showToast("Muvaffaqiyatli ro'yxatdan o'tdingiz!", "success");
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
         setTimeout(() => (window.location.href = "/patients-panel"), 800);
@@ -349,11 +324,8 @@ export default function Home() {
       const err = error as ApiError;
       setOtpError(true);
       const errorMessage =
-        err.response?.data?.detail ||
-        err.response?.data?.phone_number ||
-        "Ro'yxatdan o'tishda xato yuz berdi!";
+        err.response?.data?.detail || "Ro'yxatdan o'tishda xato yuz berdi!";
       showToast(errorMessage, "error");
-      setOtpSubmitted(false); // Allow retry
     }
   };
 
@@ -382,11 +354,11 @@ export default function Home() {
     }
 
     return () => {
-      if (registerPhoneMaskRef.current) registerPhoneMaskRef.current.destroy();
-      if (loginPhoneMaskRef.current) loginPhoneMaskRef.current.destroy();
+      registerPhoneMaskRef.current?.destroy();
+      loginPhoneMaskRef.current?.destroy();
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, []);
+  }, [activeForm]); // activeForm o'zgarganda maskalarni qayta ishga tushirish uchun qo'shildi
 
   return (
     <>
@@ -401,7 +373,6 @@ export default function Home() {
         <div className="auth-card">
           <div
             className={`progress-bar-container ${isLoading ? "visible" : ""}`}
-            id="progress-bar"
             ref={progressBarRef}
           >
             <div className="progress-bar-line"></div>
@@ -433,7 +404,6 @@ export default function Home() {
             </div>
             <div className="auth-tabs">
               <button
-                id="tab-login"
                 ref={tabLoginRef}
                 className={`auth-tab-btn ${
                   activeForm === "login" ? "active" : ""
@@ -444,7 +414,6 @@ export default function Home() {
                 Kirish
               </button>
               <button
-                id="tab-register"
                 ref={tabRegisterRef}
                 className={`auth-tab-btn ${
                   activeForm === "register" ? "active" : ""
@@ -456,15 +425,15 @@ export default function Home() {
               </button>
             </div>
 
+            {/* Login Form Wrapper */}
             <div
-              id="login-form-wrapper"
               className={`form-wrapper ${
                 activeForm === "login" ? "active" : ""
               }`}
               ref={loginFormWrapperRef}
             >
               {loginStep === "phone" && (
-                <div id="login-phone-step" className="step">
+                <div className="step">
                   <h3 className="fw-bold mb-2">Tizimga kirish</h3>
                   <p className="text-secondary mb-4">
                     Telefon raqamingizni kiriting.
@@ -489,7 +458,6 @@ export default function Home() {
                     <div className="d-grid my-3">
                       <button
                         type="button"
-                        id="login-send-code-btn"
                         className="btn btn-primary btn-lg"
                         disabled={!loginPhoneMaskRef.current?.masked.isComplete}
                         onClick={handleLoginSendCode}
@@ -501,33 +469,21 @@ export default function Home() {
                 </div>
               )}
               {loginStep === "otp" && (
-                <div id="login-otp-step" className="step">
+                <div className="step">
                   <h3 className="fw-bold mb-2">Tasdiqlash</h3>
-                  <p className="text-secondary mb-3" id="login-otp-message">
+                  <p className="text-secondary mb-3">
                     +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni
                     kiriting.
                   </p>
-                  <form id="login-otp-form" onSubmit={handleLoginSubmit}>
-                    <div
-                      className={`otp-input-fields ${
-                        loginOtp.join("").length === 6
-                          ? otpError
-                            ? "otp-error"
-                            : "otp-complete"
-                          : ""
-                      }`}
-                    >
+                  <form
+                    onSubmit={(e) => handleLoginSubmit(e, loginOtp.join(""))}
+                  >
+                    <div className={`otp-input-fields`}>
                       {loginOtp.map((digit, index) => (
                         <input
                           key={index}
                           type="tel"
-                          className={`otp-input ${
-                            otpError
-                              ? "error"
-                              : loginOtp.join("").length === 6
-                              ? "success"
-                              : ""
-                          }`}
+                          className={`otp-input ${otpError ? "error" : ""}`}
                           maxLength={1}
                           inputMode="numeric"
                           value={digit}
@@ -550,18 +506,16 @@ export default function Home() {
                             )
                           }
                           onPaste={(e) => handleOtpPaste(e, setLoginOtp)}
-                          ref={(el: HTMLInputElement | null) => {
-                            if (el) {
-                              loginOtpInputsRef.current[index] = el;
-                            }
+                          ref={(el) => {
+                            if (el) loginOtpInputsRef.current[index] = el;
                           }}
                         />
                       ))}
                     </div>
-                    <div className="validation-message" id="login-otp-error">
+                    <div className="validation-message">
                       {otpError && "Kod noto'g'ri kiritildi."}
                     </div>
-                    <div className="d-grid my-3">
+                       <div className="d-grid my-3">
                       <button
                         type="submit"
                         id="login-verify-btn"
@@ -573,30 +527,21 @@ export default function Home() {
                             <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
                           </p>
                         ) : (
-                          <span className="btn-text">Kirish</span>
+                          <span className="btn-text">Tasdiqlash</span>
                         )}
                       </button>
                     </div>
-                    <div className="text-center small text-secondary mb-2">
-                      Kodning amal qilish muddati: 1 daqiqa
-                    </div>
-                    <div
-                      id="resend-otp-container"
-                      className="text-center small"
-                    >
+                    <div className="text-center small">
                       {isResendDisabled ? (
-                        <span id="timer-text">
-                          Kod kelmadimi? Qayta yuborish uchun:{" "}
-                          <span id="timer">{timer}</span>s
+                        <span className="text-secondary">
+                          Qayta yuborish uchun: {timer}s
                         </span>
                       ) : (
                         <a
                           href="#"
-                          id="resend-otp-link"
                           className="form-switch-link"
                           onClick={(e) => {
                             e.preventDefault();
-                            startTimer();
                             handleLoginSendCode();
                           }}
                         >
@@ -608,19 +553,16 @@ export default function Home() {
                       <a
                         href="#"
                         className="form-switch-link back-link"
-                        id="back-to-login-phone"
                         onClick={(e) => {
                           e.preventDefault();
                           setLoginStep("phone");
                           setLoginOtp(Array(6).fill(""));
-                          setLoginPhone("");
-                          setOtpError(false); // Reset error state
+                          setOtpError(false);
                           if (timerIntervalRef.current)
                             clearInterval(timerIntervalRef.current);
                         }}
                       >
-                        <i className="bi bi-arrow-left-circle"></i>{" "}
-                        <span>Orqaga</span>
+                        <i className="bi bi-arrow-left-circle"></i> Orqaga
                       </a>
                     </p>
                   </form>
@@ -628,15 +570,15 @@ export default function Home() {
               )}
             </div>
 
+            {/* Register Form Wrapper */}
             <div
-              id="register-form-wrapper"
               className={`form-wrapper ${
                 activeForm === "register" ? "active" : ""
               }`}
               ref={registerFormWrapperRef}
             >
               {registerStep === "phone" && (
-                <div id="register-phone-step" className="step">
+                <div className="step">
                   <h3 className="fw-bold mb-2">Ro&apos;yxatdan o&apos;tish</h3>
                   <p className="text-secondary mb-4">
                     Ma&apos;lumotlarni to&apos;ldiring.
@@ -742,7 +684,6 @@ export default function Home() {
                     <div className="d-grid my-3">
                       <button
                         type="button"
-                        id="register-send-code-btn"
                         className="btn btn-primary btn-lg"
                         disabled={!validateRegisterForm()}
                         onClick={handleRegisterSendCode}
@@ -754,33 +695,23 @@ export default function Home() {
                 </div>
               )}
               {registerStep === "otp" && (
-                <div id="register-otp-step" className="step">
+                <div className="step">
                   <h3 className="fw-bold mb-2">Tasdiqlash</h3>
-                  <p className="text-secondary mb-3" id="register-otp-message">
+                  <p className="text-secondary mb-3">
                     +998 {registerPhone} raqamiga yuborilgan 6 xonali kodni
                     kiriting.
                   </p>
-                  <form id="register-otp-form" onSubmit={handleRegisterSubmit}>
-                    <div
-                      className={`otp-input-fields ${
-                        registerOtp.join("").length === 6
-                          ? otpError
-                            ? "otp-error"
-                            : "otp-complete"
-                          : ""
-                      }`}
-                    >
+                  <form
+                    onSubmit={(e) =>
+                      handleRegisterSubmit(e, registerOtp.join(""))
+                    }
+                  >
+                    <div className={`otp-input-fields`}>
                       {registerOtp.map((digit, index) => (
                         <input
                           key={index}
                           type="tel"
-                          className={`otp-input ${
-                            otpError
-                              ? "error"
-                              : registerOtp.join("").length === 6
-                              ? "success"
-                              : ""
-                          }`}
+                          className={`otp-input ${otpError ? "error" : ""}`}
                           maxLength={1}
                           inputMode="numeric"
                           value={digit}
@@ -803,47 +734,42 @@ export default function Home() {
                             )
                           }
                           onPaste={(e) => handleOtpPaste(e, setRegisterOtp)}
-                          ref={(el: HTMLInputElement | null) => {
-                            if (el) {
-                              registerOtpInputsRef.current[index] = el;
-                            }
+                          ref={(el) => {
+                            if (el) registerOtpInputsRef.current[index] = el;
                           }}
                         />
                       ))}
                     </div>
-                    <div className="validation-message" id="register-otp-error">
+                    <div className="validation-message">
                       {otpError && "Kod noto'g'ri kiritildi."}
                     </div>
-                    <div className="d-grid my-3">
+                      <div className="d-grid my-3">
                       <button
                         type="submit"
-                        id="register-verify-btn"
-                        className="btn btn-primary btn-lg"
+                        id="login-verify-btn"
+                        className="btn btn-primary btn-lg flex justify-center items-center"
                         disabled={registerOtp.join("").length !== 6}
                       >
-                        <span className="btn-text">Tasdiqlash</span>
+                        {isLoading ? (
+                          <p className="flex justify-center items-center w-full relative top-3">
+                            <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                          </p>
+                        ) : (
+                          <span className="btn-text">Kirish</span>
+                        )}
                       </button>
                     </div>
-                    <div className="text-center small text-secondary mb-2">
-                      Kodning amal qilish muddati: 1 daqiqa
-                    </div>
-                    <div
-                      id="resend-otp-container"
-                      className="text-center small"
-                    >
+                    <div className="text-center small">
                       {isResendDisabled ? (
-                        <span id="timer-text">
-                          Kod kelmadimi? Qayta yuborish uchun:{" "}
-                          <span id="timer">{timer}</span>s
+                        <span className="text-secondary">
+                          Qayta yuborish uchun: {timer}s
                         </span>
                       ) : (
                         <a
                           href="#"
-                          id="resend-otp-link"
                           className="form-switch-link"
                           onClick={(e) => {
                             e.preventDefault();
-                            startTimer();
                             handleRegisterSendCode();
                           }}
                         >
@@ -854,19 +780,17 @@ export default function Home() {
                     <p className="text-center small mt-3">
                       <a
                         href="#"
-                        id="back-to-register-phone"
                         className="form-switch-link back-link"
                         onClick={(e) => {
                           e.preventDefault();
                           setRegisterStep("phone");
                           setRegisterOtp(Array(6).fill(""));
-                          setOtpError(false); // Reset error state
+                          setOtpError(false);
                           if (timerIntervalRef.current)
                             clearInterval(timerIntervalRef.current);
                         }}
                       >
-                        <i className="bi bi-arrow-left-circle"></i>{" "}
-                        <span>Orqaga</span>
+                        <i className="bi bi-arrow-left-circle"></i> Orqaga
                       </a>
                     </p>
                   </form>

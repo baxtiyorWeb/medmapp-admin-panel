@@ -10,7 +10,7 @@
   height: 40px;
   text-align: center;
   font-size: 18px;
-  border: 1px solid #ced4da;
+  border: 1px solid white;
   border-radius: 6px;
   transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
 }
