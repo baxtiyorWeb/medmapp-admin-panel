@@ -295,8 +295,7 @@ const Table = () => {
 
             {/* Modal Body */}
             <div
-              className="p-6 overflow-y-auto space-y-6 modal-body"
-              style={{ backgroundColor: "rgb(30, 41, 59)" }}
+              className="p-6 bg-[var(--card-background)] overflow-y-auto space-y-6 modal-body"
             >
               {/* Umumiy ma'lumot */}
               <div>
@@ -304,12 +303,8 @@ const Table = () => {
                   Umumiy ma&apos;lumot
                 </h4>
                 <div
-                  className="p-4 rounded-lg space-y-3 text-sm modal-card border"
-                  style={{
-                    backgroundColor: "var(--card-background)",
-                    color: "var(--text-color)",
-                    borderColor: "var(--border-color)",
-                  }}
+                  className="p-4 bg-[var(--card-background)]  var(--border-color) var(--text-color) rounded-lg space-y-3 text-sm modal-card border"
+                  
                 >
                   <div className="flex justify-between">
                     <span>Yuborilgan sana:</span>

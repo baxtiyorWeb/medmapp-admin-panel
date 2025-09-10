@@ -915,11 +915,11 @@ const StatusCard: React.FC = () => {
           key={currentStep}
           custom={direction}
           variants={stepVariants}
-          initial="enter"
+          initial="center"
           animate="center"
           exit="exit"
-          transition={{ type: "tween", stiffness: 500, damping: 30 }}
-          className="form-step active"
+          transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
+           className="form-step active max-h-[600px]" // yoki kerakli balandlik
           data-step={currentStep}
         >
           <div className="w-full max-w-3xl mx-auto">
