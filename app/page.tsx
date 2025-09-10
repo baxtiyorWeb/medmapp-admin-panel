@@ -2,60 +2,10 @@
 import React from "react";
 import { User, HeartPulse, Headset, Hospital } from "lucide-react";
 import { BsShieldLock } from "react-icons/bs";
+import Link from "next/link";
 
 const Portal = () => {
-  const roles = [
-    {
-      id: 1,
-      title: "Bemor Kabineti",
-      description:
-        "Uchrashuvlar tarixi, tahlil natijalari va shaxsiy ma&apos;lumotlarni ko&apos;rish.",
-      icon: <User className="text-xl" />,
-      link: "/patient",
-      color: "bg-blue-100 text-blue-600",
-      buttonColor: "text-blue-600",
-    },
-    {
-      id: 2,
-      title: "Shifokor Kabineti",
-      description:
-        "Qabullar jadvali, bemorlar ro&apos;yxati va maslahatlarni boshqarish.",
-      icon: <HeartPulse className="text-xl" />,
-      link: "/doctor",
-      color: "bg-emerald-100 text-emerald-600",
-      buttonColor: "text-emerald-600",
-    },
-    {
-      id: 3,
-      title: "Operator Paneli",
-      description:
-        "Bemorlar va klinikalar o&apos;rtasidagi jarayonlarni, so&apos;rovlarni va qo&apos;llab-quvvatlashni boshqarish.",
-      icon: <Headset className="text-xl" />,
-      link: "/admin",
-      color: "bg-teal-100 text-teal-600",
-      buttonColor: "text-teal-600",
-    },
-    {
-      id: 4,
-      title: "Klinika Administratori",
-      description:
-        "Klinika faoliyati, shifokorlar va moliyaviy hisobotlarni boshqarish.",
-      icon: <Hospital className="text-xl" />,
-      link: "/clinic",
-      color: "bg-yellow-100 text-yellow-600",
-      buttonColor: "text-yellow-600",
-    },
-    {
-      id: 5,
-      title: "Super Admin Paneli",
-      description:
-        "Platformaning barcha tizimlarini markazlashgan holda boshqarish.",
-      icon: <BsShieldLock className="text-xl" />,
-      link: "/superadmin",
-      color: "bg-red-100 text-red-600",
-      buttonColor: "text-red-600",
-    },
-  ];
+ 
 
   return (
     <main className="main-container">
@@ -73,7 +23,7 @@ const Portal = () => {
         </div>
         <div className="row g-4 justify-center flex flex-wrap w-full gap-4">
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a href="/patients-panel" className="portal-card">
+            <Link href="/patients-panel" className="portal-card">
               <div className="icon-wrapper">
                 <i className="bi bi-person"></i>
               </div>
@@ -85,10 +35,10 @@ const Portal = () => {
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
-            </a>
+            </Link>
           </div>
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a href="/doctors" className="portal-card doctor-card">
+            <Link href="/doctors" className="portal-card doctor-card">
               <div className="icon-wrapper">
                 <i className="bi bi-heart-pulse"></i>
               </div>
@@ -100,10 +50,10 @@ const Portal = () => {
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
-            </a>
+            </Link>
           </div>
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a href="/operator" className="portal-card operator-card">
+            <Link href="/operator" className="portal-card operator-card">
               <div className="icon-wrapper">
                 <i className="bi bi-headset"></i>
               </div>
@@ -115,10 +65,10 @@ const Portal = () => {
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
-            </a>
+            </Link>
           </div>
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a href="clinic/index.html" className="portal-card admin-card">
+            <Link href="clinic/index.html" className="portal-card admin-card">
               <div className="icon-wrapper">
                 <i className="bi bi-hospital"></i>
               </div>
@@ -130,10 +80,10 @@ const Portal = () => {
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
-            </a>
+            </Link>
           </div>
           <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <a
+            <Link
               href="superadmin/index.html"
               className="portal-card superadmin-card"
             >
@@ -147,7 +97,7 @@ const Portal = () => {
               <span className="btn-login">
                 Kirish <i className="bi bi-arrow-right-short"></i>
               </span>
-            </a>
+            </Link>
           </div>
         </div>
       </div>

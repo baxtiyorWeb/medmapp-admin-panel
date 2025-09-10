@@ -117,7 +117,7 @@ body {
   text-align: center;
   transition: all 0.3s ease;
   text-decoration: none;
-  color: var(--text-color);
+  color: red;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -163,7 +163,7 @@ body {
 
 .portal-card h3 {
   font-weight: 600;
-  color: var(--color-secondary);
+  color: var(--text-color);
   font-size: 1.25rem;
 }
 
@@ -479,7 +479,7 @@ body {
 }
 
 .form-switch-link {
-  color: var(--color-primary);
+  /* color: var(--color-primary); */
   font-weight: 600;
   cursor: pointer;
   display: inline-flex;
@@ -490,7 +490,7 @@ body {
 
 .form-switch-link:hover {
   text-decoration: none;
-  color: var(--color-primary-600);
+  /* color: var(--color-primary-600); */
 }
 
 /* Xatolik xabarlari */
@@ -517,7 +517,7 @@ body {
 }
 
 #resend-otp-link.disabled {
-  color: var(--text-light);
+  /* color: var(--text-light); */
   pointer-events: none;
 }
 
@@ -976,4 +976,7 @@ body {
   font-weight: 600 !important;
   color: var(--secondary-color) !important;
   margin-bottom: 0;
+}
+a{
+  color: var(--text-color) !important;
 }
