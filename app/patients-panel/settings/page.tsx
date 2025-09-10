@@ -58,12 +58,12 @@ const Settings = () => {
         <div className="flex-1 flex flex-col overflow-hidden ">
           <main className="flex-1  ">
             <div className="max-w-4xl mx-auto space-y-8">
-              <div className="bg-white rounded-2xl shadow-lg">
-                <div className="p-6 border-b border-slate-200">
-                  <h2 className="text-lg font-bold text-slate-800">
+              <div className="bg-[var(--card-background)] rounded-2xl shadow-lg">
+                <div className="p-6 border-b border-[var(--border-color)]">
+                  <h2 className="text-lg font-bold text-[var(--text-color)]">
                     Profil Sozlamalari
                   </h2>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-[var(--text-color)]">
                     Shaxsiy ma&apos;lumotlaringizni yangilang.
                   </p>
                 </div>
@@ -75,10 +75,10 @@ const Settings = () => {
                       alt="Profil rasmi"
                     />
                     <div>
-                      <button className="bg-[#4153F1] text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
+                      <button className="bg-[#4153F1] text-[var(--text-color)] text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
                         Rasm yuklash
                       </button>
-                      <button className="text-sm text-slate-500 hover:text-danger ml-3">
+                      <button className="text-sm text-[var(--text-color)] hover:text-danger ml-3">
                         O&apos;chirish
                       </button>
                     </div>
@@ -87,7 +87,7 @@ const Settings = () => {
                     <div>
                       <label
                         htmlFor="fullName"
-                        className="text-sm font-medium text-slate-700 mb-1 block"
+                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                       >
                         To&apos;liq ism
                       </label>
@@ -95,13 +95,13 @@ const Settings = () => {
                         type="text"
                         id="fullName"
                         defaultValue="Ali Valiyev"
-                        className="w-full p-3 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="email"
-                        className="text-sm font-medium text-slate-700 mb-1 block"
+                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                       >
                         Elektron pochta
                       </label>
@@ -109,13 +109,13 @@ const Settings = () => {
                         type="email"
                         id="email"
                         defaultValue="ali.valiyev@example.com"
-                        className="w-full p-3 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
+                        className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="phone"
-                        className="text-sm font-medium text-slate-700 mb-1 block"
+                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                       >
                         Telefon raqam (kirish uchun)
                       </label>
@@ -123,20 +123,20 @@ const Settings = () => {
                         type="tel"
                         id="phone"
                         defaultValue="+998 90 123 45 67"
-                        className="w-full p-3 bg-slate-200 border border-slate-300 rounded-lg cursor-not-allowed"
+                        className="w-full p-3 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg cursor-not-allowed"
                         disabled
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="region"
-                        className="text-sm font-medium text-slate-700 mb-1 block"
+                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                       >
                         Viloyat
                       </label>
                       <select
                         id="region"
-                        className="w-full p-3 bg-slate-100 border border-slate-300 rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
+                        className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
                       >
                         <option>Toshkent shahri</option>
                         <option>Toshkent viloyati</option>
@@ -156,16 +156,16 @@ const Settings = () => {
                     </div>
                   </div>
                 </div>
-                <div className="p-6 bg-slate-50 rounded-b-2xl text-right">
-                  <button className="bg-primary text-white font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
+                <div className="p-6 bg-[var(--card-background)] rounded-b-2xl text-right">
+                  <button className="bg-primary text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
                     O&apos;zgarishlarni saqlash
                   </button>
                 </div>
               </div>
 
               {/* Danger Zone */}
-              <div className="bg-white rounded-2xl shadow-lg border-2 border-[#EF4444]/20">
-                <div className="p-6 border-b border-slate-200">
+              <div className="bg-[var(--card-background)] rounded-2xl shadow-lg border-2 border-[#EF4444]/20">
+                <div className="p-6 border-b border-[var(--border-color)]">
                   <h2 className="text-lg  font-bold text-[#EF4444]">
                     Xavfli Hudud
                   </h2>
@@ -173,10 +173,10 @@ const Settings = () => {
                 <div className="p-6">
                   <div className="flex flex-col sm:flex-row justify-between sm:items-center">
                     <div className="mb-3 sm:mb-0">
-                      <h4 className="font-semibold text-slate-700">
+                      <h4 className="font-semibold text-[var(--text-color)]">
                         Hisobni o&apos;chirish
                       </h4>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-[var(--text-color)]">
                         Hisobingiz o&apos;chirilgach, uni qayta tiklab
                         bo&apos;lmaydi.
                       </p>

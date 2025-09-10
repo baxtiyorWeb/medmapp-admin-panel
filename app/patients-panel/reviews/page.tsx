@@ -68,11 +68,11 @@ const Home = () => {
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
               {/* Rating Summary */}
               <div className="lg:col-span-4">
-                <div className="bg-white rounded-2xl shadow-lg p-6 text-center">
+                <div className="bg-[var(--card-background)] rounded-2xl shadow-lg p-6 text-center">
                   <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">
                     AKFA MEDLINE KLINIKASI
                   </h3>
-                  <p className="text-6xl font-bold text-slate-800 my-2">4.8</p>
+                  <p className="text-6xl font-bold text-[var(--text-color)] my-2">4.8</p>
                   <div className="star-rating text-2xl mb-2 flex justify-center items-center">
                     <BsStarFill className="text-[#F59E0B] "/>
                     <BsStarFill className="text-[#F59E0B] "/>
@@ -81,14 +81,14 @@ const Home = () => {
                     <BsStarFill className="text-[#F59E0B] "/>
                   </div>
                   <p className="text-sm text-slate-500">152 ta izoh asosida</p>
-                  <hr className="my-6 border-slate-200" />
+                  <hr className="my-6 border-[var(--border-color)]" />
                   <div className="rating-breakdown text-left space-y-2">
                     {[5, 4, 3, 2, 1].map((star) => (
                       <div key={star} className="flex items-center gap-2 ">
                         <span className="text-sm text-slate-500 ">
                           {star} <BsStarFill className="my-1 text-sm"/>
                         </span>
-                        <div className="w-full bg-slate-200 rounded-full h-2">
+                        <div className="w-full bg-[var(--input-bg)] rounded-full h-2">
                           <div
                             className="progress-bar rounded-full h-2"
                             style={{
@@ -112,14 +112,14 @@ const Home = () => {
 
               {/* Reviews List */}
               <div className="lg:col-span-8">
-                <div className="bg-white rounded-2xl shadow-lg">
-                  <div className="p-4 sm:p-6 border-b border-slate-200 flex justify-between items-center">
-                    <h2 className="text-lg font-bold text-slate-800">
+                <div className="bg-[var(--card-background)] rounded-2xl shadow-lg">
+                  <div className="p-4 sm:p-6 border-b border-[var(--border-color)] flex justify-between items-center">
+                    <h2 className="text-lg font-bold text-[var(--text-color)]">
                       Barcha izohlar (152)
                     </h2>
                     <button
                       onClick={() => setIsReviewModalOpen(true)}
-                      className="bg-primary text-white font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2"
+                      className="bg-primary text-[var(--text-color)] font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition-colors flex items-center gap-2"
                     >
                       <i className="bi bi-pencil-square"></i> Izoh qoldirish
                     </button>
@@ -135,7 +135,7 @@ const Home = () => {
                         />
                         <div className="flex-grow">
                           <div className="flex justify-between items-center">
-                            <h4 className="font-bold text-slate-800">
+                            <h4 className="font-bold text-[var(--text-color)]">
                               Sarvinoz Karimova
                             </h4>
                             <p className="text-sm text-slate-500">
@@ -170,7 +170,7 @@ const Home = () => {
                         />
                         <div className="flex-grow">
                           <div className="flex justify-between items-center">
-                            <h4 className="font-bold text-slate-800">
+                            <h4 className="font-bold text-[var(--text-color)]">
                               Ali Valiyev
                             </h4>
                             <p className="text-sm text-slate-500">
@@ -201,9 +201,9 @@ const Home = () => {
         {/* Review Modal */}
         {isReviewModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4">
-              <div className="flex items-center justify-between p-5 border-b border-slate-200">
-                <h3 className="text-xl font-semibold text-slate-800">
+            <div className="bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4">
+              <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                <h3 className="text-xl font-semibold text-[var(--text-color)]">
                   Fikr bildirish
                 </h3>
                 <button
@@ -262,14 +262,14 @@ const Home = () => {
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-end p-5 border-t border-slate-200 bg-slate-50 rounded-b-2xl space-x-3">
+              <div className="flex items-center justify-end p-5 border-t border-[var(--border-color)] bg-slate-50 rounded-b-2xl space-x-3">
                 <button
                   onClick={() => setIsReviewModalOpen(false)}
-                  className="bg-slate-200 text-slate-800 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition"
+                  className="bg-[var(--input-bg)] text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-slate-300 transition"
                 >
                   Bekor qilish
                 </button>
-                <button className="bg-primary text-white font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
+                <button className="bg-primary text-[var(--text-color)] font-bold py-2 px-5 rounded-lg hover:bg-primary-600 transition">
                   Yuborish
                 </button>
               </div>
