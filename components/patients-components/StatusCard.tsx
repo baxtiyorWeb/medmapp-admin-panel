@@ -880,28 +880,23 @@ const StatusCard: React.FC = () => {
                   Men kiritgan barcha ma&apos;lumotlarning
                   to&apos;g&apos;riligini tasdiqlayman hamda{" "}
                   <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Ommaviy oferta matni shu yerda ko'rsatiladi.");
-                    }}
+                    target="_blank"
+                    href="https://medmapp.uz/public-offer-uz"
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Ommaviy oferta
                   </a>{" "}
                   va{" "}
                   <a
-                    href="#"
+                    target="_blank"
+                    href="https://medmapp.uz/user-agreement-uz"
                     onClick={(e) => {
                       e.preventDefault();
-                      alert(
-                        "Foydalanish shartlari matni shu yerda ko'rsatiladi."
-                      );
                     }}
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Foydalanish shartlari
-                  </a>{" "}
+                  </a>
                   bilan tanishib chiqdim.
                 </span>
               </label>
@@ -923,7 +918,7 @@ const StatusCard: React.FC = () => {
           initial="enter"
           animate="center"
           exit="exit"
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          transition={{ type: "tween", stiffness: 500, damping: 30 }}
           className="form-step active"
           data-step={currentStep}
         >
@@ -1066,7 +1061,9 @@ const StatusCard: React.FC = () => {
                 ></div>
               </div>
             </div>
-            <div className="p-6 overflow-y-auto flex-grow bg-[var(--background-color)] ">{renderStep()}</div>
+            <div className="p-6 overflow-y-auto flex-grow bg-[var(--background-color)] ">
+              {renderStep()}
+            </div>
             <div className="flex items-center justify-between p-4 bg-[var(--background-color)] border-t border-[var(--border-color)] rounded-b-2xl">
               <button
                 type="button"
