@@ -13,6 +13,7 @@
   --text-color: #344054;
   --text-light: #667085;
   --border-color: #eaecf0;
+  --input-fields-bg: #f4f6fc;
 }
 
 @theme {
@@ -60,11 +61,13 @@ html.dark {
   --card-background: #334155;
   --text-color: #e0e0e0;
   --text-light: #a0a0a0;
+  --opacity-border: ""
   --border-color: #333333;
   --danger-light: #4a2724;
   --success-light: rgba(18, 183, 106, 0.1);
   --warning-light: rgba(247, 144, 9, 0.1);
   --info-light: rgba(13, 202, 240, 0.1);
+  --input-fields-bg: #1E293B;
 }
 /* ----- O'zgaruvchilar bo'limi tugadi ----- */
 
