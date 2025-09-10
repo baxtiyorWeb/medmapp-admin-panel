@@ -173,8 +173,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             >
               <i className="bi bi-list text-3xl"></i>
             </button>
-            <h1 className="hidden md:block text-2xl font-semibold text-[var(--text-color)]">
-              Boshqaruv Paneli
+            <h1 className="hidd en md:block text-2xl font-semibold text-[var(--text-color)]">
+              Boshqaruv paneli
             </h1>
           </div>
           <div className="flex items-center space-x-3 md:space-x-5">
