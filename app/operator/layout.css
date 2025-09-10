@@ -19,11 +19,11 @@
   --sidebar-collapsed-width: 88px;
 }
 
-html.dark-mode {
+html.dark {
   --primary-light: rgba(65, 84, 241, 0.1);
   --secondary-color: #dbe2ff;
-  --background-color: #121212;
-  --card-background: #334155;
+   --background-color: #0F172A;
+  --card-background: #1E293B;
   --text-color: #e0e0e0;
   --text-light: #a0a0a0;
   --border-color: #333333;
@@ -80,25 +80,6 @@ body {
 .sidebar-nav {
   flex-grow: 1;
 }
-.sidebar-nav .nav-link {
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text-light);
-  padding: 10px 12px;
-  border-radius: 6px;
-  margin-bottom: 4px;
-  transition: all 0.2s ease-in-out;
-  white-space: nowrap;
-}
-.sidebar-nav .nav-link i {
-  font-size: 20px;
-  margin-right: 12px;
-  flex-shrink: 0;
-  width: 24px;
-  text-align: center;
-}
 .sidebar-nav .nav-link:hover {
   background: var(--primary-light);
   color: var(--primary-color);
@@ -108,24 +89,7 @@ body {
   color: #fff;
   font-weight: 600;
 }
-.sidebar-nav .nav-link.active i {
-  color: #fff;
-}
 
-.sidebar .logout {
-  margin-top: auto;
-  padding-top: 15px;
-  border-top: 1px solid var(--border-color);
-}
-.sidebar .logout .nav-link {
-  color: var(--danger-color);
-  margin-top: 5px;
-}
-.sidebar .logout .nav-link:hover {
-  background-color: var(--danger-light);
-  color: var(--danger-color);
-  font-weight: 600;
-}
 
 /* Main Content */
 .main-content {
@@ -176,7 +140,6 @@ html.dark-mode .pagetitle h1 {
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
@@ -699,8 +662,5 @@ body.sidebar-collapsed .sidebar-nav .nav-link i {
   body.sidebar-toggled .mobile-overlay {
     display: block;
   }
-  .page-controls {
-    flex-direction: column;
-    align-items: flex-start;
-  }
+ 
 }

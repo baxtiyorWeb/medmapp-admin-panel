@@ -9,8 +9,23 @@ import {
   Stage,
   Tag,
 } from "../../../lib/data";
+import {
+  Calendar,
+  Stethoscope,
+  MessageSquare,
+  Settings,
+  LogOut,
+} from "lucide-react";
+import { BsFillGrid1X2Fill } from "react-icons/bs";
 import Sortable from "sortablejs";
 import { Modal, Offcanvas, Tooltip, Toast } from "bootstrap";
+import useDarkMode from "@/hooks/useDarkMode";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { get, isArray } from "lodash";
+import useProfile from "@/hooks/useProfile";
 
 type PatientToMove = { patientId: number; newStageId: string } | null;
 
@@ -21,7 +36,6 @@ export default function DashboardPage() {
   const [stages] = useState<Stage[]>(initialStages);
   const [tags, setTags] = useState<Tag[]>(initialTags);
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeTimeFilter, setActiveTimeFilter] = useState("Haftalik");
   const [filteredPatients, setFilteredPatients] = useState<Patient[]>(patients);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [editingSection, setEditingSection] = useState<
@@ -37,6 +51,12 @@ export default function DashboardPage() {
   const [newPatientFiles, setNewPatientFiles] = useState<File[]>([]);
   const [newTagName, setNewTagName] = useState("");
   const [newTagColor, setNewTagColor] = useState("success");
+  const [isDarkMode, toggleDarkMode] = useDarkMode();
+
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const pathname = usePathname();
 
   const offcanvasInstance = useRef<Offcanvas | null>(null);
   const stageModalInstance = useRef<Modal | null>(null);
@@ -45,6 +65,47 @@ export default function DashboardPage() {
   const tagModalInstance = useRef<Modal | null>(null);
   const kanbanBoardRef = useRef<HTMLDivElement>(null);
   const isMounted = useRef(false);
+
+  const { fetchProfile } = useProfile();
+  const { data, isLoading } = useQuery({
+    queryKey: ["profile"],
+    queryFn: async () => await fetchProfile(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const isData = isArray(data) ? data : [data];
+  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+
+  useEffect(() => {
+    const handleResize = () => {
+      const mobileView = window.innerWidth < 768;
+      setIsMobile(mobileView);
+      setIsSidebarOpen(!mobileView);
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const profileToggle = document.querySelector(".profile-toggle");
+      const profileDropdown = document.querySelector(".profile-dropdown");
+      if (
+        isProfileDropdownOpen &&
+        profileToggle &&
+        profileDropdown &&
+        !profileToggle.contains(event.target as Node) &&
+        !profileDropdown.contains(event.target as Node)
+      ) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isMobile, isProfileDropdownOpen]);
 
   const showToast = (
     message: string,
@@ -176,14 +237,7 @@ export default function DashboardPage() {
     if (window.innerWidth < 1200) setSidebarToggled(!isSidebarToggled);
     else setSidebarCollapsed(!isSidebarCollapsed);
   };
-  const handleThemeToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    const newTheme = document.documentElement.classList.contains("dark-mode")
-      ? "light"
-      : "dark";
-    document.documentElement.classList.toggle("dark-mode");
-    localStorage.setItem("theme", newTheme);
-  };
+
   const handleStartEditing = (section: "personal" | "medical") => {
     if (!selectedPatient) return;
     setEditingSection(section);
@@ -330,163 +384,195 @@ export default function DashboardPage() {
           isSidebarToggled ? "sidebar-toggled" : ""
         }`}
       >
-        <aside id="sidebar" className="sidebar">
-          <a href="#" className="logo d-flex align-items-center">
-            <img
-              src="https://medmap.uz/images/MedMapp_Logo_shaffof.png"
-              alt="MedMap Logo"
-              className="logo-full"
-            />
-            <img
-              src="https://medmap.uz/images/favicon.png"
-              alt="MedMap Icon"
-              className="logo-icon"
-            />
-          </a>
-          <div className="sidebar-nav nav flex-column mt-4 flex-grow-1">
-            <a className="nav-link active" href="#">
-              <i className="bi bi-grid-1x2-fill"></i>
-              <span>Boshqaruv Paneli</span>
-            </a>
-            <a className="nav-link" href="#">
-              <i className="bi bi-telephone-inbound"></i>
-              <span>Yangi Murojaatlar</span>
-            </a>
-            <a className="nav-link" href="#">
-              <i className="bi bi-check2-circle"></i>
-              <span>Bajarilgan Murojaatlar</span>
-            </a>
-            <a className="nav-link" href="#">
-              <i className="bi bi-building"></i>
-              <span>Klinikalar Bazasi</span>
-            </a>
-            <a className="nav-link" href="#">
-              <i className="bi bi-cash-coin"></i>
-              <span>Moliya</span>
-            </a>
+        <aside
+          id="sidebar"
+          className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)]  flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
+            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
+            <Link href="/">
+              <Image
+                className="h-[66px] w-auto"
+                width={150}
+                height={66}
+                src="https://medmapp.netlify.app/images/MedMapp_Logo_shaffof.png"
+                alt="MedMapp Logo"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "https://placehold.co/150x40/ffffff/0f172a?text=MedMapp";
+                }}
+              />
+            </Link>
           </div>
-          <div className="logout">
-            <a className="nav-link" href="#">
-              <i className="bi bi-box-arrow-left"></i>
-              <span>Chiqish</span>
-            </a>
-          </div>
+          <nav className="flex-grow  pb-6 space-y-[5px]">
+            <SidebarItem
+              link="/patients-panel"
+              icon={BsFillGrid1X2Fill}
+              text="
+Boshqaruv Paneli"
+              open={isSidebarOpen}
+              active={pathname === "/patients-panel"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+            <SidebarItem
+              link="/patients-panel/applications"
+              icon={Calendar}
+              text="
+Yangi Murojaatlar"
+              open={isSidebarOpen}
+              active={pathname === "/patients-panel/applications"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+            <SidebarItem
+              link="/patients-panel/consultations"
+              icon={MessageSquare}
+              text="
+Bajarilgan Murojaatlar"
+              open={isSidebarOpen}
+              active={pathname === "/patients-panel/consultations"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+            <SidebarItem
+              link="/patients-panel/reviews"
+              icon={Stethoscope}
+              text="
+Klinikalar Bazasi"
+              open={isSidebarOpen}
+              active={pathname === "/patients-panel/reviews"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+            <SidebarItem
+              link="/patients-panel/settings"
+              icon={Settings}
+              text="
+Moliya"
+              open={isSidebarOpen}
+              active={pathname === "/patients-panel/settings"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+            <SidebarItem
+              link="/login"
+              icon={LogOut}
+              text="Chiqish"
+              open={isSidebarOpen}
+              className="text-[var(--color-danger)] absolute bottom-10"
+              active={pathname === "/login"}
+              onClick={() => isMobile && setIsSidebarOpen(false)}
+            />
+          </nav>
         </aside>
-
-        <div className="main-content">
-          <header className="header d-flex align-items-center justify-content-between">
-            <div className="d-flex align-items-center">
-              <i
-                className="bi bi-list toggle-sidebar-btn me-3 fs-4"
-                onClick={handleToggleSidebar}
-              ></i>
+        <div
+          className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
+            isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"
+          }`}
+        >
+          <header className="flex items-center justify-between py-4 px-8 bg-[var(--card-background)] border-b border-[var(--border-color)] h-[89px] flex-shrink-0">
+            <div className="flex items-center ">
+              <button
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                id="sidebar-toggle"
+                className="text-[var(--text-light)] hover:text-[var(--text-color)] -ml-2 mr-4"
+              >
+                <i className="bi bi-list text-3xl"></i>
+              </button>
             </div>
-            <nav className="header-nav d-flex align-items-center">
-              <a
-                className="nav-link nav-icon"
-                id="dark-mode-toggle"
-                href="#"
-                onClick={handleThemeToggle}
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                title="Tungi/Kunduzgi rejim"
-              >
-                <i className="bi bi-moon-stars"></i>
-              </a>
-              <a
-                className="nav-link nav-icon"
-                href="#"
-                data-bs-toggle="modal"
-                data-bs-target="#tagManagementModal"
-                data-bs-placement="bottom"
-                title="Sozlamalar"
-              >
-                <i className="bi bi-gear-fill"></i>
-              </a>
-              <a
-                className="nav-link nav-icon"
-                href="#"
-                data-bs-toggle="tooltip"
-                data-bs-placement="bottom"
-                title="Bildirishnomalar"
-              >
-                <i className="bi bi-bell"></i>
-              </a>
-              <div className="vr h-50 d-none d-sm-block mx-2"></div>
-              <div className="nav-item dropdown">
-                <a
-                  className="nav-link nav-profile d-flex align-items-center ps-sm-2"
-                  href="#"
-                  data-bs-toggle="dropdown"
-                >
-                  <img
-                    src="https://placehold.co/40x40/012970/ffffff?text=O"
-                    alt="Profile"
-                    className="rounded-circle"
-                  />
-                  <div className="d-none d-md-flex flex-column align-items-start ms-2">
-                    <span className="fw-bold" id="operator-name">
-                      Operator #1
-                    </span>
-                    <span className="text-muted small">
-                      callcenter@medmap.uz
-                    </span>
-                  </div>
-                </a>
-                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
-                  <li>
-                    {" "}
-                    <a
-                      className="dropdown-item d-flex align-items-center"
-                      href="#"
-                    >
-                      {" "}
-                      <i className="bi bi-person"></i> <span>Profil</span>{" "}
-                    </a>{" "}
-                  </li>
-                  <li>
-                    {" "}
-                    <hr className="dropdown-divider" />{" "}
-                  </li>
-                  <li>
-                    {" "}
-                    <a
-                      className="dropdown-item d-flex align-items-center"
-                      href="#"
-                    >
-                      {" "}
-                      <i className="bi bi-box-arrow-right"></i>{" "}
-                      <span>Chiqish</span>{" "}
-                    </a>{" "}
-                  </li>
-                </ul>
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <button className="lang-toggle cursor-pointer text-[var(--text-light)] hover:text-[var(--color-primary)]">
+                  <i className="bi bi-translate text-xl"></i>
+                </button>
               </div>
-            </nav>
+              <div>
+                <button
+                  id="dark-mode-toggle"
+                  className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]"
+                  onClick={toggleDarkMode}
+                >
+                  {isDarkMode ? (
+                    <i className="bi bi-sun-fill text-xl"></i>
+                  ) : (
+                    <i className="bi bi-moon-stars-fill text-xl"></i>
+                  )}
+                </button>
+              </div>
+              <div>
+                <button className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]">
+                  <i className="bi bi-bell text-xl"></i>
+                </button>
+              </div>
+
+              {/* Profile section */}
+              <div className="relative">
+                <button
+                  className="profile-toggle cursor-pointer flex items-center space-x-3"
+                  onClick={() =>
+                    setIsProfileDropdownOpen(!isProfileDropdownOpen)
+                  }
+                >
+                  {dataItem && dataItem.full_name ? (
+                    <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[var(--color-slate-200)] dark:bg-[var(--color-slate-600)] text-[var(--text-color)] dark:text-[var(--text-light)] font-bold">
+                      {dataItem.full_name.charAt(0).toUpperCase()}
+                    </div>
+                  ) : (
+                    <img
+                      className="h-10 w-10 rounded-full object-cover"
+                      src="https://placehold.co/40x40/EFEFEF/333333?text=A"
+                      alt="Profil rasmi"
+                    />
+                  )}
+                  <div className="hidden md:block text-left">
+                    <div className="font-bold text-[var(--text-color)]">
+                      {get(dataItem, "full_name", "Bemor")}
+                    </div>
+                    <div className="text-sm text-[var(--text-light)]">
+                      Bemor
+                    </div>
+                  </div>
+                </button>
+                {isProfileDropdownOpen && (
+                  <div className="profile-dropdown absolute right-0 mt-2 w-48 bg-[var(--card-background)] rounded-md shadow-lg py-1 z-10 border border-[var(--border-color)]">
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                    >
+                      <i className="bi bi-gear-fill mr-2 text-[var(--text-light)]"></i>
+                      Sozlamalar
+                    </Link>
+                    <div className="border-t border-[var(--border-color)] my-1"></div>
+                    <Link
+                      href="#"
+                      className="flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                    >
+                      <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
           </header>
 
-          <main className="page-content">
+          <main className="flex-1 bg-[var(--background-color)]  relative overflow-y-auto p-6 md:p-8">
             <section className="section dashboard">
-              <div className="page-controls d-flex flex-wrap ">
-                {/* Page Title */}
-
-                {/* Controls Group */}
-                <div className="d-flex flex-wrap align-items-center justify-content-between w-full gap-2">
-                <div className="pagetitle mb-3">
+              <div className="page-controls ">
+                <div className="w-max  pagetitle mb-3">
                   <h1>Boshqaruv Paneli</h1>
                 </div>
+
+                <div className="w-max d-flex flex-wrap align-items-center justify-content-end gap-2">
                   {/* Filter & Search Group */}
                   <div
                     className="d-flex align-items-center gap-2"
                     id="filter-group"
                   >
                     {/* Search Input */}
-                    <div className="input-group  border" style={{ width: "auto" }}>
-                      <span className="input-group-text bg-transparent border-end-0 text-muted">
+                    <div className="input-group  " style={{ width: "auto" }}>
+                      <span className="input-group-text bg-transparent  border-end-0 text-muted">
                         <i className="bi bi-search"></i>
                       </span>
                       <input
                         type="search"
-                        className="form-control border-start-0 w-[300px]"
+                        className="pl-5 text-[var(--text-color)] outline-none border-[var(--border-color)] bg-[var(--input-bg)] border-start-0 "
                         id="search-patient-input"
                         placeholder="Bemor qidirish..."
                       />
@@ -509,7 +595,7 @@ export default function DashboardPage() {
                     </div>
 
                     <button
-                      className="btn btn-light border w-[150px]"
+                      className="btn btn-light  border w-[150px]"
                       type="button"
                       data-bs-toggle="offcanvas"
                       data-bs-target="#filtersOffcanvas"
@@ -517,17 +603,16 @@ export default function DashboardPage() {
                       <i className="bi bi-funnel"></i>
                       <span className="d-none d-sm-inline ms-1">Filtr</span>
                     </button>
-                  {/* New Patient Button */}
+                    {/* New Patient Button */}
                   </div>
                   <button
-                    className="btn btn-primary w-[80px]"
+                    className="btn btn-primary "
                     data-bs-toggle="modal"
                     data-bs-target="#newPatientModal"
                   >
                     <i className="bi bi-plus-lg"></i>
                     <span className="d-none d-sm-inline ms-1">Yangi Bemor</span>
                   </button>
-
                 </div>
               </div>
 
@@ -631,7 +716,7 @@ export default function DashboardPage() {
                                 >
                                   <div className="kanban-card-header">
                                     <div>
-                                      <div className="title">
+                                      <div className="title text-[var(--text-color)]">
                                         {patient.name}
                                       </div>
                                       <div className="text-muted small">
@@ -1311,3 +1396,46 @@ export default function DashboardPage() {
     </>
   );
 }
+
+interface SidebarItemProps {
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+  text: string;
+  open: boolean;
+  className?: string;
+  active?: boolean;
+  link?: string;
+  onClick: () => void;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  icon: Icon,
+  text,
+  open,
+  className = "",
+  active = false,
+  link = "",
+  onClick,
+}) => (
+  <Link
+    href={link}
+    onClick={onClick}
+    style={{ textDecoration: "none" }}
+    className={`underline-offset-0 flex items-center py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 ${
+      active
+        ? "bg-[var(--color-primary)] text-white"
+        : "text-[var(--text-light)] hover:bg-[var(--input-bg)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--text-color)]"
+    } ${className}`}
+  >
+    <div className="flex items-center justify-center">
+      <Icon
+        size={20}
+        className={`mr-3 text-xl transition-colors duration-200 ${
+          active
+            ? "text-white"
+            : "text-[var(--text-light)] hover:text-[var(--color-primary)] dark:hover:text-white"
+        }`}
+      />
+    </div>
+    {open && <span className="transition-colors duration-200">{text}</span>}
+  </Link>
+);

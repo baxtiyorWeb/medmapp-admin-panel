@@ -218,11 +218,9 @@ const StatusCard: React.FC = () => {
   const closeModal = (): void => {
     setIsModalOpen(false);
     setCurrentStep(1);
-    // Faqat ariza uchun maxsus maydonlarni tozalaymiz.
-    // Shaxsiy ma'lumotlar (fullName, dob, gender, phone) saqlanib qoladi.
     setFormData((prev) => ({
       ...prev,
-      email: "", // Pochta profildan olinmaydi, shuning uchun tozalaymiz
+      email: "",
       complaint: "",
       diagnosis: "",
       documents: [],

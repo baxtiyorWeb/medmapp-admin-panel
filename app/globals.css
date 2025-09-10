@@ -362,10 +362,10 @@ body {
   color: var(--text-color);
   margin-bottom: 0.6rem;
 }
-
+.details-info-item
 .form-control,
 .form-select {
-  height: 50px;
+  height: 100px;
   padding: 0.75rem 1.25rem;
   border-radius: 12px;
   border: 1px solid var(--border-color);
@@ -459,12 +459,12 @@ body {
   padding: 0.9rem 1rem;
   border-radius: 12px;
   font-weight: 600;
-  min-height: 50px;
+  min-height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  width: 100%;
+  width: 150px;
 }
 
 .btn-primary:disabled {

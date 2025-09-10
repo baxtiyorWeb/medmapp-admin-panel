@@ -458,7 +458,8 @@ export default function Home() {
                     <div className="d-grid my-3">
                       <button
                         type="button"
-                        className="btn btn-primary btn-lg"
+                        style={{borderRadius: "10px", cursor: "pointer"}}
+                        className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
                         disabled={!loginPhoneMaskRef.current?.masked.isComplete}
                         onClick={handleLoginSendCode}
                       >
@@ -623,7 +624,9 @@ export default function Home() {
                         Yashash hududingiz
                       </label>
                       <select
-                        className="form-select"
+                       style={{borderRadius: "10px", cursor: "pointer"}}
+                        className="w-full px-2 py-3 bg-white rounded-2xl text-[#000]"
+                        
                         id="registerRegion"
                         value={registerRegion}
                         onChange={(e) => setRegisterRegion(e.target.value)}
@@ -684,7 +687,8 @@ export default function Home() {
                     <div className="d-grid my-3">
                       <button
                         type="button"
-                        className="btn btn-primary btn-lg"
+                       style={{borderRadius: "10px", cursor: "pointer"}}
+                        className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
                         disabled={!validateRegisterForm()}
                         onClick={handleRegisterSendCode}
                       >
