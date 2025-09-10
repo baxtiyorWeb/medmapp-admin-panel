@@ -5,12 +5,10 @@ import React from "react";
 const PatientDashboardHomePage = () => {
 
   return (
-    <div>
-      <div className="container">
+      <div className="w-full">
         <PatientsDashboard />
         <ServiceCard />
       </div>
-    </div>
   );
 };
 

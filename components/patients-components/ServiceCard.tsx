@@ -307,7 +307,7 @@ export default function ServiceCard() {
 
   return (
     <ErrorBoundary>
-      <div className="container">
+      <div className="w-full">
         <div className="">
           {/* Main Title */}
           <h1 className="text-xl my-4 font-bold text-[var(--text-color)]">
