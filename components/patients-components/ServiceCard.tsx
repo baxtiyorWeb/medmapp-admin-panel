@@ -308,7 +308,7 @@ export default function ServiceCard() {
   return (
     <ErrorBoundary>
       <div className="container">
-        <div className="p-4">
+        <div className="">
           {/* Main Title */}
           <h1 className="text-xl my-4 font-bold text-[var(--text-color)]">
             Qo&apos;shimcha xizmatlar
@@ -339,7 +339,7 @@ export default function ServiceCard() {
           {/* Service Cards Grid */}
           <div
             id="service-cards-container"
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 p-8" // Increased padding from p-4 to p-8
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 pt-8" // Increased padding from p-4 to p-8
           >
             {/* Visa Card */}
             <div

@@ -514,20 +514,10 @@ const StatusCard: React.FC = () => {
   };
 
   const stepVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 50 : -50,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 50 : -50,
-      opacity: 0,
-    }),
-  };
-
+  enter: { opacity: 0, position: "absolute" },
+  center: { opacity: 1, position: "relative" },
+  exit: { opacity: 0, position: "absolute" },
+};
   interface Step {
     icon: string;
     title: string;
@@ -912,14 +902,15 @@ const StatusCard: React.FC = () => {
     return (
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
+        layout
           key={currentStep}
           custom={direction}
           variants={stepVariants}
           initial="center"
-          animate="center"
+          animate="top"
           exit="exit"
-          transition={{ type: "tween", duration: 0.3, ease: "easeInOut" }}
-           className="form-step active max-h-[600px]" // yoki kerakli balandlik
+          transition={{ type: "tween", duration: 0.1, ease: "easeInOut" }}
+           className="form-step active " // yoki kerakli balandlik
           data-step={currentStep}
         >
           <div className="w-full max-w-3xl mx-auto">
