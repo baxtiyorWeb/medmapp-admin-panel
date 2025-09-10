@@ -407,11 +407,11 @@ export default function Home() {
             <div className="progress-bar-line"></div>
           </div>
           <div className="auth-left">
-            <div className="icon relative left-7 -top-10">
+            <div className="icon relative left-14 -top-20">
               <Image
                 src={"/assets/login.png"}
-                width={250}
-                height={100}
+                width={300}
+                height={120}
                 style={{ marginBottom: "15px" }}
                 alt="MedMapp Logotipi"
               />
