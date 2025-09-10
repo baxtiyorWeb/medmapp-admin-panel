@@ -880,9 +880,7 @@ const StatusCard: React.FC = () => {
                   <a
                     target="_blank"
                     href="https://medmapp.uz/privacy-policy"
-                    onClick={(e) => {
-                      e.preventDefault();
-                    }}
+                   
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Foydalanish shartlari
