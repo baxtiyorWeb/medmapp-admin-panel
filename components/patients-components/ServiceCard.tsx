@@ -357,7 +357,7 @@ export default function ServiceCard() {
                 so&apos;rang.
               </p>
               <button
-                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition"
+                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition cursor-pointer"
                 onClick={openVisaModal}
               >
                 Buyurtma
@@ -380,7 +380,7 @@ export default function ServiceCard() {
                 ta&apos;minlang.
               </p>
               <button
-                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition"
+                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition cursor-pointer"
                 onClick={openTransferModal}
               >
                 Buyurtma
@@ -402,7 +402,7 @@ export default function ServiceCard() {
                 Klinikaga yaqin va qulay mehmonxonalardan joy band qiling.
               </p>
               <button
-                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition"
+                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition cursor-pointer"
                 onClick={openHotelModal}
               >
                 Buyurtma
@@ -425,7 +425,7 @@ export default function ServiceCard() {
                 kelmang.
               </p>
               <button
-                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition"
+                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition cursor-pointer"
                 onClick={openTranslatorModal}
               >
                 Buyurtma
@@ -447,7 +447,7 @@ export default function ServiceCard() {
                 Borgan davlatingizda yaqinlaringiz bilan aloqada bo&apos;ling.
               </p>
               <button
-                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition"
+                className="service-btn w-full bg-[var(--color-primary-50)] dark:bg-[var(--color-primary-800)]/50 text-[var(--color-primary-600)] dark:text-[var(--color-primary-200)] font-semibold py-2 px-4 rounded-lg text-sm hover:bg-[var(--color-primary-100)] dark:hover:bg-[var(--color-primary-700)] transition cursor-pointer"
                 onClick={openSimcardModal}
               >
                 Buyurtma
@@ -469,7 +469,7 @@ export default function ServiceCard() {
                     className="text-slate-400 hover:text-slate-600 dark:bg-[var(--card-background)] transition"
                     onClick={closeVisaModal}
                   >
-                    <i className="bi bi-x-lg text-xl"></i>
+                    <i className="bi bi-x-lg text-xl cursor-pointer"></i>
                   </button>
                 </div>
                 {/* Body */}
@@ -537,14 +537,14 @@ export default function ServiceCard() {
                       <div className="flex items-center justify-end space-x-3 mt-4">
                         <button
                           type="button"
-                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition"
+                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition cursor-pointer"
                           onClick={closeVisaModal}
                         >
                           Bekor qilish
                         </button>
                         <button
                           type="submit"
-                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition"
+                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition cursor-pointer"
                         >
                           Buyurtma qilish
                         </button>
@@ -571,7 +571,7 @@ export default function ServiceCard() {
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
                     onClick={closeSimcardModal}
                   >
-                    <i className="bi bi-x-lg text-xl"></i>
+                    <i className="bi bi-x-lg text-xl cursor-pointer"></i>
                   </button>
                 </div>
                 <div className="p-6 overflow-y-auto">
@@ -634,14 +634,14 @@ export default function ServiceCard() {
                       <div className="flex items-center justify-end space-x-3 mt-4">
                         <button
                           type="button"
-                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition"
+                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition cursor-pointer"
                           onClick={closeSimcardModal}
                         >
                           Bekor qilish
                         </button>
                         <button
                           type="submit"
-                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition"
+                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition cursor-pointer"
                         >
                           Buyurtma qilish
                         </button>
@@ -668,7 +668,7 @@ export default function ServiceCard() {
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
                     onClick={closeTransferModal}
                   >
-                    <i className="bi bi-x-lg text-xl"></i>
+                    <i className="bi bi-x-lg text-xl cursor-pointer"></i>
                   </button>
                 </div>
                 <div className="p-6 overflow-y-auto">
@@ -752,14 +752,14 @@ export default function ServiceCard() {
                       <div className="flex items-center justify-end space-x-3 mt-4">
                         <button
                           type="button"
-                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition"
+                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition cursor-pointer"
                           onClick={closeTransferModal}
                         >
                           Bekor qilish
                         </button>
                         <button
                           type="submit"
-                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition"
+                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition cursor-pointer"
                         >
                           Buyurtma qilish
                         </button>
@@ -786,7 +786,7 @@ export default function ServiceCard() {
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
                     onClick={closeTranslatorModal}
                   >
-                    <i className="bi bi-x-lg text-xl"></i>
+                    <i className="bi bi-x-lg text-xl cursor-pointer"></i>
                   </button>
                 </div>
                 <div className="p-6 overflow-y-auto">
@@ -845,14 +845,14 @@ export default function ServiceCard() {
                       <div className="flex items-center justify-end space-x-3 mt-4">
                         <button
                           type="button"
-                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition"
+                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition cursor-pointer"
                           onClick={closeTranslatorModal}
                         >
                           Bekor qilish
                         </button>
                         <button
                           type="submit"
-                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition"
+                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition cursor-pointer"
                         >
                           Buyurtma qilish
                         </button>
@@ -879,7 +879,7 @@ export default function ServiceCard() {
                     className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
                     onClick={closeHotelModal}
                   >
-                    <i className="bi bi-x-lg text-xl"></i>
+                    <i className="bi bi-x-lg text-xl cursor-pointer"></i>
                   </button>
                 </div>
                 <div className="p-6 overflow-y-auto">
@@ -915,14 +915,14 @@ export default function ServiceCard() {
                       <div className="flex items-center justify-end space-x-3 mt-4">
                         <button
                           type="button"
-                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition"
+                          className="bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold py-2 px-5 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-500 transition cursor-pointer"
                           onClick={closeHotelModal}
                         >
                           Bekor qilish
                         </button>
                         <button
                           type="submit"
-                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition"
+                          className="bg-slate-800 dark:bg-slate-200 text-white dark:text-slate-900 font-bold py-2 px-5 rounded-lg hover:bg-slate-700 dark:hover:bg-slate-300 transition cursor-pointer"
                         >
                           Buyurtma qilish
                         </button>

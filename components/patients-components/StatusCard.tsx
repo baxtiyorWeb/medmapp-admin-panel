@@ -1031,11 +1031,11 @@ const StatusCard: React.FC = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
+            className={`z-[200] bg-[var(--background-color)] rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
               isClosing ? "scale-95" : "scale-100"
             }`}
           >
-            <div className="flex  rounded-2xl bg-[var(--background-color)] items-center justify-between p-4 border-b border-[var(--border-color)]">
+            <div className="flex rounded-tr-2xl rounded-tl-2xl  bg-[var(--background-color)] items-center justify-between p-4 border-b border-[var(--border-color)]">
               <h3 className="text-xl font-semibold text-[var(--text-color)]">
                 Tibbiy konsultatsiya uchun anketa
               </h3>

@@ -198,7 +198,7 @@ export default function Home() {
     return isFirstNameValid && isLastNameValid && isRegionValid && isPhoneValid;
   };
 
-  const handleRegisterSendCode = async () => {
+ const handleRegisterSendCode = async () => {
     if (!validateRegisterForm()) return;
     setLoading(true);
     const cleanedPhone = cleanPhoneNumber(registerPhone);
@@ -219,6 +219,18 @@ export default function Home() {
         setRegisterStep("otp");
         startTimer();
         showToast("Tasdiqlash kodi yuborildi!", "success");
+
+        // >>> BU YERGA YANGI KOD QO'SHILDI >>>
+        // Agar API javobida OTP kodi kelsa (test uchun), uni avtomatik to'ldirish
+        if (response.data && response.data.otp) {
+          const otpCode = response.data.otp.toString();
+          if (otpCode.length === 6) {
+            const otpArray = otpCode.split(''); // "678354" -> ['6','7','8','3','5','4']
+            setRegisterOtp(otpArray);
+            showToast("Kod avtomatik to'ldirildi!", "success");
+          }
+        }
+        // <<< O'ZGARTIRISH TUGADI <<<
       }
     } catch (error: unknown) {
       setLoading(false);
@@ -241,6 +253,18 @@ export default function Home() {
         setLoginStep("otp");
         showToast("Tasdiqlash kodi yuborildi!", "success");
         startTimer();
+
+        // >>> BU YERGA YANGI KOD QO'SHILDI >>>
+        // Agar API javobida OTP kodi kelsa (test uchun), uni avtomatik to'ldirish
+        if (response.data && response.data.otp) {
+          const otpCode = response.data.otp.toString();
+          if (otpCode.length === 6) {
+            const otpArray = otpCode.split(''); // "678354" -> ['6','7','8','3','5','4']
+            setLoginOtp(otpArray);
+            showToast("Kod avtomatik to'ldirildi!", "success");
+          }
+        }
+        // <<< O'ZGARTIRISH TUGADI <<<
       }
     } catch (error: unknown) {
       setLoading(false);
