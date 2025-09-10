@@ -460,13 +460,13 @@ export default function ServiceCard() {
               id="visa-modal"
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-slate-900/80 p-4"
             >
-              <div className="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+              <div className=" bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+                <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                  <h3 className="text-lg font-bold text-[var(--text-color)]">
                     Taklifnoma & Viza
                   </h3>
                   <button
-                    className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition"
+                    className="text-slate-400 hover:text-slate-600 dark:bg-[var(--card-background)] transition"
                     onClick={closeVisaModal}
                   >
                     <i className="bi bi-x-lg text-xl"></i>
@@ -480,10 +480,10 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="visa-passport-scan"
-                          className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
+                          className="relative block w-full border-2 border-dashed  border-[var(--border-color)] rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-[var(--input-bg)]"
                         >
                           <i className="bi bi-cloud-arrow-up-fill text-3xl text-slate-500 dark:text-slate-400"></i>
-                          <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          <p className="mt-1 text-sm font-semibold text-[var(--text-color)]">
                             Passport skanini yuklash *
                           </p>
                           {visaPassportScan && (
@@ -508,7 +508,7 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="visa-note"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Qo&apos;shimcha izoh
                         </label>
@@ -519,7 +519,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={visaNote}
                           onChange={(e) => setVisaNote(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {/* Error & Success */}
@@ -562,9 +562,9 @@ export default function ServiceCard() {
               id="simcard-modal"
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-slate-900/80 p-4"
             >
-              <div className="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+              <div className=" bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+                <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                  <h3 className="text-lg font-bold text-[var(--text-color)]">
                     SIM-karta
                   </h3>
                   <button
@@ -580,10 +580,10 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="simcard-passport-scan"
-                          className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
+                          className="relative block w-full border-2 border-dashed border border-[var(--border-color)] rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-[var(--card-background)]"
                         >
                           <i className="bi bi-cloud-arrow-up-fill text-3xl text-slate-500 dark:text-slate-400"></i>
-                          <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          <p className="mt-1 text-sm font-semibold text-[var(--text-color)]">
                             Passport skanini yuklash *
                           </p>
                           {simcardPassportScan && (
@@ -607,7 +607,7 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="simcard-note"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Qo&apos;shimcha izoh
                         </label>
@@ -618,7 +618,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={simcardNote}
                           onChange={(e) => setSimcardNote(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (
@@ -659,9 +659,9 @@ export default function ServiceCard() {
               id="transfer-modal"
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-slate-900/80 p-4"
             >
-              <div className="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+              <div className=" bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+                <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                  <h3 className="text-lg font-bold text-[var(--text-color)]">
                     Transfer Xizmati
                   </h3>
                   <button
@@ -677,7 +677,7 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="transfer-flight-number"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Parvoz raqami *
                         </label>
@@ -692,13 +692,13 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTransferFlightNumber(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="transfer-arrival-datetime"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Kelish vaqti *
                         </label>
@@ -710,16 +710,16 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTransferArrivalDatetime(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="transfer-ticket-scan"
-                          className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
+                          className="relative block w-full border-2 border-dashed border border-[var(--border-color)] rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 dark:hover:border-slate-400 transition-colors bg-[var(--card-background)]"
                         >
                           <i className="bi bi-cloud-arrow-up-fill text-3xl text-slate-500 dark:text-slate-400"></i>
-                          <p className="mt-1 text-sm font-semibold text-slate-700 dark:text-slate-300">
+                          <p className="mt-1 text-sm font-semibold text-[var(--text-color)]">
                             Chipta skanini yuklash (ixtiyoriy)
                           </p>
                           {transferTicketScan && (
@@ -777,9 +777,9 @@ export default function ServiceCard() {
               id="translator-modal"
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-slate-900/80 p-4"
             >
-              <div className="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+              <div className=" bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+                <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                  <h3 className="text-lg font-bold text-[var(--text-color)]">
                     Tarjimon Xizmati
                   </h3>
                   <button
@@ -795,7 +795,7 @@ export default function ServiceCard() {
                       <div>
                         <label
                           htmlFor="translator-language"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Til *
                         </label>
@@ -810,13 +810,13 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTranslatorLanguage(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       <div>
                         <label
                           htmlFor="translator-requirements"
-                          className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 block"
+                          className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                         >
                           Talablar
                         </label>
@@ -829,7 +829,7 @@ export default function ServiceCard() {
                           onChange={(e) =>
                             setTranslatorRequirements(e.target.value)
                           }
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-100 border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (
@@ -870,9 +870,9 @@ export default function ServiceCard() {
               id="hotel-modal"
               className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 dark:bg-slate-900/80 p-4"
             >
-              <div className="modal-content bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between p-5 border-b border-slate-200 dark:border-slate-700">
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">
+              <div className=" bg-[var(--card-background)] rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] flex flex-col border border-[var(--border-color)]">
+                <div className="flex items-center justify-between p-5 border-b border-[var(--border-color)]">
+                  <h3 className="text-lg font-bold text-[var(--text-color)]">
                     Mehmonxona
                   </h3>
                   <button
@@ -899,7 +899,7 @@ export default function ServiceCard() {
                           maxLength={500}
                           value={hotelNotes}
                           onChange={(e) => setHotelNotes(e.target.value)}
-                          className="w-full p-3 bg-slate-100 dark:bg-slate-700 text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
+                          className="w-full p-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-slate-500 dark:focus:ring-slate-400 focus:border-slate-500 dark:focus:border-slate-400 outline-none transition"
                         />
                       </div>
                       {error && (
