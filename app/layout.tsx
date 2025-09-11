@@ -10,8 +10,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "My App",
-  description: "Next.js app with Inter font",
+  title: "MedMapp paneli",
+  description: "MedMapp hamma uchun birdek ",
 };
 
 export default function RootLayout({

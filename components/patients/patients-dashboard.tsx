@@ -1,11 +1,12 @@
 "use client";
 
-import StatusCard from "./StatusCard";
-import Stepper from "./Stepper";
+// import StatusCard from "./status-card";
+import StatusCard from "./application/main-application-modal";
+import Stepper from "./stepper";
 
 export default function PatientsDashboard() {
   return (
-    <div >
+    <div>
       <StatusCard />
       <Stepper />
       {/* <OrderedService /> */}

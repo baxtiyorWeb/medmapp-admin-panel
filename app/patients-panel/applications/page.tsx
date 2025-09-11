@@ -1,4 +1,4 @@
-import Table from "@/components/patients-components/Table";
+import Table from "@/components/patients/application-table";
 import React from "react";
 
 const Application = () => {

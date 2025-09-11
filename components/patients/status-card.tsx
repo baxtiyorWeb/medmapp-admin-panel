@@ -15,9 +15,8 @@ import api from "@/utils/api";
 import useProfile from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import { useQuery } from "@tanstack/react-query";
-import IMask, { InputMask, MaskedPatternOptions } from "imask";
-import clsx from "clsx";
 
+import Modal from "@/exports/modal";
 interface InputFieldProps {
   id: string;
   label: string;
@@ -34,14 +33,8 @@ interface InputFieldProps {
   ) => void;
   error?: string;
   inputRef?: React.RefObject<HTMLInputElement | null>;
-  className?: string; // qo‘shildi
   onFocus?: () => void;
 }
-
-
-
-const baseClasses =
-  "w-full bg-slate-100 dark:bg-slate-700/50 dark:text-white border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition";
 
 const InputField = memo<InputFieldProps>(
   ({
@@ -57,19 +50,17 @@ const InputField = memo<InputFieldProps>(
     error,
     inputRef,
     onFocus,
-    className,
   }) => (
     <div>
       <label
         htmlFor={`input-${id}`}
-        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+        className="block text-sm font-medium text-[var(--text-color)] mb-1"
       >
         {label} {required && <span className="text-red-500">*</span>}
       </label>
-
       <div className="relative">
         {icon && (
-          <span className="absolute inset-y-0 left-0 flex items-center justify-center w-9 text-slate-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400">
             <i className={`bi bi-${icon}`}></i>
           </span>
         )}
@@ -79,11 +70,9 @@ const InputField = memo<InputFieldProps>(
             <select
               id={`input-${id}`}
               required={required}
-              className={clsx(
-                baseClasses,
-                "pl-9 p-2.5 appearance-none",
-                className
-              )}
+              className={`w-full p-2 bg-[var(--input-bg)]  border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+                icon ? "pl-9" : "pl-3"
+              }`}
               value={value}
               onChange={onChange}
             >
@@ -93,7 +82,6 @@ const InputField = memo<InputFieldProps>(
                 </option>
               ))}
             </select>
-
             <span className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 pointer-events-none">
               <i className="bi bi-chevron-down"></i>
             </span>
@@ -104,17 +92,21 @@ const InputField = memo<InputFieldProps>(
             rows={5}
             required={required}
             placeholder={placeholder}
-            className={clsx(baseClasses, "pl-3 p-3", className)}
+            className={`w-full p-2.5 bg-[var(--input-bg)]  border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+              icon ? "pl-9" : "pl-3"
+            }`}
             value={value}
             onChange={onChange}
-          />
+          ></textarea>
         ) : (
           <input
             id={`input-${id}`}
             type={type}
             placeholder={placeholder}
             required={required}
-            className={clsx(baseClasses, "pl-8 p-2.5", className)}
+            className={`w-full p-2 bg-[var(--input-bg)]  border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+              icon ? "pl-9" : "pl-3"
+            }`}
             value={value}
             onChange={onChange}
             ref={inputRef}
@@ -122,7 +114,6 @@ const InputField = memo<InputFieldProps>(
           />
         )}
       </div>
-
       <div id={`error-${id}`} className="h-5 text-red-500 text-xs mt-1">
         {error}
       </div>
@@ -163,9 +154,7 @@ const StatusCard: React.FC = () => {
   const [showSuccessNotification, setShowSuccessNotification] =
     useState<boolean>(false);
   const { fetchProfile } = useProfile();
-  const loginPhoneMaskRef = useRef<InputMask<MaskedPatternOptions> | null>(
-    null
-  );
+
   const phoneInputRef = useRef<HTMLInputElement | null>(null);
   const { data } = useQuery({
     queryKey: ["profile"],
@@ -229,12 +218,17 @@ const StatusCard: React.FC = () => {
   const closeModal = (): void => {
     setIsModalOpen(false);
     setCurrentStep(1);
-    setFormData((prev) => ({ ...prev, documents: [], phone: "" }));
+    setFormData((prev) => ({
+      ...prev,
+      email: "",
+      complaint: "",
+      diagnosis: "",
+      documents: [],
+    }));
     setErrors({});
     setConfirmChecked(false);
     setSubmitError(null);
   };
-
   // Validate phone number
   const validateStep = (step: number): boolean => {
     const newErrors: Errors = {};
@@ -525,20 +519,10 @@ const StatusCard: React.FC = () => {
   };
 
   const stepVariants = {
-    enter: (direction: number) => ({
-      x: direction > 0 ? 50 : -50,
-      opacity: 0,
-    }),
-    center: {
-      x: 0,
-      opacity: 1,
-    },
-    exit: (direction: number) => ({
-      x: direction < 0 ? 50 : -50,
-      opacity: 0,
-    }),
+    enter: { opacity: 0, position: "absolute" },
+    center: { opacity: 1, position: "relative" },
+    exit: { opacity: 0, position: "absolute" },
   };
-
   interface Step {
     icon: string;
     title: string;
@@ -578,8 +562,8 @@ const StatusCard: React.FC = () => {
         description: "Iltimos, barcha maydonlarni to'ldiring.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-sm">
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-4">
+            <div className="bg-[var(--card-background)] p-6 rounded-2xl shadow-sm">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
                 <InputField
                   id="fullName"
                   label="Ism-familiya"
@@ -647,7 +631,7 @@ const StatusCard: React.FC = () => {
         description: "Bizga yordam berish uchun bu ma'lumotlar juda muhim.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 p-6 md:p-8 rounded-2xl space-y-4 shadow-sm">
+            <div className="bg-[var(--card-background)] px-4 pt-4  rounded-2xl  shadow-sm">
               <InputField
                 id="complaint"
                 label="Sizni nima bezovta qilmoqda?"
@@ -664,8 +648,6 @@ const StatusCard: React.FC = () => {
                 placeholder="Tashxislarni vergul bilan ajratib kiriting"
                 value={formData.diagnosis}
                 onChange={handleInputChange}
-                className="-pl-10"
-                icon="stethoscope"
                 error={errors.diagnosis}
               />
             </div>
@@ -679,13 +661,13 @@ const StatusCard: React.FC = () => {
           "Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun kamida bitta tibbiy hujjat (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.",
         content: (
           <div className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 p-2 md:p-4 rounded-2xl shadow-sm">
+            <div className="bg-[var(--card-background)] p-3 md:p-5 rounded-2xl shadow-sm">
               <label
                 htmlFor="file-upload-input-multiple"
-                className="relative block w-full border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-6 text-center cursor-pointer hover:border-primary-500 dark:hover:border-primary-400 transition-colors bg-slate-50 dark:bg-slate-700/50"
+                className="relative bg-[var(--input-bg)]  block w-full border-2 border-dashed border-[var(--border-color)] rounded-xl p-6 text-center cursor-pointer hover:border-primary-500 dark:hover:border-primary-400 transition-colors  "
               >
                 <i className="bi bi-cloud-arrow-up-fill text-5xl text-primary-500"></i>
-                <p className="mt-3 text-lg font-semibold text-slate-700 dark:text-slate-300">
+                <p className="mt-3 text-lg font-semibold text-[var(--text-color)]">
                   Fayl yuklash
                 </p>
                 <p className="text-sm text-slate-500">
@@ -713,7 +695,7 @@ const StatusCard: React.FC = () => {
                   formData.documents.map((doc) => (
                     <div
                       key={doc.id}
-                      className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 flex items-center gap-4 shadow-sm"
+                      className="bg-[var(--card-background)] border border-[var(--border-color)] mt-6 rounded-xl p-4 flex items-center gap-4 shadow-sm"
                     >
                       <div className="file-card-preview">
                         <img
@@ -724,7 +706,7 @@ const StatusCard: React.FC = () => {
                       </div>
                       <div className="flex-grow overflow-hidden">
                         <p
-                          className="font-semibold text-slate-800 dark:text-slate-200 truncate"
+                          className="font-semibold text-[var(--text-color)] truncate"
                           title={doc.name}
                         >
                           {doc.name}
@@ -771,9 +753,9 @@ const StatusCard: React.FC = () => {
           "Yuborishdan oldin barcha ma'lumotlar to'g'riligiga ishonch hosil qiling.",
         content: (
           <div id="review-container" className="w-full max-w-3xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 shadow-sm rounded-xl p-6">
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-700 mb-2">
-                <h3 className="text-base font-semibold text-slate-800 dark:text-white flex items-center gap-3">
+            <div className="bg-[var(--card-background)] shadow-sm rounded-xl p-6">
+              <div className="flex justify-between items-center pb-2 border-b border-[var(--border-color)] mb-2">
+                <h3 className="text-base font-semibold text-[var(--text-color)] flex items-center gap-3">
                   <i className="bi bi-person-vcard text-primary text-xl"></i>
                   <span>Shaxsiy ma&apos;lumotlar</span>
                 </h3>
@@ -788,7 +770,7 @@ const StatusCard: React.FC = () => {
                   Tahrirlash
                 </button>
               </div>
-              <dl className="divide-y divide-slate-100 dark:divide-slate-700/50 grid grid-cols-1 md:grid-cols-2 md:gap-x-8">
+              <dl className=" grid grid-cols-1 md:grid-cols-1 md:gap-x-8">
                 {[
                   { label: "Ism-familiya", value: formData.fullName },
                   { label: "Tug'ilgan sana", value: formData.dob },
@@ -801,19 +783,19 @@ const StatusCard: React.FC = () => {
                 ].map((item, idx) => (
                   <div
                     key={idx}
-                    className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1"
+                    className="py-3 border-b border-[var(--border-color)] grid grid-cols-1 md:grid-cols-3 gap-1"
                   >
-                    <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
+                    <dt className="text-sm font-medium text-[var(--text-color)] md:col-span-1">
                       {item.label}
                     </dt>
-                    <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
+                    <dd className="text-sm text-[var(--secondary-color)] md:col-span-2">
                       {item.value}
                     </dd>
                   </div>
                 ))}
               </dl>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-700 mt-6 mb-2">
-                <h3 className="text-base font-semibold text-slate-800 dark:text-white flex items-center gap-3">
+              <div className="flex justify-between items-center pb-2  mt-6 mb-2">
+                <h3 className="text-base font-semibold text-[var(--text-color)] flex items-center gap-3">
                   <i className="bi bi-clipboard2-pulse text-red-500 text-xl"></i>
                   <span>Tibbiy ma&apos;lumotlar</span>
                 </h3>
@@ -828,26 +810,26 @@ const StatusCard: React.FC = () => {
                   Tahrirlash
                 </button>
               </div>
-              <dl className="divide-y divide-slate-100 dark:divide-slate-700/50">
-                <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
-                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
+              <dl className="border-b border-[var(--border-color)] dark:divide-slate-700/50">
+                <div className="py-3 border-b border-[var(--border-color)] grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
+                  <dt className="text-sm font-medium text-[var(--text-color)]  md:col-span-1">
                     Shikoyatlar
                   </dt>
-                  <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
+                  <dd className="text-sm text-[var(--secondary-color)] md:col-span-2">
                     <p className="whitespace-pre-wrap">{formData.complaint}</p>
                   </dd>
                 </div>
                 <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
-                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
+                  <dt className="text-sm font-medium text-[var(--text-color)]  md:col-span-1">
                     Avvalgi tashxis
                   </dt>
-                  <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
+                  <dd className="text-sm text-[var(--secondary-color)] md:col-span-2">
                     {formData.diagnosis || "Kiritilmagan"}
                   </dd>
                 </div>
               </dl>
-              <div className="flex justify-between items-center pb-2 border-b border-slate-200 dark:border-slate-700 mt-6 mb-2">
-                <h3 className="text-base font-semibold text-slate-800 dark:text-white flex items-center gap-3">
+              <div className="flex justify-between items-center pb-2 border-b  border-[var(--border-color)] mt-6 mb-2">
+                <h3 className="text-base font-semibold text-[var(--text-color)] flex items-center gap-3">
                   <i className="bi bi-file-earmark-text text-primary text-xl"></i>
                   <span>Yuklangan hujjatlar</span>
                 </h3>
@@ -864,10 +846,10 @@ const StatusCard: React.FC = () => {
               </div>
               <dl className="divide-y divide-slate-100 dark:divide-slate-700/50">
                 <div className="py-3 grid grid-cols-1 md:grid-cols-3 gap-1 md:col-span-2">
-                  <dt className="text-sm font-medium text-slate-500 dark:text-slate-400 md:col-span-1">
+                  <dt className="text-sm font-medium text-[var(--text-color)] md:col-span-1">
                     Fayllar
                   </dt>
-                  <dd className="text-sm text-slate-900 dark:text-slate-100 md:col-span-2">
+                  <dd className="text-sm text-[var(--secondary-color)] md:col-span-2">
                     <ul className="list-disc list-inside">
                       {formData.documents.map((doc) => (
                         <li key={doc.id}>{doc.name}</li>
@@ -877,7 +859,7 @@ const StatusCard: React.FC = () => {
                 </div>
               </dl>
             </div>
-            <div className="mt-6 bg-slate-100 dark:bg-slate-800 p-4 rounded-xl">
+            <div className="mt-6 bg-[var(--card-background)] p-4 rounded-xl">
               <label
                 htmlFor="confirm-checkbox"
                 className="flex items-start space-x-3 cursor-pointer"
@@ -889,32 +871,24 @@ const StatusCard: React.FC = () => {
                   checked={confirmChecked}
                   onChange={(e) => setConfirmChecked(e.target.checked)}
                 />
-                <span className="text-sm text-slate-700 dark:text-slate-300">
+                <span className="text-sm text-[var(--text-color)]">
                   Men kiritgan barcha ma&apos;lumotlarning
                   to&apos;g&apos;riligini tasdiqlayman hamda{" "}
                   <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert("Ommaviy oferta matni shu yerda ko'rsatiladi.");
-                    }}
+                    target="_blank"
+                    href="https://medmapp.uz/public-offer"
                     className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
                   >
                     Ommaviy oferta
                   </a>{" "}
                   va{" "}
                   <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      alert(
-                        "Foydalanish shartlari matni shu yerda ko'rsatiladi."
-                      );
-                    }}
-                    className="font-semibold text-primary-600 dark:text-primary-400 hover:underline"
+                    target="_blank"
+                    href="https://medmapp.uz/privacy-policy"
+                    className="font-semibold underline text-primary-600 dark:text-primary-400 hover:underline"
                   >
-                    Foydalanish shartlari
-                  </a>{" "}
+                    Maxfiylik siyosat
+                  </a>
                   bilan tanishib chiqdim.
                 </span>
               </label>
@@ -930,19 +904,20 @@ const StatusCard: React.FC = () => {
     return (
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
+          layout
           key={currentStep}
           custom={direction}
           variants={stepVariants}
-          initial="enter"
-          animate="center"
+          initial="center"
+          animate="top"
           exit="exit"
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="form-step active"
+          transition={{ type: "tween", duration: 0.1, ease: "easeInOut" }}
+          className="form-step active " // yoki kerakli balandlik
           data-step={currentStep}
         >
           <div className="w-full max-w-3xl mx-auto">
-            <div className="text-center mb-8">
-              <div className="w-16 h-16 mx-auto bg-primary-100 dark:bg-primary-900/50 rounded-full flex items-center justify-center">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 mx-auto bg-[var(--card-background)] rounded-full flex items-center justify-center">
                 <i
                   className={`bi bi-${steps[currentStep - 1].icon} text-4xl ${
                     currentStep === 2
@@ -953,10 +928,10 @@ const StatusCard: React.FC = () => {
                   }`}
                 ></i>
               </div>
-              <h4 className="text-xl font-semibold mt-4 text-slate-800 dark:text-slate-200">
+              <h4 className="text-xl font-semibold  text-[var(--text-color)]">
                 {steps[currentStep - 1].title}
               </h4>
-              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-sm text-slate-500 dark:text-slate-400 ">
                 {steps[currentStep - 1].description}
               </p>
             </div>
@@ -970,12 +945,16 @@ const StatusCard: React.FC = () => {
   return (
     <div className="relative">
       {showSuccessNotification && (
-        <div className="notification success flex items-center gap-2 p-4 mb-4 rounded-lg">
-          Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
-          shaxsiy kabinetingizga xabar yuboriladi!
-          <i className="bi bi-check-circle text-success"></i>
-        </div>
+        <Modal
+          isOpen={showSuccessNotification}
+          onClose={() => setShowSuccessNotification(false)}
+          title="Muvaffaqiyatli!"
+          message="Arizangiz muvaffaqiyatli qabul qilindi. Jarayon yakunlangach tez orada
+        shaxsiy kabinetingizga xabar yuboriladi!"
+          type="success"
+        />
       )}
+
       {typeof window !== "undefined" &&
       window.localStorage.getItem("formData") ? (
         <div
@@ -1052,35 +1031,37 @@ const StatusCard: React.FC = () => {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className={`z-[200] bg-slate-50 dark:bg-slate-900/80 rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
+            className={`z-[200] bg-[var(--background-color)] rounded-2xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] flex flex-col transform transition-transform duration-300 ${
               isClosing ? "scale-95" : "scale-100"
             }`}
           >
-            <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-xl font-semibold text-slate-800 dark:text-slate-200">
+            <div className="flex rounded-tr-2xl rounded-tl-2xl  bg-[var(--background-color)] items-center justify-between p-4 border-b border-[var(--border-color)]">
+              <h3 className="text-xl font-semibold text-[var(--text-color)]">
                 Tibbiy konsultatsiya uchun anketa
               </h3>
               <button
                 onClick={closeModal}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                className="text-slate-400 hover:text-slate-600 "
               >
                 <i className="bi bi-x-lg text-2xl"></i>
               </button>
             </div>
-            <div className="px-6 pt-5">
-              <div className="bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
+            <div className="px-6 pt-5 bg-[var(--background-color)] ">
+              <div className="bg-[var(--background-color)]  rounded-full h-2.5">
                 <div
                   id="modal-progress-bar"
                   className="bg-primary-600 h-2.5 rounded-full transition-all duration-300"
                 ></div>
               </div>
             </div>
-            <div className="p-6 overflow-y-auto flex-grow">{renderStep()}</div>
-            <div className="flex items-center justify-between p-4 bg-white dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700 rounded-b-2xl">
+            <div className="p-3 overflow-y-auto flex-grow bg-[var(--background-color)] ">
+              {renderStep()}
+            </div>
+            <div className="flex items-center justify-between p-4 bg-[var(--background-color)] border-t border-[var(--border-color)] rounded-b-2xl">
               <button
                 type="button"
                 id="prev-btn"
-                className={`bg-slate-200 cursor-pointer dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold py-3 px-6 rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition ${
+                className={`bg-[var(--card-background)] cursor-pointer  text-[var(--text-color)] font-bold py-3 px-6 rounded-lg  transition ${
                   currentStep === 1 ? "invisible" : ""
                 }`}
                 onClick={prevStep}

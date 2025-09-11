@@ -336,7 +336,7 @@ const ConsultationPage: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, [handleSelectConsultation]); // ✅ qo‘shish kerak
+  }, [handleSelectConsultation]); 
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConsultation) return;

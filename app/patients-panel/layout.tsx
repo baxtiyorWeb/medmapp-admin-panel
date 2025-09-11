@@ -16,8 +16,9 @@ import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
-import "./../../components/patients-components/style.css";
+import "./../../components/patients/style.css";
 import useDarkMode from "@/hooks/useDarkMode";
+import { BiBasket } from "react-icons/bi";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -122,22 +123,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             active={pathname === "/patients-panel/applications"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
+           <SidebarItem
+            link="/patients-panel/orders"
+            icon={BiBasket}
+            text="Buyurtmalarim"
+            open={isSidebarOpen}
+            active={pathname === "/patients-panel/orders"}
+            onClick={() => isMobile && setIsSidebarOpen(false)}
+          />
           <SidebarItem
             link="/patients-panel/consultations"
             icon={MessageSquare}
-            text="Konsultatsiyalar"
+            text="Chat"
             open={isSidebarOpen}
             active={pathname === "/patients-panel/consultations"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
-          <SidebarItem
-            link="/patients-panel/reviews"
-            icon={Stethoscope}
-            text="Izohlarim"
-            open={isSidebarOpen}
-            active={pathname === "/patients-panel/reviews"}
-            onClick={() => isMobile && setIsSidebarOpen(false)}
-          />
+
           <SidebarItem
             link="/patients-panel/settings"
             icon={Settings}
@@ -235,8 +237,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <Link
                     href="/login"
                     onClick={() => {
-                      localStorage.removeItem("access_token")
-                      localStorage.removeItem("refresh_token")
+                      localStorage.removeItem("access_token");
+                      localStorage.removeItem("refresh_token");
                     }}
                     className="flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >

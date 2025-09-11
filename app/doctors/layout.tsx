@@ -114,7 +114,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           <SidebarItem
             link="/doctors/settings"
             icon={Settings}
-            text="Profil Sozlamalari"
+            text="Profil sozlamalari"
             open={isSidebarOpen}
             active={pathname === "/settings"}
             onClick={() => isMobile && setIsSidebarOpen(false)}

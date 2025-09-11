@@ -237,7 +237,7 @@ const Settings = () => {
               <div className="bg-[var(--card-background)] rounded-2xl shadow-lg">
                 <div className="p-6 border-b border-[var(--border-color)]">
                   <h2 className="text-lg font-bold text-[var(--text-color)]">
-                    Profil Sozlamalari
+                    Profil sozlamalari
                   </h2>
                   <p className="text-sm text-[var(--text-color)]">
                     Shaxsiy ma&apos;lumotlaringizni yangilang.
@@ -389,7 +389,7 @@ const Settings = () => {
               <div className="bg-[var(--card-background)] rounded-2xl shadow-lg border-2 border-[#EF4444]/20">
                 <div className="p-6 border-b border-[var(--border-color)]">
                   <h2 className="text-lg font-bold text-[#EF4444]">
-                    Xavfli Hudud
+                    Xavfli hudud
                   </h2>
                 </div>
                 <div className="p-6">

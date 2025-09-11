@@ -1,5 +1,5 @@
-import PatientsDashboard from "@/components/patients-components/patients-dashboard";
-import ServiceCard from "@/components/patients-components/ServiceCard";
+import PatientsDashboard from "@/components/patients/patients-dashboard";
+import ServiceCard from "@/components/patients/service-card";
 import React from "react";
 
 const PatientDashboardHomePage = () => {

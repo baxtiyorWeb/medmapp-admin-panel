@@ -10,6 +10,7 @@ import api from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { AiOutlineLoading } from "react-icons/ai";
 import LoadingOverlay from "../LoadingOverlay";
+import { FaEye } from "react-icons/fa";
 
 // Define the types for the application data from the backend
 interface ApplicationDetails {
@@ -235,13 +236,14 @@ const Table = () => {
                     <td className="px-6 py-4 h-[61px]">
                       {renderStatusBadge(app.status)}
                     </td>
-                    <td className="px-6 py-4 h-[61px] text-right">
+                    <td className="px-6 py-4 h-[61px] flex justify-end items-center space-x-1 text-right">
                       <button
-                        className="view-details-btn cursor-pointer hover:underline"
+                        className="view-details-btn  cursor-pointer hover:underline"
                         onClick={() => openModal(app.id)}
                       >
-                        Batafsil
+                       <FaEye /> 
                       </button>
+                       <button onClick={() => openModal(app.id)}  className="view-details-btn text cursor-pointer hover:underline">Batafsil</button>
                     </td>
                   </tr>
                 ))}
@@ -373,7 +375,7 @@ const Table = () => {
                 </div>
               </div>
 
-              {/* Buyurtma qilingan xizmatlar */}
+              {/* Buyurtma qilingan xizmatlar
               <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
                   Buyurtma qilingan xizmatlar
@@ -400,7 +402,7 @@ const Table = () => {
                     <p>Xizmatlar buyurtma qilinmagan.</p>
                   )}
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Modal Footer */}
