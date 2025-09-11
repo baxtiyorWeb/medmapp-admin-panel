@@ -7,15 +7,15 @@ import api from "@/utils/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
 
 interface PatientProfile {
-  id: number | null;
-  full_name: string | null;
-  passport: string | null;
-  dob: string | null;
-  gender: "male" | "female" | null;
-  phone: string | null;
-  email: string | null;
-  created_at: string | null;
-  updated_at: string | null;
+  id: string;
+  full_name: string;
+  passport: string;
+  dob: string;
+  gender: string;
+  phone: string;
+  email: string;
+  created_at: string;
+  updated_at: string;
 }
 
 const getMyProfile = async (): Promise<PatientProfile> => {
@@ -132,12 +132,12 @@ const Settings = () => {
     setNotification(null);
 
     const changedData: Partial<PatientProfile> = {};
-    const keys = Object.keys(profile) as Array<keyof PatientProfile>;
+    const keys = Object.keys(profile) as (keyof PatientProfile)[];
 
     for (const key of keys) {
-      if (profile[key] !== initialProfile[key]) {
-        // Xatolikni tuzatish uchun shu qator o'zgartirildi
-        (changedData as any)[key] = profile[key];
+      const value = profile[key];
+      if (value !== initialProfile[key]) {
+        changedData[key] = value; // shu joyda qiymat qo'yilyapti
       }
     }
 
@@ -394,7 +394,8 @@ const Settings = () => {
                         Hisobni o&apos;chirish
                       </h4>
                       <p className="text-sm text-[var(--text-color)]">
-                        Hisobingiz o&apos;chirilgach, uni qayta tiklab bo&apos;lmaydi.
+                        Hisobingiz o&apos;chirilgach, uni qayta tiklab
+                        bo&apos;lmaydi.
                       </p>
                     </div>
                     <button className="bg-[#EF4444]/10 text-[#EF4444] text-sm font-bold py-2 px-4 rounded-lg hover:bg-danger/20 transition self-start sm:self-center">
