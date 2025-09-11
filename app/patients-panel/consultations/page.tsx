@@ -2,7 +2,7 @@
 
 import { PaperclipIcon, Send, Loader2 } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   BsChatDotsFill,
   BsClipboard2PlusFill,
@@ -76,7 +76,9 @@ const getConsultations = async (): Promise<ApiConversation[]> => {
 };
 
 const getMessages = async (conversationId: number): Promise<ApiMessage[]> => {
-  const response = await api.get(`/consultations/conversations/${conversationId}/messages/`);
+  const response = await api.get(
+    `/consultations/conversations/${conversationId}/messages/`
+  );
   return response.data;
 };
 
@@ -84,7 +86,9 @@ const getDoctorSummary = async (
   conversationId: number
 ): Promise<ApiDoctorSummary | null> => {
   try {
-    const response = await api.get(`/consultations/conversations/${conversationId}/summary/`);
+    const response = await api.get(
+      `/consultations/conversations/${conversationId}/summary/`
+    );
     return response.data;
   } catch (error: any) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
@@ -106,7 +110,9 @@ const getPrescriptions = async (
 const getAttachments = async (
   conversationId: number
 ): Promise<ApiAttachment[]> => {
-  const response = await api.get(`/consultations/conversations/${conversationId}/files/`);
+  const response = await api.get(
+    `/consultations/conversations/${conversationId}/files/`
+  );
   return response.data;
 };
 
@@ -273,6 +279,48 @@ const ConsultationPage: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
+    }
+  }, [selectedConsultation?.messages, activeTab]);
+
+  const handleSelectConsultation = useCallback(
+    async (consultation: Consultation) => {
+      if (isLoadingDetails || selectedConsultation?.id === consultation.id)
+        return;
+
+      try {
+        setIsLoadingDetails(true);
+        setSelectedConsultation(null);
+        setActiveTab("chat");
+
+        const [messages, summary, prescriptions, attachments] =
+          await Promise.all([
+            getMessages(consultation.id),
+            getDoctorSummary(consultation.id),
+            getPrescriptions(consultation.id),
+            getAttachments(consultation.id),
+          ]);
+
+        const fullData = mapDetailsToFrontendConsultation(
+          consultation,
+          messages,
+          summary,
+          prescriptions,
+          attachments
+        );
+        setSelectedConsultation(fullData);
+      } catch (error) {
+        console.error("Failed to fetch consultation details:", error);
+      } finally {
+        setIsLoadingDetails(false);
+      }
+    },
+    [isLoadingDetails, selectedConsultation] // dependencies
+  );
+
+  useEffect(() => {
     const fetchInitialData = async () => {
       try {
         setIsLoadingList(true);
@@ -289,47 +337,7 @@ const ConsultationPage: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, []);
-
-  useEffect(() => {
-    if (scrollContainerRef.current) {
-      scrollContainerRef.current.scrollTop =
-        scrollContainerRef.current.scrollHeight;
-    }
-  }, [selectedConsultation?.messages, activeTab]);
-
-  const handleSelectConsultation = async (consultation: Consultation) => {
-    if (isLoadingDetails || selectedConsultation?.id === consultation.id)
-      return;
-
-    try {
-      setIsLoadingDetails(true);
-      setSelectedConsultation(null);
-      setActiveTab("chat");
-
-      const [messages, summary, prescriptions, attachments] = await Promise.all(
-        [
-          getMessages(consultation.id),
-          getDoctorSummary(consultation.id),
-          getPrescriptions(consultation.id),
-          getAttachments(consultation.id),
-        ]
-      );
-
-      const fullData = mapDetailsToFrontendConsultation(
-        consultation,
-        messages,
-        summary,
-        prescriptions,
-        attachments
-      );
-      setSelectedConsultation(fullData);
-    } catch (error) {
-      console.error("Failed to fetch consultation details:", error);
-    } finally {
-      setIsLoadingDetails(false);
-    }
-  };
+  }, [handleSelectConsultation]); // ✅ qo‘shish kerak
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConsultation) return;
@@ -357,13 +365,13 @@ const ConsultationPage: React.FC = () => {
         selectedConsultation.id,
         messageContent
       );
-      setSelectedConsultation((prev: any) => {
+      setSelectedConsultation((prev: Consultation | null) => {
         if (!prev) return null;
-        const newMessages = prev.messages.map((msg: any) =>
+        const newMessages = prev.messages.map((msg: Message) =>
           msg.id === tempMessage.id
             ? {
                 id: sentMessage.id,
-                from: "patient",
+                from: "patient" as const,
                 text: sentMessage.content,
                 time: new Date(sentMessage.created_at).toLocaleTimeString(
                   "uz-UZ",
