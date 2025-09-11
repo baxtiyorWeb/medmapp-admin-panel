@@ -90,14 +90,13 @@ const getDoctorSummary = async (
       `/consultations/conversations/${conversationId}/summary/`
     );
     return response.data;
-  } catch (error: any) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response?.status === 404) {
       return null;
     }
     throw error;
   }
 };
-
 const getPrescriptions = async (
   conversationId: number
 ): Promise<ApiPrescription[]> => {

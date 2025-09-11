@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import { Loader2, CheckCircle, Info } from "lucide-react";
 import api from "@/utils/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
@@ -154,33 +154,38 @@ const Settings = () => {
           message: "Ma'lumotlar muvaffaqiyatli saqlandi!",
           type: "success",
         });
-      } catch (err) {
-        const axiosError = err as AxiosError<any>;
-        const responseData = axiosError.response?.data;
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err)) {
+          const responseData = err.response?.data;
 
-        if (
-          responseData &&
-          typeof responseData === "object" &&
-          !Array.isArray(responseData)
-        ) {
-          const newErrors: { [key: string]: string } = {};
-          for (const key in responseData) {
-            if (
-              Array.isArray(responseData[key]) &&
-              responseData[key].length > 0
-            ) {
-              const englishError = responseData[key][0];
-              newErrors[key] = translateError(key, englishError);
+          if (
+            responseData &&
+            typeof responseData === "object" &&
+            !Array.isArray(responseData)
+          ) {
+            const newErrors: { [key: string]: string } = {};
+            for (const key in responseData) {
+              if (
+                Array.isArray(responseData[key]) &&
+                responseData[key].length > 0
+              ) {
+                const englishError = responseData[key][0];
+                newErrors[key] = translateError(key, englishError);
+              }
             }
+            setErrors(newErrors);
+          } else {
+            const errorMsg =
+              responseData?.detail ||
+              (Array.isArray(responseData)
+                ? responseData[0]
+                : "Noma'lum xatolik yuz berdi.");
+            setGeneralError(errorMsg);
           }
-          setErrors(newErrors);
         } else {
-          const errorMsg =
-            responseData?.detail ||
-            (Array.isArray(responseData)
-              ? responseData[0]
-              : "Noma'lum xatolik yuz berdi.");
-          setGeneralError(errorMsg);
+          // Axios xatosi emas bo'lsa
+          setGeneralError("Noma'lum xatolik yuz berdi.");
+          console.error(err);
         }
       } finally {
         setIsSaving(false);
