@@ -1,7 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
+import DarkModeProvider from "@/providers/DarkThemeProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -11,7 +13,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "MedMapp paneli",
-  description: "MedMapp hamma uchun birdek ",
+  description: "MedMapp hamma uchun birdek",
 };
 
 export default function RootLayout({
@@ -20,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link
           href="https://placehold.co/32x32/3a86ff/ffffff?text=✈"
@@ -33,10 +35,12 @@ export default function RootLayout({
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-        ></link>
+        />
       </head>
       <body className={`${inter.variable}`}>
-        <QueryProvider>{children}</QueryProvider>
+        <DarkModeProvider>
+          <QueryProvider>{children}</QueryProvider>
+        </DarkModeProvider>
       </body>
     </html>
   );

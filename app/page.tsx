@@ -1,101 +1,122 @@
-// components/Portal.tsx
-import React from "react";
-import { User, HeartPulse, Headset, Hospital } from "lucide-react";
-import { BsShieldLock } from "react-icons/bs";
+"use client";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-const Portal = () => {
- 
+const App = () => {
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+
+    return () => {
+      document.documentElement.classList.remove("dark");
+    };
+  }, []);
 
   return (
-    <main className="main-container">
-      <div className="portal-container">
-        <div className="logo-container">
-          <img src="images/MedMapp_Logo_shaffof.png" alt="MedMapp.uz Logo" />
+    <main className="flex min-h-screen items-center justify-center p-6 bg-[var(--background-color)]">
+      <div className="w-full max-w-[1200px] text-center">
+        {/* Logo */}
+        <div className="mb-8 flex justify-center">
+          <Image
+            src={"/assets/MedMapp_Logo_shaffof.png"}
+            width={300}
+            height={120}
+            alt="MedMapp Logotipi"
+            className="mb-4 max-h-[70px]"
+          />
         </div>
+
+        {/* Title */}
         <div className="mb-6">
-          <h1 className="text-[32px] mb-3 text-[#212529] font-bold leading-[32px]">
+          <h1 className="text-[32px] mb-3 font-bold leading-[32px] text-[var(--text-color)]">
             Platformaga kirish
           </h1>
-          <span className="text-[#6c757D] font-light text-[20px]">
+          <span className="text-[var(--text-light)] font-light text-[20px]">
             O&apos;z rolingizni tanlang va tizimga kiring.
           </span>
         </div>
-        <div className="row g-4 justify-center flex flex-wrap w-full gap-4">
-          <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <Link href="/patients-panel" className="portal-card">
-              <div className="icon-wrapper">
+
+        {/* Cards */}
+        <div className="flex flex-wrap justify-center gap-4">
+          {/* Bemor Kabineti */}
+          <div className="w-[384px] h-[334px]">
+            <Link
+              href="/patients-panel"
+              className="flex h-full flex-col rounded-2xl border border-[var(--border-color)] transition-all duration-300  bg-[var(--card-background)] p-10 text-center text-[var(--text-color)]  hover:-translate-y-2 hover:border-[var(--color-primary)] hover:shadow-xl"
+            >
+              <div className="mx-auto mb-6 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[var(--color-primary-50)] text-[28px] text-[var(--color-primary)]">
                 <i className="bi bi-person"></i>
               </div>
-              <h3>Bemor Kabineti</h3>
-              <p>
+              <h3 className="text-xl font-semibold">Bemor Kabineti</h3>
+              <p className="flex-grow min-h-[60px] text-[var(--text-light)]">
                 Uchrashuvlar tarixi, tahlil natijalari va shaxsiy
                 ma&apos;lumotlarni ko&apos;rish.
               </p>
-              <span className="btn-login">
-                Kirish <i className="bi bi-arrow-right-short"></i>
+              <span className="mt-6 inline-flex items-center font-semibold text-[var(--color-primary)]">
+                Kirish{" "}
+                <i className="bi bi-arrow-right-short transition-transform group-hover:translate-x-1"></i>
               </span>
             </Link>
           </div>
-          <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <Link href="/doctors" className="portal-card doctor-card">
-              <div className="icon-wrapper">
+
+          {/* Shifokor Kabineti */}
+          {/* <div className="w-[384px] h-[334px]">
+            <Link
+              href="/doctors"
+              className="flex h-full flex-col rounded-2xl border border-[var(--border-color)] transition-all duration-300  bg-[var(--card-background)] p-10 text-center text-[var(--text-color)]  hover:-translate-y-2 hover:border-[var(--color-success)] hover:shadow-xl"
+            >
+              <div className="mx-auto mb-6 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[var(--success-light)] text-[28px] text-[var(--color-success)]">
                 <i className="bi bi-heart-pulse"></i>
               </div>
-              <h3>Shifokor Kabineti</h3>
-              <p>
+              <h3 className="text-xl font-semibold">Shifokor Kabineti</h3>
+              <p className="flex-grow min-h-[60px] text-[var(--text-light)]">
                 Qabullar jadvali, bemorlar ro&apos;yxati va maslahatlarni
                 boshqarish.
               </p>
-              <span className="btn-login">
-                Kirish <i className="bi bi-arrow-right-short"></i>
+              <span className="mt-6 inline-flex items-center font-semibold text-[var(--color-success)]">
+                Kirish{" "}
+                <i className="bi bi-arrow-right-short transition-transform group-hover:translate-x-1"></i>
               </span>
             </Link>
-          </div>
-          <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <Link href="/operator" className="portal-card operator-card">
-              <div className="icon-wrapper">
+          </div> */}
+
+          {/* Operator Paneli */}
+          <div className="w-[384px] h-[334px]">
+            <Link
+              href="/operator"
+              className="flex h-full flex-col rounded-2xl border border-[var(--border-color)] transition-all duration-300  bg-[var(--card-background)] p-10 text-center text-[var(--text-color)]  hover:-translate-y-2 hover:border-[var(--color-info)] hover:shadow-xl"
+            >
+              <div className="mx-auto mb-6 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[var(--info-light)] text-[28px] text-[var(--color-info)]">
                 <i className="bi bi-headset"></i>
               </div>
-              <h3>Operator Paneli</h3>
-              <p>
+              <h3 className="text-xl font-semibold">Operator Paneli</h3>
+              <p className="flex-grow min-h-[60px] text-[var(--text-light)]">
                 Bemorlar va klinikalar o&apos;rtasidagi jarayonlarni,
                 so&apos;rovlarni va qo&apos;llab-quvvatlashni boshqarish.
               </p>
-              <span className="btn-login">
-                Kirish <i className="bi bi-arrow-right-short"></i>
+              <span className="mt-6 inline-flex items-center font-semibold text-[var(--color-info)]">
+                Kirish{" "}
+                <i className="bi bi-arrow-right-short transition-transform group-hover:translate-x-1"></i>
               </span>
             </Link>
           </div>
-          <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
-            <Link href="clinic/index.html" className="portal-card admin-card">
-              <div className="icon-wrapper">
-                <i className="bi bi-hospital"></i>
-              </div>
-              <h3>Klinika Administratori</h3>
-              <p>
-                Klinika faoliyati, shifokorlar va moliyaviy hisobotlarni
-                boshqarish.
-              </p>
-              <span className="btn-login">
-                Kirish <i className="bi bi-arrow-right-short"></i>
-              </span>
-            </Link>
-          </div>
-          <div className="col-lg-4 col-md-6 w-[384px] h-[334px]">
+
+          {/* Super Admin */}
+          <div className="w-[384px] h-[334px]">
             <Link
               href="superadmin/index.html"
-              className="portal-card superadmin-card"
+              className="flex h-full flex-col rounded-2xl border border-[var(--border-color)] transition-all duration-300  bg-[var(--card-background)] p-10 text-center text-[var(--text-color)]  hover:-translate-y-2 hover:border-[var(--color-danger)] hover:shadow-xl"
             >
-              <div className="icon-wrapper">
+              <div className="mx-auto mb-6 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[var(--danger-light)] text-[28px] text-[var(--color-danger)]">
                 <i className="bi bi-shield-lock"></i>
               </div>
-              <h3>Super Admin Paneli</h3>
-              <p>
+              <h3 className="text-xl font-semibold">Super Admin Paneli</h3>
+              <p className="flex-grow min-h-[60px] text-[var(--text-light)]">
                 Platformaning barcha tizimlarini markazlashgan holda boshqarish.
               </p>
-              <span className="btn-login">
-                Kirish <i className="bi bi-arrow-right-short"></i>
+              <span className="mt-6 inline-flex items-center font-semibold text-[var(--color-danger)]">
+                Kirish
+                <i className="bi bi-arrow-right-short transition-transform group-hover:translate-x-1"></i>
               </span>
             </Link>
           </div>
@@ -105,4 +126,4 @@ const Portal = () => {
   );
 };
 
-export default Portal;
+export default App;

@@ -16,8 +16,6 @@
   --input-bg: #f4f6fc;
 }
 
-
-
 @theme {
   /* Birlamchi rang (Primary) */
   --color-primary: #4154f1;
@@ -59,8 +57,8 @@
 html.dark {
   --primary-light: rgba(65, 84, 241, 0.1);
   --secondary-color: #dbe2ff;
-  --background-color: #0F172A;
-  --card-background: #1E293B;
+  --background-color: #0f172a;
+  --card-background: #1e293b;
   --text-color: #e0e0e0;
   --text-light: #a0a0a0;
   --border-color: #334155;
@@ -115,7 +113,6 @@ body {
   border-radius: 16px;
   padding: 2.5rem 2rem;
   text-align: center;
-  transition: all 0.3s ease;
   text-decoration: none;
   color: red;
   display: flex;
@@ -362,8 +359,7 @@ body {
   color: var(--text-color);
   margin-bottom: 0.6rem;
 }
-.details-info-item
-.form-control,
+.details-info-item .form-control,
 .form-select {
   height: 100px;
   padding: 0.75rem 1.25rem;
@@ -437,7 +433,6 @@ body {
   box-shadow: 0 0 0 3px rgba(92, 153, 244, 0.3);
   transform: scale(1.05);
 }
-
 
 .otp-input.success {
   border-color: #28a745;
@@ -977,6 +972,6 @@ body {
   color: var(--secondary-color) !important;
   margin-bottom: 0;
 }
-a{
+a {
   color: var(--text-color) !important;
 }
