@@ -17,7 +17,7 @@ interface ApiError {
   };
 }
 
-export default function Home() {
+export default function LoginClientComponent() {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const timerIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const loginFormWrapperRef = useRef<HTMLDivElement>(null);
@@ -47,7 +47,6 @@ export default function Home() {
   const [loginOtp, setLoginOtp] = useState<string[]>(Array(6).fill(""));
   const [registerOtp, setRegisterOtp] = useState<string[]>(Array(6).fill(""));
   const [otpError, setOtpError] = useState<boolean>(false);
-  const [otpSubmitted, setOtpSubmitted] = useState(false);
 
   const switchForms = (formToShow: "login" | "register") => {
     setActiveForm(formToShow);
@@ -378,443 +377,415 @@ export default function Home() {
       loginPhoneMaskRef.current?.destroy();
       if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     };
-  }, [activeForm]); // activeForm o'zgarganda maskalarni qayta ishga tushirish uchun qo'shildi
+  }, [activeForm]);
 
   return (
     <>
-      <div className="auth-wrapper bg-[linear-gradient(to_right,#e9f0f8_0%,#5c99f4_100%)]">
-        <div id="toast-container"></div>
-        <div className="auth-card">
-          <div
-            className={`progress-bar-container ${isLoading ? "visible" : ""}`}
-            ref={progressBarRef}
+      <div
+        className={`progress-bar-container ${isLoading ? "visible" : ""}`}
+        ref={progressBarRef}
+      >
+        <div className="progress-bar-line"></div>
+      </div>
+      <div className="auth-left">
+        <div className="icon relative left-14 -top-20">
+          <Image
+            src={"/assets/login.png"}
+            width={300}
+            height={120}
+            style={{ marginBottom: "15px" }}
+            alt="MedMapp Logotipi"
+          />
+        </div>
+        <h2>Endi tibbiy sayohat — faqatgina orzu emas!</h2>
+        <p>
+          Xalqaro miqyosdagi eng yaxshi tibbiy xizmatlar va davolanish
+          imkoniyatlaridan mustaqil foydalaning.
+        </p>
+      </div>
+      <div className="auth-right">
+        <div className="mobile-logo-container">
+          <Image
+            src={"/assets/login.png"}
+            width={150}
+            height={50}
+            alt="MedMapp Mobil Logotipi"
+          />
+        </div>
+        <div className="auth-tabs">
+          <button
+            ref={tabLoginRef}
+            className={`auth-tab-btn ${activeForm === "login" ? "active" : ""}`}
+            type="button"
+            onClick={() => switchForms("login")}
           >
-            <div className="progress-bar-line"></div>
-          </div>
-          <div className="auth-left">
-            <div className="icon relative left-14 -top-20">
-              <Image
-                src={"/assets/login.png"}
-                width={300}
-                height={120}
-                style={{ marginBottom: "15px" }}
-                alt="MedMapp Logotipi"
-              />
-            </div>
-            <h2>Endi tibbiy sayohat — faqatgina orzu emas!</h2>
-            <p>
-              Xalqaro miqyosdagi eng yaxshi tibbiy xizmatlar va davolanish
-              imkoniyatlaridan mustaqil foydalaning.
-            </p>
-          </div>
-          <div className="auth-right">
-            <div className="mobile-logo-container">
-              <Image
-                src={"/assets/login.png"}
-                width={150}
-                height={50}
-                alt="MedMapp Mobil Logotipi"
-              />
-            </div>
-            <div className="auth-tabs">
-              <button
-                ref={tabLoginRef}
-                className={`auth-tab-btn ${
-                  activeForm === "login" ? "active" : ""
-                }`}
-                type="button"
-                onClick={() => switchForms("login")}
-              >
-                Kirish
-              </button>
-              <button
-                ref={tabRegisterRef}
-                className={`auth-tab-btn ${
-                  activeForm === "register" ? "active" : ""
-                }`}
-                type="button"
-                onClick={() => switchForms("register")}
-              >
-                Ro&apos;yxatdan o&apos;tish
-              </button>
-            </div>
+            Kirish
+          </button>
+          <button
+            ref={tabRegisterRef}
+            className={`auth-tab-btn ${
+              activeForm === "register" ? "active" : ""
+            }`}
+            type="button"
+            onClick={() => switchForms("register")}
+          >
+            Ro&apos;yxatdan o&apos;tish
+          </button>
+        </div>
 
-            {/* Login Form Wrapper */}
-            <div
-              className={`form-wrapper ${
-                activeForm === "login" ? "active" : ""
-              }`}
-              ref={loginFormWrapperRef}
-            >
-              {loginStep === "phone" && (
-                <div className="step">
-                  <h3 className="fw-bold mb-2">Tizimga kirish</h3>
-                  <p className="text-secondary mb-4">
-                    Telefon raqamingizni kiriting.
-                  </p>
-                  <form onSubmit={(e) => e.preventDefault()}>
-                    <div className="mb-3">
-                      <label htmlFor="loginPhone" className="form-label">
-                        Telefon raqam
-                      </label>
-                      <div className="phone-input-wrapper">
-                        <span className="phone-prefix">+998</span>
-                        <input
-                          type="tel"
-                          className="form-control phone-input"
-                          id="loginPhone"
-                          placeholder="(90) 123-45-67"
-                          value={loginPhone}
-                          onChange={(e) => setLoginPhone(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="d-grid my-3">
-                      <button
-                        type="button"
-                        style={{ borderRadius: "10px", cursor: "pointer" }}
-                        className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
-                        disabled={!loginPhoneMaskRef.current?.masked.isComplete}
-                        onClick={handleLoginSendCode}
-                      >
-                        <span className="btn-text">Davom etish</span>
-                      </button>
-                    </div>
-                  </form>
+        {/* Login Form Wrapper */}
+        <div
+          className={`form-wrapper ${activeForm === "login" ? "active" : ""}`}
+          ref={loginFormWrapperRef}
+        >
+          {loginStep === "phone" && (
+            <div className="step">
+              <h3 className="fw-bold mb-2">Tizimga kirish</h3>
+              <p className="text-secondary mb-4">
+                Telefon raqamingizni kiriting.
+              </p>
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="mb-3">
+                  <label htmlFor="loginPhone" className="form-label">
+                    Telefon raqam
+                  </label>
+                  <div className="phone-input-wrapper">
+                    <span className="phone-prefix">+998</span>
+                    <input
+                      type="tel"
+                      className="form-control phone-input"
+                      id="loginPhone"
+                      placeholder="(90) 123-45-67"
+                      value={loginPhone}
+                      onChange={(e) => setLoginPhone(e.target.value)}
+                    />
+                  </div>
                 </div>
-              )}
-              {loginStep === "otp" && (
-                <div className="step">
-                  <h3 className="fw-bold mb-2">Tasdiqlash</h3>
-                  <p className="text-secondary mb-3">
-                    +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni
-                    kiriting.
-                  </p>
-                  <form
-                    onSubmit={(e) => handleLoginSubmit(e, loginOtp.join(""))}
+                <div className="d-grid my-3">
+                  <button
+                    type="button"
+                    style={{ borderRadius: "10px", cursor: "pointer" }}
+                    className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
+                    disabled={!loginPhoneMaskRef.current?.masked.isComplete}
+                    onClick={handleLoginSendCode}
                   >
-                    <div className={`otp-input-fields`}>
-                      {loginOtp.map((digit, index) => (
-                        <input
-                          key={index}
-                          type="tel"
-                          className={`otp-input ${otpError ? "error" : ""}`}
-                          maxLength={1}
-                          inputMode="numeric"
-                          value={digit}
-                          onChange={(e) =>
-                            handleOtpChange(
-                              e,
-                              index,
-                              loginOtp,
-                              setLoginOtp,
-                              loginOtpInputsRef
-                            )
-                          }
-                          onKeyDown={(e) =>
-                            handleOtpKeyDown(
-                              e,
-                              index,
-                              loginOtp,
-                              setLoginOtp,
-                              loginOtpInputsRef
-                            )
-                          }
-                          onPaste={(e) => handleOtpPaste(e, setLoginOtp)}
-                          ref={(el) => {
-                            if (el) loginOtpInputsRef.current[index] = el;
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <div className="validation-message">
-                      {otpError && "Kod noto'g'ri kiritildi."}
-                    </div>
-                    <div className="d-grid my-3">
-                      <button
-                        type="submit"
-                        style={{ borderRadius: "10px", cursor: "pointer" }}
-                        className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
-                        disabled={loginOtp.join("").length !== 6}
-                      >
-                        {isLoading ? (
-                          <p className="flex justify-center items-center w-full relative top-3">
-                            <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
-                          </p>
-                        ) : (
-                          <span className="btn-text">Tasdiqlash</span>
-                        )}
-                      </button>
-                    </div>
-                    <div className="text-center small">
-                      {isResendDisabled ? (
-                        <span className="text-secondary">
-                          Qayta yuborish uchun: {timer}s
-                        </span>
-                      ) : (
-                        <a
-                          href="#"
-                          className="form-switch-link"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleLoginSendCode();
-                          }}
-                        >
-                          Qayta yuborish
-                        </a>
-                      )}
-                    </div>
-                    <p className="text-center small mt-3">
-                      <a
-                        href="#"
-                        className="form-switch-link back-link"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setLoginStep("phone");
-                          setLoginOtp(Array(6).fill(""));
-                          setOtpError(false);
-                          if (timerIntervalRef.current)
-                            clearInterval(timerIntervalRef.current);
-                        }}
-                      >
-                        <i className="bi bi-arrow-left-circle"></i> Orqaga
-                      </a>
-                    </p>
-                  </form>
+                    <span className="btn-text">Davom etish</span>
+                  </button>
                 </div>
-              )}
+              </form>
             </div>
+          )}
+          {loginStep === "otp" && (
+            <div className="step">
+              <h3 className="fw-bold mb-2">Tasdiqlash</h3>
+              <p className="text-secondary mb-3">
+                +998 {loginPhone} raqamiga yuborilgan 6 xonali kodni kiriting.
+              </p>
+              <form onSubmit={(e) => handleLoginSubmit(e, loginOtp.join(""))}>
+                <div className={`otp-input-fields`}>
+                  {loginOtp.map((digit, index) => (
+                    <input
+                      key={index}
+                      type="tel"
+                      className={`otp-input ${otpError ? "error" : ""}`}
+                      maxLength={1}
+                      inputMode="numeric"
+                      value={digit}
+                      onChange={(e) =>
+                        handleOtpChange(
+                          e,
+                          index,
+                          loginOtp,
+                          setLoginOtp,
+                          loginOtpInputsRef
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleOtpKeyDown(
+                          e,
+                          index,
+                          loginOtp,
+                          setLoginOtp,
+                          loginOtpInputsRef
+                        )
+                      }
+                      onPaste={(e) => handleOtpPaste(e, setLoginOtp)}
+                      ref={(el) => {
+                        if (el) loginOtpInputsRef.current[index] = el;
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="validation-message">
+                  {otpError && "Kod noto'g'ri kiritildi."}
+                </div>
+                <div className="d-grid my-3">
+                  <button
+                    type="submit"
+                    style={{ borderRadius: "10px", cursor: "pointer" }}
+                    className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
+                    disabled={loginOtp.join("").length !== 6}
+                  >
+                    {isLoading ? (
+                      <p className="flex justify-center items-center w-full relative top-3">
+                        <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                      </p>
+                    ) : (
+                      <span className="btn-text">Tasdiqlash</span>
+                    )}
+                  </button>
+                </div>
+                <div className="text-center small">
+                  {isResendDisabled ? (
+                    <span className="text-secondary">
+                      Qayta yuborish uchun: {timer}s
+                    </span>
+                  ) : (
+                    <a
+                      href="#"
+                      className="form-switch-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLoginSendCode();
+                      }}
+                    >
+                      Qayta yuborish
+                    </a>
+                  )}
+                </div>
+                <p className="text-center small mt-3">
+                  <a
+                    href="#"
+                    className="form-switch-link back-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setLoginStep("phone");
+                      setLoginOtp(Array(6).fill(""));
+                      setOtpError(false);
+                      if (timerIntervalRef.current)
+                        clearInterval(timerIntervalRef.current);
+                    }}
+                  >
+                    <i className="bi bi-arrow-left-circle"></i> Orqaga
+                  </a>
+                </p>
+              </form>
+            </div>
+          )}
+        </div>
 
-            {/* Register Form Wrapper */}
-            <div
-              className={`form-wrapper ${
-                activeForm === "register" ? "active" : ""
-              }`}
-              ref={registerFormWrapperRef}
-            >
-              {registerStep === "phone" && (
-                <div className="step">
-                  <h3 className="fw-bold mb-2">Ro&apos;yxatdan o&apos;tish</h3>
-                  <p className="text-secondary mb-4">
-                    Ma&apos;lumotlarni to&apos;ldiring.
-                  </p>
-                  <form onSubmit={(e) => e.preventDefault()}>
-                    <div className="row">
-                      <div className="col-12 col-md-6 mb-3">
-                        <label
-                          htmlFor="registerFirstName"
-                          className="form-label"
-                        >
-                          Ism
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="registerFirstName"
-                          placeholder="Abror"
-                          value={registerFirstName}
-                          onChange={(e) => setRegisterFirstName(e.target.value)}
-                        />
-                      </div>
-                      <div className="col-12 col-md-6 mb-3">
-                        <label
-                          htmlFor="registerLastName"
-                          className="form-label"
-                        >
-                          Familiya
-                        </label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          id="registerLastName"
-                          placeholder="Olimov"
-                          value={registerLastName}
-                          onChange={(e) => setRegisterLastName(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="registerRegion" className="form-label">
-                        Yashash hududingiz
-                      </label>
-                      <select
-                        style={{ borderRadius: "10px", cursor: "pointer" }}
-                        className="w-full px-2 py-3 bg-white rounded-2xl text-[#000]"
-                        id="registerRegion"
-                        value={registerRegion}
-                        onChange={(e) => setRegisterRegion(e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Viloyatni tanlang...
-                        </option>
-                        <option value="Toshkent shahri">Toshkent shahri</option>
-                        <option value="Andijon viloyati">
-                          Andijon viloyati
-                        </option>
-                        <option value="Buxoro viloyati">Buxoro viloyati</option>
-                        <option value="Farg'ona viloyati">
-                          Farg&apos;ona viloyati
-                        </option>
-                        <option value="Jizzax viloyati">Jizzax viloyati</option>
-                        <option value="Xorazm viloyati">Xorazm viloyati</option>
-                        <option value="Namangan viloyati">
-                          Namangan viloyati
-                        </option>
-                        <option value="Navoiy viloyati">Navoiy viloyati</option>
-                        <option value="Qashqadaryo viloyati">
-                          Qashqadaryo viloyati
-                        </option>
-                        <option value="Qoraqalpog'iston Respublikasi">
-                          Qoraqalpog&apos;iston Respublikasi
-                        </option>
-                        <option value="Samarqand viloyati">
-                          Samarqand viloyati
-                        </option>
-                        <option value="Sirdaryo viloyati">
-                          Sirdaryo viloyati
-                        </option>
-                        <option value="Surxondaryo viloyati">
-                          Surxondaryo viloyati
-                        </option>
-                        <option value="Toshkent viloyati">
-                          Toshkent viloyati
-                        </option>
-                      </select>
-                    </div>
-                    <div className="mb-3">
-                      <label htmlFor="registerPhone" className="form-label">
-                        Telefon raqam
-                      </label>
-                      <div className="phone-input-wrapper">
-                        <span className="phone-prefix">+998</span>
-                        <input
-                          type="tel"
-                          className="form-control phone-input"
-                          id="registerPhone"
-                          placeholder="(90) 123-45-67"
-                          value={registerPhone}
-                          onChange={(e) => setRegisterPhone(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="d-grid my-3">
-                      <button
-                        type="button"
-                        style={{ borderRadius: "10px", cursor: "pointer" }}
-                        className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
-                        disabled={!validateRegisterForm()}
-                        onClick={handleRegisterSendCode}
-                      >
-                        <span className="btn-text">Kod yuborish</span>
-                      </button>
-                    </div>
-                  </form>
+        {/* Register Form Wrapper */}
+        <div
+          className={`form-wrapper ${
+            activeForm === "register" ? "active" : ""
+          }`}
+          ref={registerFormWrapperRef}
+        >
+          {registerStep === "phone" && (
+            <div className="step">
+              <h3 className="fw-bold mb-2">Ro&apos;yxatdan o&apos;tish</h3>
+              <p className="text-secondary mb-4">
+                Ma&apos;lumotlarni to&apos;ldiring.
+              </p>
+              <form onSubmit={(e) => e.preventDefault()}>
+                <div className="row">
+                  <div className="col-12 col-md-6 mb-3">
+                    <label htmlFor="registerFirstName" className="form-label">
+                      Ism
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="registerFirstName"
+                      placeholder="Abror"
+                      value={registerFirstName}
+                      onChange={(e) => setRegisterFirstName(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-12 col-md-6 mb-3">
+                    <label htmlFor="registerLastName" className="form-label">
+                      Familiya
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="registerLastName"
+                      placeholder="Olimov"
+                      value={registerLastName}
+                      onChange={(e) => setRegisterLastName(e.target.value)}
+                    />
+                  </div>
                 </div>
-              )}
-              {registerStep === "otp" && (
-                <div className="step">
-                  <h3 className="fw-bold mb-2">Tasdiqlash</h3>
-                  <p className="text-secondary mb-3">
-                    +998 {registerPhone} raqamiga yuborilgan 6 xonali kodni
-                    kiriting.
-                  </p>
-                  <form
-                    onSubmit={(e) =>
-                      handleRegisterSubmit(e, registerOtp.join(""))
-                    }
+                <div className="mb-3">
+                  <label htmlFor="registerRegion" className="form-label">
+                    Yashash hududingiz
+                  </label>
+                  <select
+                    style={{ borderRadius: "10px", cursor: "pointer" }}
+                    className="w-full px-2 py-3 bg-white rounded-2xl text-[#000]"
+                    id="registerRegion"
+                    value={registerRegion}
+                    onChange={(e) => setRegisterRegion(e.target.value)}
                   >
-                    <div className={`otp-input-fields`}>
-                      {registerOtp.map((digit, index) => (
-                        <input
-                          key={index}
-                          type="tel"
-                          className={`otp-input ${otpError ? "error" : ""}`}
-                          maxLength={1}
-                          inputMode="numeric"
-                          value={digit}
-                          onChange={(e) =>
-                            handleOtpChange(
-                              e,
-                              index,
-                              registerOtp,
-                              setRegisterOtp,
-                              registerOtpInputsRef
-                            )
-                          }
-                          onKeyDown={(e) =>
-                            handleOtpKeyDown(
-                              e,
-                              index,
-                              registerOtp,
-                              setRegisterOtp,
-                              registerOtpInputsRef
-                            )
-                          }
-                          onPaste={(e) => handleOtpPaste(e, setRegisterOtp)}
-                          ref={(el) => {
-                            if (el) registerOtpInputsRef.current[index] = el;
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <div className="validation-message">
-                      {otpError && "Kod noto'g'ri kiritildi."}
-                    </div>
-                    <div className="d-grid my-3">
-                      <button
-                        type="submit"
-                        id="login-verify-btn"
-                        className="btn btn-primary btn-lg flex justify-center items-center"
-                        disabled={registerOtp.join("").length !== 6}
-                      >
-                        {isLoading ? (
-                          <p className="flex justify-center items-center w-full relative top-3">
-                            <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
-                          </p>
-                        ) : (
-                          <span className="btn-text">Kirish</span>
-                        )}
-                      </button>
-                    </div>
-                    <div className="text-center small">
-                      {isResendDisabled ? (
-                        <span className="text-secondary">
-                          Qayta yuborish uchun: {timer}s
-                        </span>
-                      ) : (
-                        <a
-                          href="#"
-                          className="form-switch-link"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleRegisterSendCode();
-                          }}
-                        >
-                          Qayta yuborish
-                        </a>
-                      )}
-                    </div>
-                    <p className="text-center small mt-3">
-                      <a
-                        href="#"
-                        className="form-switch-link back-link"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setRegisterStep("phone");
-                          setRegisterOtp(Array(6).fill(""));
-                          setOtpError(false);
-                          if (timerIntervalRef.current)
-                            clearInterval(timerIntervalRef.current);
-                        }}
-                      >
-                        <i className="bi bi-arrow-left-circle"></i> Orqaga
-                      </a>
-                    </p>
-                  </form>
+                    <option value="" disabled>
+                      Viloyatni tanlang...
+                    </option>
+                    <option value="Toshkent shahri">Toshkent shahri</option>
+                    <option value="Andijon viloyati">Andijon viloyati</option>
+                    <option value="Buxoro viloyati">Buxoro viloyati</option>
+                    <option value="Farg'ona viloyati">
+                      Farg&apos;ona viloyati
+                    </option>
+                    <option value="Jizzax viloyati">Jizzax viloyati</option>
+                    <option value="Xorazm viloyati">Xorazm viloyati</option>
+                    <option value="Namangan viloyati">Namangan viloyati</option>
+                    <option value="Navoiy viloyati">Navoiy viloyati</option>
+                    <option value="Qashqadaryo viloyati">
+                      Qashqadaryo viloyati
+                    </option>
+                    <option value="Qoraqalpog'iston Respublikasi">
+                      Qoraqalpog&apos;iston Respublikasi
+                    </option>
+                    <option value="Samarqand viloyati">
+                      Samarqand viloyati
+                    </option>
+                    <option value="Sirdaryo viloyati">Sirdaryo viloyati</option>
+                    <option value="Surxondaryo viloyati">
+                      Surxondaryo viloyati
+                    </option>
+                    <option value="Toshkent viloyati">Toshkent viloyati</option>
+                  </select>
                 </div>
-              )}
+                <div className="mb-3">
+                  <label htmlFor="registerPhone" className="form-label">
+                    Telefon raqam
+                  </label>
+                  <div className="phone-input-wrapper">
+                    <span className="phone-prefix">+998</span>
+                    <input
+                      type="tel"
+                      className="form-control phone-input"
+                      id="registerPhone"
+                      placeholder="(90) 123-45-67"
+                      value={registerPhone}
+                      onChange={(e) => setRegisterPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="d-grid my-3">
+                  <button
+                    type="button"
+                    style={{ borderRadius: "10px", cursor: "pointer" }}
+                    className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
+                    disabled={!validateRegisterForm()}
+                    onClick={handleRegisterSendCode}
+                  >
+                    <span className="btn-text">Kod yuborish</span>
+                  </button>
+                </div>
+              </form>
             </div>
-          </div>
+          )}
+          {registerStep === "otp" && (
+            <div className="step">
+              <h3 className="fw-bold mb-2">Tasdiqlash</h3>
+              <p className="text-secondary mb-3">
+                +998 {registerPhone} raqamiga yuborilgan 6 xonali kodni
+                kiriting.
+              </p>
+              <form
+                onSubmit={(e) => handleRegisterSubmit(e, registerOtp.join(""))}
+              >
+                <div className={`otp-input-fields`}>
+                  {registerOtp.map((digit, index) => (
+                    <input
+                      key={index}
+                      type="tel"
+                      className={`otp-input ${otpError ? "error" : ""}`}
+                      maxLength={1}
+                      inputMode="numeric"
+                      value={digit}
+                      onChange={(e) =>
+                        handleOtpChange(
+                          e,
+                          index,
+                          registerOtp,
+                          setRegisterOtp,
+                          registerOtpInputsRef
+                        )
+                      }
+                      onKeyDown={(e) =>
+                        handleOtpKeyDown(
+                          e,
+                          index,
+                          registerOtp,
+                          setRegisterOtp,
+                          registerOtpInputsRef
+                        )
+                      }
+                      onPaste={(e) => handleOtpPaste(e, setRegisterOtp)}
+                      ref={(el) => {
+                        if (el) registerOtpInputsRef.current[index] = el;
+                      }}
+                    />
+                  ))}
+                </div>
+                <div className="validation-message">
+                  {otpError && "Kod noto'g'ri kiritildi."}
+                </div>
+                <div className="d-grid my-3">
+                  <button
+                    type="submit"
+                    id="login-verify-btn"
+                    className="btn btn-primary btn-lg flex justify-center items-center"
+                    disabled={registerOtp.join("").length !== 6}
+                  >
+                    {isLoading ? (
+                      <p className="flex justify-center items-center w-full relative top-3">
+                        <AiOutlineLoading className="animate-spin duration-300 transiton-all" />
+                      </p>
+                    ) : (
+                      <span className="btn-text">Kirish</span>
+                    )}
+                  </button>
+                </div>
+                <div className="text-center small">
+                  {isResendDisabled ? (
+                    <span className="text-secondary">
+                      Qayta yuborish uchun: {timer}s
+                    </span>
+                  ) : (
+                    <a
+                      href="#"
+                      className="form-switch-link"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleRegisterSendCode();
+                      }}
+                    >
+                      Qayta yuborish
+                    </a>
+                  )}
+                </div>
+                <p className="text-center small mt-3">
+                  <a
+                    href="#"
+                    className="form-switch-link back-link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setRegisterStep("phone");
+                      setRegisterOtp(Array(6).fill(""));
+                      setOtpError(false);
+                      if (timerIntervalRef.current)
+                        clearInterval(timerIntervalRef.current);
+                    }}
+                  >
+                    <i className="bi bi-arrow-left-circle"></i> Orqaga
+                  </a>
+                </p>
+              </form>
+            </div>
+          )}
         </div>
       </div>
     </>
