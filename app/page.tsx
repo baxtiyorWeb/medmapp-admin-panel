@@ -59,27 +59,6 @@ const App = () => {
             </Link>
           </div>
 
-          {/* Shifokor Kabineti */}
-          {/* <div className="w-[384px] h-[334px]">
-            <Link
-              href="/doctors"
-              className="flex h-full flex-col rounded-2xl border border-[var(--border-color)] transition-all duration-300  bg-[var(--card-background)] p-10 text-center text-[var(--text-color)]  hover:-translate-y-2 hover:border-[var(--color-success)] hover:shadow-xl"
-            >
-              <div className="mx-auto mb-6 flex h-[60px] w-[60px] items-center justify-center rounded-full bg-[var(--success-light)] text-[28px] text-[var(--color-success)]">
-                <i className="bi bi-heart-pulse"></i>
-              </div>
-              <h3 className="text-xl font-semibold">Shifokor Kabineti</h3>
-              <p className="flex-grow min-h-[60px] text-[var(--text-light)]">
-                Qabullar jadvali, bemorlar ro&apos;yxati va maslahatlarni
-                boshqarish.
-              </p>
-              <span className="mt-6 inline-flex items-center font-semibold text-[var(--color-success)]">
-                Kirish{" "}
-                <i className="bi bi-arrow-right-short transition-transform group-hover:translate-x-1"></i>
-              </span>
-            </Link>
-          </div> */}
-
           {/* Operator Paneli */}
           <div className="w-[384px] h-[334px]">
             <Link

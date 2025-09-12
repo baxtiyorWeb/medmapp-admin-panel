@@ -1,9 +1,5 @@
 "use client";
-import api from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
-import { isArray } from "lodash";
 import React from "react";
-import { get } from "sortablejs";
 
 const appointments = [
   {
@@ -33,8 +29,6 @@ const appointments = [
 ];
 
 const AppointmentTable = () => {
-  
-
   // const usersitems = isArray(data?.data) ? get("data", {}) : [];
 
   return (

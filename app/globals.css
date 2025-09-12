@@ -93,19 +93,7 @@ body {
    3. PORTAL SAHIFASI STILLARI
    - Tizimga kirish uchun rollarni tanlash sahifasi.
 ================================================================= */
-.portal-container {
-  width: 100%;
-  max-width: 1200px;
-  text-align: center;
-}
 
-.logo-container {
-  margin-bottom: 2rem;
-}
-
-.logo-container img {
-  max-height: 70px;
-}
 
 /* ----- Portal sahifasi stillari tugadi ----- */
 
@@ -261,11 +249,6 @@ body {
   display: none;
 }
 
-.form-label {
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 0.6rem;
-}
 .details-info-item .form-control,
 .form-select {
   height: 100px;
@@ -288,8 +271,8 @@ body {
 .phone-input-wrapper {
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-color);
   border-radius: 12px;
+  padding-left: 10px;
   background-color: rgba(248, 249, 250, 0.8);
   transition: all 0.2s ease-in-out;
 }
@@ -299,17 +282,10 @@ body {
   box-shadow: 0 0 0 3px rgba(58, 134, 255, 0.2);
 }
 
-.phone-prefix {
-  padding-left: 1.25rem;
-  color: var(--text-color);
-  font-weight: 500;
-}
-
 .phone-input-wrapper input {
   border: none;
   background: transparent;
   box-shadow: none !important;
-  padding-left: 0.5rem;
   width: 100%;
   height: 48px;
 }
@@ -851,12 +827,6 @@ body {
     height: 46px;
     font-size: 0.9rem;
     border-radius: 10px;
-  }
-
-  .form-label {
-    font-weight: 500;
-    margin-bottom: 0.4rem;
-    font-size: 0.85rem;
   }
 
   .otp-input-fields {

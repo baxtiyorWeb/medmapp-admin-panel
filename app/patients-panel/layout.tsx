@@ -1,12 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Calendar,
-  MessageSquare,
-  Settings,
-  LogOut,
-} from "lucide-react";
+import { Calendar, MessageSquare, Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,6 +13,7 @@ import LoadingOverlay from "@/components/LoadingOverlay";
 import "./../../components/patients/style.css";
 import useDarkMode from "@/hooks/useDarkMode";
 import { BiBasket } from "react-icons/bi";
+import { SidebarItem } from "@/components/SidebarItem";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -122,7 +118,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             active={pathname === "/patients-panel/applications"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
-           <SidebarItem
+          <SidebarItem
             link="/patients-panel/orders"
             icon={BiBasket}
             text="Buyurtmalarim"
@@ -257,57 +253,5 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     </div>
   );
 };
-
-interface SidebarItemProps {
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  text: string;
-  open: boolean;
-  className?: string;
-  active?: boolean;
-  link?: string;
-  onClick: () => void;
-}
-
-const SidebarItem: React.FC<SidebarItemProps> = ({
-  icon: Icon,
-  text,
-  open,
-  className = "",
-  active = false,
-  link = "",
-  onClick,
-}) => (
-  <Link
-    href={link}
-    onClick={onClick}
-    className={`flex items-center py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 ${
-      active
-        ? "bg-[var(--color-primary)] text-white"
-        : "text-[var(--text-light)] hover:bg-[var(--input-bg)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--text-color)]"
-    } ${className}`}
-  >
-    <div className="flex items-center justify-center">
-      <Icon
-        size={20}
-        className={`mr-3 text-xl transition-colors duration-200 ${
-          active
-            ? "text-white"
-            : "text-[var(--text-light)] hover:text-[var(--color-primary)] dark:hover:text-white"
-        }`}
-      />
-    </div>
-    {open && (
-      <span
-        className={`mr-3 transition-colors duration-200 ${
-          active
-            ? "text-white"
-            : "text-[var(--text-light)] hover:text-[var(--color-primary)] dark:hover:text-white"
-        }`}
-      >
-        {text}
-      </span>
-    )}
-  </Link>
-);
 
 export default DashboardLayout;

@@ -449,11 +449,11 @@ export default function LoginClientComponent() {
                   <label htmlFor="loginPhone" className="form-label">
                     Telefon raqam
                   </label>
-                  <div className="phone-input-wrapper">
+                  <div className="phone-input-wrapper ">
                     <span className="phone-prefix">+998</span>
                     <input
                       type="tel"
-                      className="form-control phone-input"
+                      className="form-control border-none phone-input"
                       id="loginPhone"
                       placeholder="(90) 123-45-67"
                       value={loginPhone}

@@ -1,9 +1,14 @@
 // app/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
+// Barcha global stillarni shu yerga import qiling!
+
+import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
 import DarkModeProvider from "@/providers/DarkThemeProvider";
+import Script from "next/script";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -14,6 +19,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "MedMapp paneli",
   description: "MedMapp hamma uchun birdek",
+  icons: {
+    icon: "https://placehold.co/32x32/012970/ffffff?text=M",
+    apple: "https://placehold.co/180x180/012970/ffffff?text=M",
+  },
 };
 
 export default function RootLayout({
@@ -22,25 +31,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <head>
-        <link
-          href="https://placehold.co/32x32/3a86ff/ffffff?text=✈"
-          rel="icon"
-        />
-        <link
-          href="https://placehold.co/180x180/3a86ff/ffffff?text=✈"
-          rel="apple-touch-icon"
-        />
-        <link
-          rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-        />
-      </head>
+    <html lang="en">
       <body className={`${inter.variable}`}>
         <DarkModeProvider>
           <QueryProvider>{children}</QueryProvider>
         </DarkModeProvider>
+        <Script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+          strategy="beforeInteractive"
+        />
+        <Script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js" />
       </body>
     </html>
   );
