@@ -437,7 +437,7 @@ const KanbanBoard: React.FC = () => {
                             <div className="info-line">
                               <i className="bi bi-exclamation-diamond-fill"></i>
                               <span>
-                                Keyingi qadam:{" "}
+                                Keyingi qadam:
                                 {getNextStepText(patient.stageId)}
                               </span>
                             </div>
@@ -626,8 +626,8 @@ const KanbanBoard: React.FC = () => {
                       htmlFor="form-agreement"
                     >
                       Men kiritgan barcha ma&apos;lumotlarning
-                      to&apos;g&apos;riligini tasdiqlayman hamda{" "}
-                      <a href="#">Ommaviy oferta</a> va{" "}
+                      to&apos;g&apos;riligini tasdiqlayman hamda
+                      <a href="#">Ommaviy oferta</a> va
                       <a href="#">Foydalanish shartlari</a> bilan tanishib
                       chiqdim.
                     </label>

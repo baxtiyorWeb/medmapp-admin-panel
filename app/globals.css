@@ -94,7 +94,6 @@ body {
    - Tizimga kirish uchun rollarni tanlash sahifasi.
 ================================================================= */
 
-
 /* ----- Portal sahifasi stillari tugadi ----- */
 
 /* =================================================================
@@ -851,4 +850,14 @@ body {
 }
 a {
   color: var(--text-color) !important;
+}
+
+/* service card styles */
+.dark .service-btn {
+  background-color: #2b2c6f;
+  color: white;
+}
+.dark .service-btn:hover {
+  background-color: #4338ca;
+  color: white;
 }

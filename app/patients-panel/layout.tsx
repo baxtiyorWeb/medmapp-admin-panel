@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Calendar, MessageSquare, Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { BsFillGrid1X2Fill } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
@@ -14,6 +14,7 @@ import "./../../components/patients/style.css";
 import useDarkMode from "@/hooks/useDarkMode";
 import { BiBasket } from "react-icons/bi";
 import { SidebarItem } from "@/components/SidebarItem";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -23,8 +24,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Yangi state
   const pathname = usePathname();
-  const [isDarkMode, toggleDarkMode] = useDarkMode();
+  const router = useRouter();
 
   const { fetchProfile } = useProfile();
   const { data, isLoading } = useQuery({
@@ -65,7 +67,28 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       window.removeEventListener("resize", handleResize);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isMobile, isProfileDropdownOpen]);
+  }, [isProfileDropdownOpen]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    router.push("/login");
+  };
+
+  // Animatsiya uchun variantlar
+  const modalVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.95 },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.2, ease: "easeOut" },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.15, ease: "easeIn" },
+    },
+  };
 
   return (
     <div className="flex h-screen bg-[var(--background-color)] text-[var(--text-color)] overflow-hidden">
@@ -82,7 +105,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)]  flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)] flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -134,7 +157,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             active={pathname === "/patients-panel/consultations"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
-
           <SidebarItem
             link="/patients-panel/settings"
             icon={Settings}
@@ -143,21 +165,23 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             active={pathname === "/patients-panel/settings"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
-          <SidebarItem
-            link="/login"
-            icon={LogOut}
-            text="Chiqish"
-            open={isSidebarOpen}
-            className="text-white w-[80%]  bg-[var(--color-danger)]/30  absolute bottom-10"
-            active={pathname === "/login"}
-            onClick={() => isMobile && setIsSidebarOpen(false)}
-          />
+
+          {/* Chiqish tugmasi modalni ochadi */}
+          <div className="absolute bottom-10 w-[calc(100%-48px)]">
+            <button
+              onClick={() => setIsLogoutModalOpen(true)}
+              className="w-full flex items-center p-3 text-sm font-semibold rounded-lg transition-colors duration-200 text-red-500 bg-red-500/10 hover:bg-red-500/20"
+            >
+              <LogOut className="h-5 w-5 mr-3" />
+              <span>Chiqish</span>
+            </button>
+          </div>
         </nav>
       </aside>
 
       <div
         className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"
+          isSidebarOpen && !isMobile ? "ml-[260px]" : "ml-0"
         }`}
       >
         {/* Header */}
@@ -170,30 +194,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             >
               <i className="bi bi-list text-3xl"></i>
             </button>
-            <h1 className="hidd en md:block text-2xl font-semibold text-[var(--text-color)]">
+            <h1 className="hidden md:block text-2xl font-semibold text-[var(--text-color)]">
               Boshqaruv paneli
             </h1>
           </div>
           <div className="flex items-center space-x-3 md:space-x-5">
-            <div className="relative">
-              <button className="lang-toggle cursor-pointer text-[var(--text-light)] hover:text-[var(--color-primary)]">
-                <i className="bi bi-translate text-xl"></i>
-              </button>
-            </div>
-            <button
-              id="dark-mode-toggle"
-              className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]"
-              onClick={toggleDarkMode}
-            >
-              {isDarkMode ? (
-                <i className="bi bi-sun-fill text-xl"></i>
-              ) : (
-                <i className="bi bi-moon-stars-fill text-xl"></i>
-              )}
-            </button>
-            <button className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]">
-              <i className="bi bi-bell text-xl"></i>
-            </button>
+            {/* ...boshqa ikonlar... */}
 
             {/* Profile section */}
             <div className="relative">
@@ -202,11 +208,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
                 {dataItem && dataItem.full_name ? (
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[var(--color-slate-200)] dark:bg-[var(--color-slate-600)] text-[var(--text-color)] dark:text-[var(--text-light)] font-bold">
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold">
                     {dataItem.full_name.charAt(0).toUpperCase()}
                   </div>
                 ) : (
-                  <img
+                  <Image
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                     src="https://placehold.co/40x40/EFEFEF/333333?text=A"
                     alt="Profil rasmi"
@@ -229,16 +237,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     Sozlamalar
                   </Link>
                   <div className="border-t border-[var(--border-color)] my-1"></div>
-                  <Link
-                    href="/login"
-                    onClick={() => {
-                      localStorage.removeItem("access_token");
-                      localStorage.removeItem("refresh_token");
-                    }}
-                    className="flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                  <button
+                    onClick={() => setIsLogoutModalOpen(true)}
+                    className="w-full text-left flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >
                     <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -250,6 +254,50 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           {isLoading ? <LoadingOverlay /> : children}
         </main>
       </div>
+
+      {/* Chiqish uchun Modal */}
+      <AnimatePresence>
+        {isLogoutModalOpen && (
+          <motion.div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="bg-[var(--card-background)] rounded-2xl shadow-xl w-full max-w-md p-8 text-center border border-[var(--border-color)]"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+            >
+              <div className="w-16 h-16 mx-auto rounded-full bg-red-500/10 flex items-center justify-center mb-5">
+                <i className="bi bi-exclamation-triangle-fill text-3xl text-red-500"></i>
+              </div>
+              <h3 className="text-xl font-bold text-[var(--text-color)] mb-2">
+                Ishonchingiz komilmi?
+              </h3>
+              <p className="text-[var(--text-light)] mb-8">
+                Siz profilingizdan chiqmoqchisiz. Bu amalni tasdiqlaysizmi?
+              </p>
+              <div className="grid grid-cols-2 gap-x-3">
+                <button
+                  onClick={() => setIsLogoutModalOpen(false)}
+                  className="bg-[#475569] text-sm text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer"
+                >
+                  Bekor qilish
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="w-full py-2 px-3  text-sm rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
+                >
+                  Ha, chiqish
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

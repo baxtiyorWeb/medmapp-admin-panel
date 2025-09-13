@@ -14,15 +14,13 @@ import api from "@/utils/api";
 import useProfile from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import "./../application.css";
-// Import qilingan yangi komponentlar
 import ApplicationModal from "./application-modal";
 import PersonalDetailsStep from "./personal-detail-step";
 import HealthInfoStep from "./health-info-step";
 import DocumentUploadStep from "./document-upload-step";
 import ReviewStep from "./review-step";
-import Modal from "@/exports/modal"; // Success notification modal
+import Modal from "@/exports/modal";
 
-// Tiplar
 export interface DocumentFile {
   id: string;
   name: string;
@@ -94,7 +92,7 @@ const StatusCard: React.FC = () => {
 
       if (initialPhone) {
         const limitedPhone = initialPhone.slice(0, 9);
-        let formatted = `+998 (${limitedPhone.slice(
+        const formatted = `+998 (${limitedPhone.slice(
           0,
           2
         )}) ${limitedPhone.slice(2, 5)}-${limitedPhone.slice(
@@ -446,14 +444,15 @@ const StatusCard: React.FC = () => {
       )}
 
       {isFormSubmitted ? (
-        <div className="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl p-6 md:p-8 shadow-lg">
+        <div className="bg-gradient-to-r mb-10 from-green-500 to-green-600 text-white rounded-2xl p-6 md:p-8 shadow-lg">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-2xl font-bold mb-2">
-                So'rov muvaffaqiyatli yuborildi!
+                So&apos;rov muvaffaqiyatli yuborildi!
               </h2>
               <p className="text-indigo-200">
-                Arizangiz ko'rib chiqilmoqda. Tez orada siz bilan bog'lanamiz.
+                Arizangiz ko&apos;rib chiqilmoqda. Tez orada siz bilan
+                bog&apos;lanamiz.
               </p>
             </div>
             <button
@@ -468,7 +467,7 @@ const StatusCard: React.FC = () => {
       ) : (
         <div
           id="status-card"
-          className="bg-gradient-to-r from-[#012970] to-[#4154f1] text-white rounded-2xl p-6 md:p-8 shadow-lg mb-8 transition-all duration-500"
+          className="bg-gradient-to-r  from-[#012970] to-[#4154f1] text-white rounded-2xl p-6 md:p-8 shadow-lg mb-10 transition-all duration-500"
         >
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
@@ -479,7 +478,6 @@ const StatusCard: React.FC = () => {
                 Tibbiy konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
                 quyidagi tugmani bosing.
               </p>
-              
             </div>
             <button
               id="main-action-button"

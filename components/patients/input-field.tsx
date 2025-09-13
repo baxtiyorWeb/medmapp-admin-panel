@@ -61,7 +61,7 @@ const InputField = memo<InputFieldProps>(
             <select
               id={`input-${id}`}
               required={required}
-              className={`w-full p-2 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition ${
+              className={`w-full p-2 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition appearance-none ${
                 icon ? "pl-9" : "pl-3"
               }`}
               value={value}
