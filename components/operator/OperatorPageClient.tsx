@@ -520,7 +520,7 @@ export default function OperatorPageClient() {
                     ) : (
                       <div className="text-center text-slate-400 p-5">
                         <i className="bi bi-moon-stars text-4xl"></i>
-                        <p className="mt-2 text-sm">Bemorlar yo'q</p>
+                        <p className="mt-2 text-sm">Bemorlar yo&apos;q</p>
                       </div>
                     )}
                   </div>
@@ -575,7 +575,7 @@ export default function OperatorPageClient() {
                       <div className="flex justify-between items-center mb-3">
                         <h6 className="font-semibold text-slate-700">
                           <i className="bi bi-person-badge mr-2"></i>Shaxsiy
-                          ma'lumotlar
+                          ma&apos;lumotlar
                         </h6>
                         {editingSection !== "personal" ? (
                           <button
@@ -619,7 +619,7 @@ export default function OperatorPageClient() {
                             </div>
                             <div>
                               <label className="text-xs text-slate-500">
-                                Tug'ilgan sana
+                                Tug&apos;ilgan sana
                               </label>
                               <input
                                 type="date"
@@ -678,7 +678,7 @@ export default function OperatorPageClient() {
                             </div>
                             <div className="flex justify-between py-1.5">
                               <span className="text-slate-500">
-                                Tug'ilgan sana
+                                Tug&apos;ilgan sana
                               </span>
                               <span className="font-medium text-slate-800">
                                 {selectedPatient.details.dob}
@@ -713,7 +713,7 @@ export default function OperatorPageClient() {
                         className="w-full py-2.5 text-red-600 bg-white border border-red-300 rounded-lg hover:bg-red-50 cursor-pointer transition"
                         onClick={() => setPatientToDelete(selectedPatient)}
                       >
-                        <i className="bi bi-trash mr-2"></i>Bemorni o'chirish
+                        <i className="bi bi-trash mr-2"></i>Bemorni o&apos;chirish
                       </button>
                     </div>
                   </div>
@@ -754,7 +754,7 @@ export default function OperatorPageClient() {
               <Dialog.Panel className="bg-white rounded-lg shadow-xl w-full max-w-md">
                 <div className="p-5 border-b">
                   <Dialog.Title className="font-semibold text-lg text-slate-800">
-                    Bosqichni O'zgartirish
+                    Bosqichni O&apos;zgartirish
                   </Dialog.Title>
                 </div>
                 <div className="p-5">
@@ -847,8 +847,8 @@ export default function OperatorPageClient() {
                 <div className="p-5">
                   <p className="text-slate-600">
                     Rostdan ham <strong>{patientToDelete?.name}</strong> ismli
-                    bemorni o'chirmoqchimisiz? Bu amalni orqaga qaytarib
-                    bo'lmaydi.
+                    bemorni o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib
+                    bo&apos;lmaydi.
                   </p>
                 </div>
                 <div className="flex justify-end gap-3 p-4 bg-slate-50 rounded-b-lg">
@@ -857,14 +857,14 @@ export default function OperatorPageClient() {
                     className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-100 cursor-pointer transition"
                     onClick={() => setPatientToDelete(null)}
                   >
-                    Yo'q
+                    Yo&apos;q
                   </button>
                   <button
                     type="button"
                     className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 cursor-pointer transition"
                     onClick={confirmDeletePatient}
                   >
-                    Ha, o'chirish
+                    Ha, o&apos;chirish
                   </button>
                 </div>
               </Dialog.Panel>
@@ -1026,7 +1026,7 @@ export default function OperatorPageClient() {
                   </div>
                   <div>
                     <h6 className="font-medium text-slate-600 mb-2">
-                      Yangi Holat Qo'shish
+                      Yangi Holat Qo&apos;shish
                     </h6>
                     <div className="flex gap-2">
                       <input
@@ -1044,14 +1044,14 @@ export default function OperatorPageClient() {
                         <option value="success">Yashil</option>
                         <option value="warning">Sariq</option>
                         <option value="danger">Qizil</option>
-                        <option value="primary">Ko'k</option>
+                        <option value="primary">Ko&apos;k</option>
                         <option value="secondary">Kulrang</option>
                       </select>
                       <button
                         className="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-md hover:bg-sky-700 cursor-pointer"
                         onClick={handleAddNewTag}
                       >
-                        Qo'shish
+                        Qo&apos;shish
                       </button>
                     </div>
                   </div>
@@ -1102,7 +1102,7 @@ export default function OperatorPageClient() {
                 </button>
               </div>
               <div className="p-5">
-                <p>Bu yerda filtrlar bo'ladi...</p>
+                <p>Bu yerda filtrlar bo&apos;ladi...</p>
               </div>
             </Dialog.Panel>
           </Transition.Child>
