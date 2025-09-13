@@ -13,7 +13,7 @@ export const SidebarItem: React.FC<SidebarItemProps> = ({
   <Link
     href={link}
     onClick={onClick}
-    className={`flex items-center  py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 ${
+    className={`flex items-center py-4 px-4 text-base font-semibold rounded-lg transition-colors duration-200 no-underline ${
       active
         ? "bg-[var(--color-primary)] text-white"
         : "text-[var(--text-light)] hover:bg-[var(--input-bg)] dark:hover:bg-[var(--color-slate-700)] hover:text-[var(--text-color)]"

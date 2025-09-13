@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
 // Barcha global stillarni shu yerga import qiling!
-
+// import 'bootstrap/dist/css/bootstrap.min.css';
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
