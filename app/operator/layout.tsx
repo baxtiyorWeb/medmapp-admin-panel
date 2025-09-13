@@ -1,6 +1,4 @@
 "use client";
-// import 'bootstrap/dist/css/bootstrap-grid.min.css'; // Faqat grid
-// import 'bootstrap/dist/css/bootstrap-utilities.min.css'; // Faqat utilities
 import React, { useState, useEffect } from "react";
 import {
   Calendar,
