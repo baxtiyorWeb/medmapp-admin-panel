@@ -21,7 +21,7 @@ import "./layout.css";
 import { SidebarItem } from "@/components/SidebarItem";
 
 export default function OperatorLayout({ children }: React.PropsWithChildren) {
-  const [isSidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [isSidebarCollapsed] = useState(false);
   const [isSidebarToggled, setSidebarToggled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -76,10 +76,10 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
       document.documentElement.classList.add("dark-mode");
   }, []);
 
-  const handleToggleSidebar = () => {
-    if (window.innerWidth < 1200) setSidebarToggled(!isSidebarToggled);
-    else setSidebarCollapsed(!isSidebarCollapsed);
-  };
+  // const handleToggleSidebar = () => {
+  //   if (window.innerWidth < 1200) setSidebarToggled(!isSidebarToggled);
+  //   else setSidebarCollapsed(!isSidebarCollapsed);
+  // };
 
   return (
     <div
@@ -209,7 +209,9 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
                     {dataItem.full_name.charAt(0).toUpperCase()}
                   </div>
                 ) : (
-                  <img
+                  <Image
+                    width={100}
+                    height={100}
                     className="h-10 w-10 rounded-full object-cover"
                     src="https://placehold.co/40x40/EFEFEF/333333?text=A"
                     alt="Profil rasmi"
