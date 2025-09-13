@@ -113,10 +113,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
           <Link href="/">
             <Image
-              className="h-[66px] w-auto"
+              className="h-[66px] w-auto rounded-lg"
               width={150}
               height={66}
-              src="https://medmapp.netlify.app/images/MedMapp_Logo_shaffof.png"
+                src="/assets/MedMapp_logo_main.png"
               alt="MedMapp Logo"
               onError={(e) => {
                 e.currentTarget.src =
@@ -167,11 +167,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
 
-          {/* Chiqish tugmasi modalni ochadi */}
           <div className="absolute bottom-10 w-[calc(100%-48px)]">
             <button
               onClick={() => setIsLogoutModalOpen(true)}
-              className="w-full flex items-center p-3 text-sm font-semibold rounded-lg transition-colors duration-200 text-red-500 bg-red-500/10 hover:bg-red-500/20"
+              className="w-full  cursor-pointer flex items-center p-3 text-sm font-semibold rounded-lg transition-colors duration-200 text-red-500 bg-red-500/10 hover:bg-red-500/20"
             >
               <LogOut className="h-5 w-5 mr-3" />
               <span>Chiqish</span>
@@ -257,7 +256,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <div className="border-t border-[var(--border-color)] my-1"></div>
                   <button
                     onClick={() => setIsLogoutModalOpen(true)}
-                    className="w-full text-left flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                    className="w-full  cursor-pointer text-left flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
                   >
                     <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
                   </button>

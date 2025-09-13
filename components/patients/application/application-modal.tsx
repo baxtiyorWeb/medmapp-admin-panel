@@ -103,7 +103,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             </div>
 
             {/* Scrollable content */}
-            <div className="flex-auto overflow-y-auto p-6 relative">
+            <div className="flex-auto overflow-y-auto p-6 relative ">
               <AnimatePresence initial={false} custom={direction} mode="wait">
                 <motion.div
                   key={currentStep}
@@ -118,7 +118,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                   }}
                   className="w-full"
                 >
-                  <div className="w-full max-w-3xl mx-auto">
+                  <div className="w-full max-w-3xl mx-auto ">
                     <div className="text-center mb-6">
                       <div className="w-16 h-16 mx-auto bg-[var(--card-background)] rounded-full flex items-center justify-center border border-[var(--border-color)]">
                         <i
@@ -132,7 +132,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         {stepInfo.description}
                       </p>
                     </div>
-                    {children}
+                    <div className="bg-[var(--card-background)]  p-[20px] rounded-2xl">{children}</div>
                   </div>
                 </motion.div>
               </AnimatePresence>

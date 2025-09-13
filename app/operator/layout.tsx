@@ -152,7 +152,7 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
             icon={LogOut}
             text="Chiqish"
             open={isSidebarOpen}
-            className="text-[var(--color-danger)] absolute bottom-10"
+            className="text-[var(--color-danger)]  cursor-pointer absolute bottom-10"
             active={pathname === "/login"}
             onClick={() => isMobile && setIsSidebarOpen(false)}
           />
