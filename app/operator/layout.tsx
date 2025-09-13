@@ -13,12 +13,12 @@ import { BsFillGrid1X2Fill } from "react-icons/bs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import useDarkMode from "@/hooks/useDarkMode";
 import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import "./layout.css";
 import { SidebarItem } from "@/components/SidebarItem";
+import { useDarkModeContext } from "@/providers/DarkThemeProvider";
 
 export default function OperatorLayout({ children }: React.PropsWithChildren) {
   const [isSidebarCollapsed] = useState(false);
@@ -27,7 +27,7 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
   const [isMobile, setIsMobile] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const pathname = usePathname();
-  const [isDarkMode, toggleDarkMode] = useDarkMode();
+  const { isDarkMode, toggleDarkMode } = useDarkModeContext();
 
   const { fetchProfile } = useProfile();
   const { data } = useQuery({

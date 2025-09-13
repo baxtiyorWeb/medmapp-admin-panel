@@ -5,8 +5,8 @@ import { Inter } from "next/font/google";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "./globals.css";
 import QueryProvider from "@/providers/QueryProvider";
-import DarkModeProvider from "@/providers/DarkThemeProvider";
 import Script from "next/script";
+import { DarkModeProvider } from "@/providers/DarkThemeProvider";
 
 const inter = Inter({
   variable: "--font-inter",

@@ -14,7 +14,7 @@ import "./../../components/patients/style.css";
 import { BiBasket } from "react-icons/bi";
 import { SidebarItem } from "@/components/SidebarItem";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import useDarkMode from "@/hooks/useDarkMode";
+import { useDarkModeContext } from "@/providers/DarkThemeProvider";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -25,7 +25,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [isDarkMode, toggleDarkMode] = useDarkMode();
+  const { isDarkMode, toggleDarkMode } = useDarkModeContext();
   const pathname = usePathname();
   const router = useRouter();
 

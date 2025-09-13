@@ -1,17 +1,9 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 const App = () => {
-  useEffect(() => {
-    document.documentElement.classList.add("dark");
-
-    return () => {
-      document.documentElement.classList.remove("dark");
-    };
-  }, []);
-
   return (
     <main className="flex min-h-screen items-center justify-center p-6 bg-[var(--background-color)]">
       <div className="w-full max-w-[1200px] text-center">
