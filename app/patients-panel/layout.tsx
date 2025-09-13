@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, useEffect } from "react";
 import { Calendar, MessageSquare, Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -11,10 +11,10 @@ import { get, isArray } from "lodash";
 import useProfile from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import "./../../components/patients/style.css";
-import useDarkMode from "@/hooks/useDarkMode";
 import { BiBasket } from "react-icons/bi";
 import { SidebarItem } from "@/components/SidebarItem";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import useDarkMode from "@/hooks/useDarkMode";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -24,7 +24,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // Yangi state
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDarkMode, toggleDarkMode] = useDarkMode();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -199,7 +200,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </h1>
           </div>
           <div className="flex items-center space-x-3 md:space-x-5">
-            {/* ...boshqa ikonlar... */}
+            <div className="relative">
+              <button className="lang-toggle cursor-pointer text-[var(--text-light)] hover:text-[var(--color-primary)]">
+                <i className="bi bi-translate text-xl"></i>
+              </button>
+            </div>
+            <div>
+              <button
+                id="dark-mode-toggle"
+                className="text-[var(--text-light)] cursor-pointer hover:text-[var(--color-primary)]"
+                onClick={toggleDarkMode}
+              >
+                {isDarkMode ? (
+                  <i className="bi bi-sun-fill text-xl"></i>
+                ) : (
+                  <i className="bi bi-moon-stars-fill text-xl"></i>
+                )}
+              </button>
+            </div>
 
             {/* Profile section */}
             <div className="relative">

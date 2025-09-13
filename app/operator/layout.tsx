@@ -30,7 +30,7 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
   const [isDarkMode, toggleDarkMode] = useDarkMode();
 
   const { fetchProfile } = useProfile();
-  const { data, isLoading } = useQuery({
+  const { data } = useQuery({
     queryKey: ["profile"],
     queryFn: async () => await fetchProfile(),
     staleTime: 5 * 60 * 1000,
