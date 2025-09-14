@@ -32,7 +32,7 @@ const OrdersPage = () => {
             <strong className="font-medium text-[var(--text-color)] ">
               Reys raqami:
             </strong>{" "}
-            <span className=" text-[var(--text-light)]">'pk'</span>
+            <span className=" text-[var(--text-light)]">&apos;pk&apos;</span>
           </div>
           <div className="text-sm">
             <strong className="font-medium  text-[var(--text-color)]">
