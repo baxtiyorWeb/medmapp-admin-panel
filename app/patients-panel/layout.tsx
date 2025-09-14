@@ -306,7 +306,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="w-full py-2 px-3  text-sm rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
+                  className="w-full cursor-pointer py-2 px-3  text-sm rounded-lg font-semibold bg-red-500 text-white hover:bg-red-600 transition-colors"
                 >
                   Ha, chiqish
                 </button>
