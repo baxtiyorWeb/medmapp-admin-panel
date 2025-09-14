@@ -476,8 +476,7 @@ const StatusCard: React.FC = () => {
                 Assalomu alaykum, {dataItem?.full_name || "Foydalanuvchi"}!
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
-                Tibbiy konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
-                quyidagi tugmani bosing.
+                Tibbiy konsultatsiya olish uchun quyidagi tugmani bosing
               </p>
             </div>
             <button
