@@ -15,7 +15,7 @@ interface DocumentUploadStepProps {
 
 const DocumentUploadStep = memo<DocumentUploadStepProps>(
   ({ documents, errors, onFileUpload, onReplaceFile, onDeleteFile }) => (
-    <div className="bg-[var(--card-background)] p-3 md:p-5 rounded-2xl shadow-sm">
+    <div className="bg-[var(--card-background)]  rounded-2xl ">
       <label
         htmlFor="file-upload-input"
         className="relative bg-[var(--input-bg)] block w-full border-2 border-dashed border-[var(--border-color)] rounded-xl p-6 text-center cursor-pointer hover:border-primary-500 transition-colors"

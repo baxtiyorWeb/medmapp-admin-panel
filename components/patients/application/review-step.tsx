@@ -3,6 +3,7 @@
 
 import React, { memo } from "react";
 import { FormData } from "./main-application-modal";
+import { FaPen } from "react-icons/fa";
 
 interface ReviewSectionProps {
   title: string;
@@ -23,13 +24,16 @@ const ReviewSection: React.FC<ReviewSectionProps> = ({
         <i className={`bi ${icon} text-primary text-xl`}></i>
         <span>{title}</span>
       </h3>
-      <button
-        type="button"
-        className="text-sm text-primary-600 hover:underline font-semibold"
-        onClick={onEdit}
-      >
-        Tahrirlash
-      </button>
+      <div className="flex space-x-2 text-sm justify-center items-center cursor-pointer">
+        <FaPen className="text-primary-600" />
+        <button
+          type="button"
+          className="text-sm cursor-pointer text-primary-600 hover:underline font-semibold"
+          onClick={onEdit}
+        >
+          tahrirlash
+        </button>
+      </div>
     </div>
     <dl className="grid grid-cols-1 md:gap-x-8">{children}</dl>
   </div>
@@ -69,7 +73,7 @@ const ReviewStep = memo<ReviewStepProps>(
     setCurrentStep,
     submitError,
   }) => (
-    <div className="bg-[var(--card-background)] shadow-sm rounded-xl p-6">
+    <div className="bg-[var(--card-background)]  rounded-xl ">
       <ReviewSection
         title="Shaxsiy ma'lumotlar"
         icon="bi-person-vcard"
@@ -108,7 +112,7 @@ const ReviewStep = memo<ReviewStepProps>(
       <div className="mt-6 bg-[var(--card-background)] p-4 rounded-xl">
         <label
           htmlFor="confirm-checkbox"
-          className="flex items-start space-x-3 cursor-pointer"
+          className="flex items-start cursor-pointer space-x-2"
         >
           <input
             type="checkbox"
@@ -117,7 +121,7 @@ const ReviewStep = memo<ReviewStepProps>(
             checked={confirmChecked}
             onChange={onConfirmChange}
           />
-          <span className="text-sm text-[var(--text-color)]">
+          <div className="text-sm text-[var(--text-color)] flex-2">
             Men kiritgan barcha ma&apos;lumotlarning to&apos;g&apos;riligini
             tasdiqlayman hamda
             <a
@@ -136,9 +140,10 @@ const ReviewStep = memo<ReviewStepProps>(
               Maxfiylik siyosati
             </a>
             bilan tanishib chiqdim.
-          </span>
+          </div>
         </label>
       </div>
+
       {submitError && (
         <div className="mt-4 text-red-500 text-sm" role="alert">
           {submitError}

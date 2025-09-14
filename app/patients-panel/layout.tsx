@@ -233,7 +233,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full object-cover"
-                    src="https://placehold.co/40x40/EFEFEF/333333?text=A"
+                    src="/assets/user_avatar.png"
                     alt="Profil rasmi"
                   />
                 )}
