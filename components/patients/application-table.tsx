@@ -12,13 +12,22 @@ import { AiOutlineLoading } from "react-icons/ai";
 import LoadingOverlay from "../LoadingOverlay";
 import { FaEye } from "react-icons/fa";
 
-// Define the types for the application data from the backend
+// TYPE DEFINITIONS
+
+/**
+ * @interface ApplicationDetails
+ * @description Defines the structure for the detailed information within an application.
+ */
 interface ApplicationDetails {
   complaint: string;
   documents: string[];
   services: string[];
 }
 
+/**
+ * @interface Application
+ * @description Defines the structure for an application object used within the frontend.
+ */
 interface Application {
   id: string;
   application_id: string;
@@ -26,9 +35,13 @@ interface Application {
   date: string;
   status: "approved" | "pending" | "rejected";
   details: ApplicationDetails;
-  reason?: string;
+  reason?: string; // Optional reason for rejection
 }
 
+/**
+ * @interface BackendApplication
+ * @description Defines the raw structure of an application object received from the backend API.
+ */
 interface BackendApplication {
   application_id: number;
   clinic_name: string;
@@ -37,31 +50,55 @@ interface BackendApplication {
   complaint: string;
 }
 
-// Function to fetch data, to be used with TanStack Query
+/**
+ * @interface PaginatedBackendResponse
+ * @description Defines the structure for a paginated API response from the backend.
+ */
+interface PaginatedBackendResponse<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[];
+}
+
+// API FETCHING FUNCTION
+
+/**
+ * Fetches applications from the backend and maps them to the frontend Application type.
+ * @returns {Promise<Application[]>} A promise that resolves to an array of applications.
+ */
 const fetchApplications = async (): Promise<Application[]> => {
   const response = await api.get("/applications/applications/");
   if (response.status !== 200) {
     throw new Error("Failed to fetch applications");
   }
-  const data: BackendApplication[] = await response.data;
-  const mappedApplications: Application[] = data.map((app) => ({
-    id: String(app.application_id),
-    application_id: String(app.application_id),
-    clinic: app.clinic_name,
-    date: new Date(app.created_at).toISOString().split("T")[0],
-    status:
-      app.status === "new" || app.status === "processing"
-        ? "pending"
-        : (app.status as "approved" | "rejected"),
-    details: {
-      complaint: app.complaint,
-      documents: [],
-      services: [],
-    },
-    reason: app.status === "rejected" ? "Hujjatlar to'liq emas" : undefined,
-  }));
+
+  // Expect a paginated response object from the API
+  const data: PaginatedBackendResponse<BackendApplication> = response.data;
+
+  // Safely map the results array, returning an empty array if it doesn't exist.
+  const mappedApplications: Application[] = (data?.results || []).map(
+    (app) => ({
+      id: String(app.application_id),
+      application_id: String(app.application_id),
+      clinic: app.clinic_name,
+      date: new Date(app.created_at).toISOString().split("T")[0],
+      status:
+        app.status === "new" || app.status === "processing"
+          ? "pending"
+          : (app.status as "approved" | "rejected"),
+      details: {
+        complaint: app.complaint,
+        documents: [], // Assuming documents are fetched separately or not needed in the table view
+        services: [], // Assuming services are fetched separately
+      },
+      reason: app.status === "rejected" ? "Hujjatlar to'liq emas" : undefined,
+    })
+  );
   return mappedApplications;
 };
+
+// MAIN COMPONENT
 
 const Table = () => {
   const [filters, setFilters] = useState({
@@ -70,18 +107,18 @@ const Table = () => {
   });
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
-  // Use TanStack Query to fetch and manage data
+  // Use TanStack Query to fetch, cache, and manage server state
   const {
     data: applications,
     isLoading,
     isError,
     error,
   } = useQuery<Application[], Error>({
-    queryKey: ["applications"],
-    queryFn: fetchApplications,
+    queryKey: ["applications"], // Unique key for this query
+    queryFn: fetchApplications, // The function that will fetch the data
   });
 
-  // Filter applications based on search and status
+  // Filter applications based on current search and status filters
   const filteredApplications = applications?.filter((app) => {
     const searchMatch = app.id
       .toLowerCase()
@@ -91,17 +128,15 @@ const Table = () => {
     return searchMatch && statusMatch;
   });
 
-  // Handle search input change
+  // Event Handlers
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ ...filters, search: e.target.value });
   };
 
-  // Handle status filter change
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFilters({ ...filters, status: e.target.value });
   };
 
-  // Handle opening modal
   const openModal = (appId: string) => {
     const app = applications?.find((a) => a.id === appId);
     if (app) {
@@ -109,17 +144,23 @@ const Table = () => {
     }
   };
 
-  // Handle closing modal
   const closeModal = () => {
     setSelectedApp(null);
   };
 
+  // RENDER HELPERS
+
+  /**
+   * Renders a styled status badge based on the application status.
+   * @param {string} status - The status of the application.
+   * @returns {JSX.Element | null} A JSX element for the badge or null.
+   */
   const renderStatusBadge = (status: string): JSX.Element | null => {
     switch (status) {
       case "pending":
         return (
           <span className="status-badge status-pending">
-            <BsHourglassSplit /> Ko&apos;rib chiqilmoqda
+            <BsHourglassSplit /> Ko'rib chiqilmoqda
           </span>
         );
       case "approved":
@@ -142,8 +183,10 @@ const Table = () => {
   if (isLoading) {
     return <LoadingOverlay />;
   }
+
   return (
     <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg main-content">
+      {/* Header with Title and Filters */}
       <div className="main-content-header p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h2 className="text-lg font-bold main-content-title">
           Mening arizalarim
@@ -168,7 +211,7 @@ const Table = () => {
               onChange={handleStatusChange}
             >
               <option value="all">Barcha holatlar</option>
-              <option value="pending">Ko&apos;rib chiqilmoqda</option>
+              <option value="pending">Ko'rib chiqilmoqda</option>
               <option value="approved">Tasdiqlangan</option>
               <option value="rejected">Bekor qilingan</option>
             </select>
@@ -192,7 +235,7 @@ const Table = () => {
         <div className="p-6 text-center text-slate-500">
           <p>Hech qanday ariza topilmadi.</p>
           {filters.search || filters.status !== "all" ? (
-            <p>Filtrlarni tozalab, qayta urinib ko&apos;ring.</p>
+            <p>Filtrlarni tozalab, qayta urinib ko'ring.</p>
           ) : (
             <p>Siz hali hech qanday ariza yubormagansiz.</p>
           )}
@@ -207,9 +250,6 @@ const Table = () => {
                   <th scope="col" className="px-6 py-3">
                     Ariza ID
                   </th>
-                  {/* <th scope="col" className="px-6 py-3">
-                    Klinika
-                  </th> */}
                   <th scope="col" className="px-6 py-3">
                     Sana
                   </th>
@@ -227,9 +267,6 @@ const Table = () => {
                     <td className="px-6 py-4 h-[61px] font-bold main-content-table-cell id">
                       {app.id}
                     </td>
-                    {/* <td className="px-6 py-4 h-[61px] main-content-table-cell">
-                      {app.clinic}
-                    </td> */}
                     <td className="px-6 py-4 h-[61px] main-content-table-cell">
                       {app.date}
                     </td>
@@ -238,12 +275,17 @@ const Table = () => {
                     </td>
                     <td className="px-6 py-4 h-[61px] flex justify-end items-center space-x-1 text-right">
                       <button
-                        className="view-details-btn  cursor-pointer hover:underline"
+                        className="view-details-btn cursor-pointer hover:underline"
                         onClick={() => openModal(app.id)}
                       >
-                       <FaEye /> 
+                        <FaEye />
                       </button>
-                       <button onClick={() => openModal(app.id)}  className="view-details-btn text cursor-pointer hover:underline">Batafsil</button>
+                      <button
+                        onClick={() => openModal(app.id)}
+                        className="view-details-btn text cursor-pointer hover:underline"
+                      >
+                        Batafsil
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -256,11 +298,12 @@ const Table = () => {
       {/* Pagination Placeholder */}
       <div
         id="pagination-controls"
-        className="p-6 sm:p-8 border-t border-[var(--border-color)]  main-content-header flex justify-end"
+        className="p-6 sm:p-8 border-t border-[var(--border-color)] main-content-header flex justify-end"
       >
         {/* Add pagination logic here if needed */}
       </div>
 
+      {/* Details Modal */}
       {selectedApp && (
         <div
           className="fixed inset-0 z-50 flex items-center justify-center modal-backdrop active"
@@ -277,10 +320,7 @@ const Table = () => {
             }}
           >
             {/* Modal Header */}
-            <div
-              className="flex items-start justify-between p-5 border-b border-[var(--border-color)]"
-              style={{ borderColor: "var(--border-color)" }}
-            >
+            <div className="flex items-start justify-between p-5 border-b border-[var(--border-color)]">
               <div>
                 <h3 className="text-xl font-semibold modal-title">
                   Ariza #{selectedApp.id}
@@ -295,18 +335,13 @@ const Table = () => {
             </div>
 
             {/* Modal Body */}
-            <div
-              className="p-6 bg-[var(--card-background)] overflow-y-auto space-y-6 modal-body"
-            >
-              {/* Umumiy ma'lumot */}
+            <div className="p-6 bg-[var(--card-background)] overflow-y-auto space-y-6 modal-body">
+              {/* General Information */}
               <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
-                  Umumiy ma&apos;lumot
+                  Umumiy ma'lumot
                 </h4>
-                <div
-                  className="p-4 bg-[var(--card-background)]  var(--border-color) var(--text-color) rounded-lg space-y-3 text-sm modal-card border"
-                  
-                >
+                <div className="p-4 bg-[var(--card-background)] var(--border-color) var(--text-color) rounded-lg space-y-3 text-sm modal-card border">
                   <div className="flex justify-between">
                     <span>Yuborilgan sana:</span>
                     <span className="font-medium">{selectedApp.date}</span>
@@ -327,7 +362,7 @@ const Table = () => {
                 </div>
               </div>
 
-              {/* Shikoyatlar */}
+              {/* Complaint Details */}
               <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
                   Shikoyatlar
@@ -344,7 +379,7 @@ const Table = () => {
                 </div>
               </div>
 
-              {/* Yuklangan Hujjatlar */}
+              {/* Uploaded Documents */}
               <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
                   Yuklangan Hujjatlar
@@ -374,35 +409,6 @@ const Table = () => {
                   )}
                 </div>
               </div>
-
-              {/* Buyurtma qilingan xizmatlar
-              <div>
-                <h4 className="font-semibold mb-2 modal-section-title">
-                  Buyurtma qilingan xizmatlar
-                </h4>
-                <div
-                  className="p-4 rounded-lg space-y-2 modal-card border"
-                  style={{
-                    backgroundColor: "var(--card-background)",
-                    color: "var(--text-color)",
-                    borderColor: "var(--border-color)",
-                  }}
-                >
-                  {selectedApp.details.services.length > 0 ? (
-                    selectedApp.details.services.map((srv, index) => (
-                      <p key={index} className="flex items-center gap-2">
-                        <i
-                          className="bi bi-check-circle"
-                          style={{ color: "var(--success-light)" }}
-                        ></i>
-                        <span>{srv}</span>
-                      </p>
-                    ))
-                  ) : (
-                    <p>Xizmatlar buyurtma qilinmagan.</p>
-                  )}
-                </div>
-              </div> */}
             </div>
 
             {/* Modal Footer */}
@@ -416,13 +422,10 @@ const Table = () => {
               <button
                 onClick={closeModal}
                 type="button"
+                className="font-bold py-2 px-5 rounded-lg cursor-pointer"
                 style={{
                   backgroundColor: "#4154F1",
                   color: "white",
-                  fontWeight: "bold",
-                  padding: "0.5rem 1.25rem",
-                  borderRadius: "0.5rem",
-                  cursor: "pointer",
                 }}
               >
                 Yopish
