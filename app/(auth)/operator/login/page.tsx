@@ -232,7 +232,7 @@ export default function LoginPage() {
               Operator paneliga kirish
             </h2>
             <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              Iltimos, tizimga kirish uchun ma'lumotlaringizni kiriting
+              Iltimos, tizimga kirish uchun ma&apos;lumotlaringizni kiriting
             </p>
           </div>
 
