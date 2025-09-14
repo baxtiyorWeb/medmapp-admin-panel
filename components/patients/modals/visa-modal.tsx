@@ -26,13 +26,16 @@ export default function VisaModal({
       <form id="visa-form" onSubmit={handleSubmit}>
         <div className="space-y-4">
           <div>
+            <label className="text-sm font-medium text-[var(--text-color)] mb-1 block">
+              Xorijga chiqish pasportini yuklang <span className="text-red-500">*</span>
+            </label>
             <label
               htmlFor="visa-passport-scan"
-              className="relative block w-full border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center cursor-pointer hover:border-slate-500 transition-colors bg-[var(--input-bg)]"
+              className="relative block w-full border-2 border-dashed border-[var(--border-color)] rounded-xl p-4 text-center cursor-pointer hover:border-[#4338CA] transition-colors bg-[var(--card-background)]"
             >
               <i className="bi bi-cloud-arrow-up-fill text-3xl text-[#4338CA]"></i>
               <p className="mt-1 text-sm font-semibold text-[var(--text-color)]">
-                Passport skanini yuklash *
+                fayl yuklash
               </p>
               {visaPassportScan && (
                 <p className="text-sm text-slate-500">

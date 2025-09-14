@@ -1,8 +1,7 @@
 // utils/api.ts
 import axios, { AxiosInstance } from "axios";
 
-const API_BASE_URL = "https://medmapp-production.up.railway.app/api/";
-
+const API_BASE_URL = "https://medmapp-production.up.railway.app/api";
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },

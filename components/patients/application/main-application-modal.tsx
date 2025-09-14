@@ -368,7 +368,8 @@ const StatusCard: React.FC = () => {
       {
         icon: "file-earmark-arrow-up",
         title: "Tibbiy hujjatlar",
-        description: "Kamida bitta tibbiy hujjat yuklang.",
+        description: `Shifokorga kasalligingiz haqida to'liq ma'lumot berish uchun mavjud
+        tibbiy hujjatlarni (masalan, MRT, tibbiy xulosa va hokazolarni) yuklang.`,
       },
       {
         icon: "check2-all",

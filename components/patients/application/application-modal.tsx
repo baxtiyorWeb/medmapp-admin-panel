@@ -132,7 +132,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         {stepInfo.description}
                       </p>
                     </div>
-                    <div className="bg-[var(--card-background)]  p-[20px] rounded-2xl">{children}</div>
+                    <div className="bg-[var(--card-background)]  p-[20px] rounded-2xl">
+                      {children}
+                    </div>
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -142,7 +144,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             <div className="flex-shrink-0 flex items-center justify-between p-4 bg-[var(--background-color)] border-t border-[var(--border-color)] rounded-b-2xl">
               <button
                 type="button"
-                className={`bg-[var(--card-background)] cursor-pointer text-[var(--text-color)] font-bold py-3 px-6 rounded-lg transition hover:bg-[#475569] ${
+                className={`bg-[#475569] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer ${
                   currentStep === 1 ? "invisible" : "visible"
                 }`}
                 onClick={onPrev}
