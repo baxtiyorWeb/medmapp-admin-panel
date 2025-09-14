@@ -248,7 +248,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 <div className="profile-dropdown absolute right-0 mt-2 w-48 bg-[var(--card-background)] rounded-md shadow-lg py-1 z-10 border border-[var(--border-color)]">
                   <Link
                     href="#"
-                    className="flex items-center px-4 py-2 text-sm text-[var(--text-color)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                    className="flex items-center px-4 py-2 text-sm text-[var(--text-color)]  hover:bg-[var(--input-bg)]"
                   >
                     <i className="bi bi-gear-fill mr-2 text-[var(--text-light)]"></i>
                     Sozlamalar
@@ -256,7 +256,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                   <div className="border-t border-[var(--border-color)] my-1"></div>
                   <button
                     onClick={() => setIsLogoutModalOpen(true)}
-                    className="w-full  cursor-pointer text-left flex items-center px-4 py-2 text-sm text-[var(--color-danger)] hover:bg-[var(--color-slate-100)] dark:hover:bg-[var(--color-slate-600)]"
+                    className="w-full  cursor-pointer text-left flex items-center px-4 py-2 hover:bg-[var(--input-bg)] text-sm text-[var(--color-danger)] "
                   >
                     <i className="bi bi-box-arrow-right mr-2"></i>Chiqish
                   </button>
