@@ -328,7 +328,7 @@ const Table = () => {
               </div>
               <button
                 onClick={closeModal}
-                className="modal-close-btn -mt-2 -mr-2 transition"
+                className="modal-close-btn cursor-pointer -mt-2 -mr-2 transition"
               >
                 <i className="bi bi-x-lg text-2xl"></i>
               </button>
@@ -337,12 +337,12 @@ const Table = () => {
             {/* Modal Body */}
             <div className="p-6 bg-[var(--card-background)] overflow-y-auto space-y-6 modal-body">
               {/* General Information */}
-              <div>
+              <div >
                 <h4 className="font-semibold mb-2 modal-section-title">
-                  Umumiy ma&&apos;lumot
+                  Umumiy ma&apos;lumot
                 </h4>
-                <div className="p-4 bg-[var(--card-background)] var(--border-color) var(--text-color) rounded-lg space-y-3 text-sm modal-card border">
-                  <div className="flex justify-between">
+                <div className="p-4  border-[var(--border-color)] text-[var(--text-color)] rounded-lg space-y-3 text-sm modal-card border">
+                  <div className="flex  justify-between">
                     <span>Yuborilgan sana:</span>
                     <span className="font-medium">{selectedApp.date}</span>
                   </div>
