@@ -160,7 +160,7 @@ const Table = () => {
       case "pending":
         return (
           <span className="status-badge status-pending">
-            <BsHourglassSplit /> Ko'rib chiqilmoqda
+            <BsHourglassSplit /> Ko&apos;rib chiqilmoqda
           </span>
         );
       case "approved":
@@ -211,7 +211,7 @@ const Table = () => {
               onChange={handleStatusChange}
             >
               <option value="all">Barcha holatlar</option>
-              <option value="pending">Ko'rib chiqilmoqda</option>
+              <option value="pending">Ko&apos;rib chiqilmoqda</option>
               <option value="approved">Tasdiqlangan</option>
               <option value="rejected">Bekor qilingan</option>
             </select>
@@ -235,7 +235,7 @@ const Table = () => {
         <div className="p-6 text-center text-slate-500">
           <p>Hech qanday ariza topilmadi.</p>
           {filters.search || filters.status !== "all" ? (
-            <p>Filtrlarni tozalab, qayta urinib ko'ring.</p>
+            <p>Filtrlarni tozalab, qayta urinib ko&apos;ring.</p>
           ) : (
             <p>Siz hali hech qanday ariza yubormagansiz.</p>
           )}
@@ -339,7 +339,7 @@ const Table = () => {
               {/* General Information */}
               <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
-                  Umumiy ma'lumot
+                  Umumiy ma&&apos;lumot
                 </h4>
                 <div className="p-4 bg-[var(--card-background)] var(--border-color) var(--text-color) rounded-lg space-y-3 text-sm modal-card border">
                   <div className="flex justify-between">
