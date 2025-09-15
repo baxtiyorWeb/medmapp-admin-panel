@@ -11,9 +11,8 @@ import { BsFillGrid1X2Fill } from "react-icons/bs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useQuery } from "@tanstack/react-query";
-import { get, isArray } from "lodash";
-import useProfile from "@/hooks/useProfile";
+import { get } from "lodash";
+import { useProfile } from "@/hooks/useProfile";
 import "./layout.css";
 import { SidebarItem } from "@/components/SidebarItem";
 import { useDarkModeContext } from "@/providers/DarkThemeProvider";
@@ -27,15 +26,7 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
   const pathname = usePathname();
   const { isDarkMode, toggleDarkMode } = useDarkModeContext();
 
-  const { fetchProfile } = useProfile();
-  const { data } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const isData = isArray(data) ? data : [data];
-  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+  const { profile } = useProfile();
 
   useEffect(() => {
     const handleResize = () => {
@@ -202,22 +193,22 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
                 className="profile-toggle cursor-pointer flex items-center space-x-3"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
-                {dataItem && dataItem.full_name ? (
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-[var(--color-slate-200)] dark:bg-[var(--color-slate-600)] text-[var(--text-color)] dark:text-[var(--text-light)] font-bold">
-                    {dataItem.full_name.charAt(0).toUpperCase()}
+                {profile && get(profile, "full_name") ? (
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold">
+                    {get(profile, "full_name").charAt(0).toUpperCase()}
                   </div>
                 ) : (
                   <Image
-                    width={100}
-                    height={100}
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
-                    src="https://placehold.co/40x40/EFEFEF/333333?text=A"
+                    src="/assets/user_avatar.png"
                     alt="Profil rasmi"
                   />
                 )}
                 <div className="hidden md:block text-left">
                   <div className="font-bold text-[var(--text-color)]">
-                    {get(dataItem, "full_name", "Bemor")}
+                    {get(profile, "full_name", "Bemor")}
                   </div>
                   <div className="text-sm text-[var(--text-light)]">Bemor</div>
                 </div>

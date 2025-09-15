@@ -8,7 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { BsFillGrid1X2Fill } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import { get, isArray } from "lodash";
-import useProfile from "@/hooks/useProfile";
+import { useProfile } from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import "./../../components/patients/style.css";
 import { BiBasket } from "react-icons/bi";
@@ -29,15 +29,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { fetchProfile } = useProfile();
-  const { data, isLoading } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const isData = isArray(data) ? data : [data];
-  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+  const { profile, isLoading } = useProfile();
 
   useEffect(() => {
     const handleResize = () => {
@@ -116,7 +108,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               className="h-[66px] w-auto rounded-lg"
               width={150}
               height={66}
-                src="/assets/MedMapp_logo_main.png"
+              src="/assets/MedMapp_logo_main.png"
               alt="MedMapp Logo"
               onError={(e) => {
                 e.currentTarget.src =
@@ -224,9 +216,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 className="profile-toggle cursor-pointer flex items-center space-x-3"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
-                {dataItem && dataItem.full_name ? (
+                {profile && get(profile, "full_name") ? (
                   <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold">
-                    {dataItem.full_name.charAt(0).toUpperCase()}
+                    {get(profile, "full_name").charAt(0).toUpperCase()}
                   </div>
                 ) : (
                   <Image
@@ -239,7 +231,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 )}
                 <div className="hidden md:block text-left">
                   <div className="font-bold text-[var(--text-color)]">
-                    {get(dataItem, "full_name", "Bemor")}
+                    {get(profile, "full_name", "Bemor")}
                   </div>
                   <div className="text-sm text-[var(--text-light)]">Bemor</div>
                 </div>

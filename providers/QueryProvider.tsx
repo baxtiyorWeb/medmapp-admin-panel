@@ -9,7 +9,6 @@ export default function QueryProvider({
 }: {
   children: React.ReactNode;
 }) {
-  // Har safar yangi QueryClient yaratilmasligi uchun useState ishlatamiz
   const [queryClient] = useState(() => new QueryClient());
 
   return (

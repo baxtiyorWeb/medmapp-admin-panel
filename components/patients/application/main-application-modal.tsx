@@ -11,8 +11,8 @@ import React, {
 import { BsCheckCircleFill, BsPencilSquare } from "react-icons/bs";
 import { useQuery } from "@tanstack/react-query";
 import api from "@/utils/api";
-import useProfile from "@/hooks/useProfile";
-import { isArray } from "lodash";
+import { useProfile } from "@/hooks/useProfile";
+import { get, isArray } from "lodash";
 import "./../application.css";
 import ApplicationModal from "./application-modal";
 import PersonalDetailsStep from "./personal-detail-step";
@@ -56,15 +56,7 @@ const StatusCard: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  const { fetchProfile } = useProfile();
-  const { data } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000,
-  });
-
-  const isData = isArray(data) ? data : [data];
-  const dataItem = isData && isData.length > 0 ? isData[0] : null;
+  const { profile, isLoading } = useProfile();
 
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
@@ -80,13 +72,13 @@ const StatusCard: React.FC = () => {
   const [phoneInput, setPhoneInput] = useState<string>("");
 
   useEffect(() => {
-    if (dataItem) {
-      const initialPhone = dataItem.phone?.replace(/^\+998/, "") || "";
+    if (profile) {
+      const initialPhone = get(profile, "phone")?.replace(/^\+998/, "") || "";
       setFormData((prev) => ({
         ...prev,
-        fullName: dataItem.full_name || "",
-        dob: dataItem.dob || "",
-        gender: dataItem.gender || "",
+        fullName: get(profile, "full_name") || "",
+        dob: get(profile, "dob") || "",
+        gender: get(profile, "gender") || "",
         phone: initialPhone,
       }));
 
@@ -102,7 +94,7 @@ const StatusCard: React.FC = () => {
         setPhoneInput(formatted);
       }
     }
-  }, [dataItem]);
+  }, [profile]);
 
   const openModal = useCallback(() => {
     setIsModalOpen(true);
@@ -473,7 +465,8 @@ const StatusCard: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2" id="status-text">
-                Assalomu alaykum, {dataItem?.full_name || "Foydalanuvchi"}!
+                Assalomu alaykum, {get(profile, "full_name") || "Foydalanuvchi"}
+                !
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
                 Tibbiy konsultatsiya olish uchun quyidagi tugmani bosing

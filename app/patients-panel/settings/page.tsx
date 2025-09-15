@@ -1,34 +1,15 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import axios, { AxiosError } from "axios";
+import { AxiosError } from "axios";
 import { Loader2, CheckCircle, Info } from "lucide-react";
-import api from "@/utils/api";
 import LoadingOverlay from "@/components/LoadingOverlay";
-
-interface PatientProfile {
-  id: string;
-  full_name: string;
-  passport: string;
-  dob: string;
-  gender: string;
-  phone: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
-}
-
-const getMyProfile = async (): Promise<PatientProfile> => {
-  const response = await api.get("/patients/profile/me/");
-  return response.data;
-};
-
-const updateMyProfile = async (
-  data: Partial<PatientProfile>
-): Promise<PatientProfile> => {
-  const response = await api.patch("/patients/profile/me/", data);
-  return response.data;
-};
+import _ from "lodash";
+import {
+  PatientProfile,
+  useProfile,
+  useUpdateProfile,
+} from "@/hooks/useProfile";
 
 const formatPhoneNumber = (phoneNumber: string | null): string => {
   if (!phoneNumber) return "";
@@ -44,6 +25,7 @@ const fieldNamesUz: { [key: string]: string } = {
   full_name: "To'liq ism",
   email: "Elektron pochta",
   passport: "Passport",
+  region: "Viloyat",
 };
 
 const translateError = (fieldKey: string, englishMessage: string): string => {
@@ -62,45 +44,31 @@ const translateError = (fieldKey: string, englishMessage: string): string => {
   return englishMessage;
 };
 
-const Settings = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
-
+const Settings: React.FC = () => {
+  const { profile: initialProfile, isLoading, isError } = useProfile();
   const [profile, setProfile] = useState<Partial<PatientProfile>>({});
-  const [initialProfile, setInitialProfile] = useState<Partial<PatientProfile>>(
-    {}
-  );
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const [initialProfileState, setInitialProfileState] = useState<
+    Partial<PatientProfile>
+  >({});
+  const updateProfileMutation = useUpdateProfile();
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [generalError, setGeneralError] = useState<string | null>(null);
-
   const [notification, setNotification] = useState<{
     message: string;
     type: "success" | "info";
   } | null>(null);
 
-  const profileDropdownRef = useRef<HTMLDivElement>(null);
-  const langDropdownRef = useRef<HTMLDivElement>(null);
-
   useEffect(() => {
-    const fetchProfile = async () => {
-      setIsLoading(true);
-      try {
-        const data = await getMyProfile();
-        const formattedData = { ...data, phone: formatPhoneNumber(data.phone) };
-        setProfile(formattedData);
-        setInitialProfile(formattedData);
-      } catch (err) {
-        setGeneralError("Ma'lumotlarni yuklab bo'lmadi.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchProfile();
-  }, []);
+    if (initialProfile) {
+      const formattedData: Partial<PatientProfile> = {
+        ...initialProfile,
+        phone: formatPhoneNumber(initialProfile.phone),
+      };
+      setProfile(formattedData);
+      setInitialProfileState(formattedData);
+    }
+  }, [initialProfile]);
 
   useEffect(() => {
     if (notification) {
@@ -125,8 +93,7 @@ const Settings = () => {
     }
   };
 
-  const handleSaveChanges = async () => {
-    setIsSaving(true);
+  const handleSaveChanges = () => {
     setErrors({});
     setGeneralError(null);
     setNotification(null);
@@ -136,284 +103,271 @@ const Settings = () => {
 
     for (const key of keys) {
       const value = profile[key];
-      if (value !== initialProfile[key]) {
-        changedData[key] = value; // shu joyda qiymat qo'yilyapti
+      if (value !== initialProfileState[key]) {
+        changedData[key] = value;
       }
     }
 
     if (Object.keys(changedData).length > 0) {
-      try {
-        const updatedProfile = await updateMyProfile(changedData);
-        const formatted = {
-          ...updatedProfile,
-          phone: formatPhoneNumber(updatedProfile.phone),
-        };
-        setProfile(formatted);
-        setInitialProfile(formatted);
-        setNotification({
-          message: "Ma'lumotlar muvaffaqiyatli saqlandi!",
-          type: "success",
-        });
-      } catch (err: unknown) {
-        if (axios.isAxiosError(err)) {
-          const responseData = err.response?.data;
+      updateProfileMutation.mutate(changedData, {
+        onSuccess: (updatedProfile: PatientProfile) => {
+          const formatted: Partial<PatientProfile> = {
+            ...updatedProfile,
+            phone: formatPhoneNumber(updatedProfile.phone),
+          };
+          setProfile(formatted);
+          setInitialProfileState(formatted);
+          setNotification({
+            message: "Ma'lumotlar muvaffaqiyatli saqlandi!",
+            type: "success",
+          });
+        },
+        onError: (err: unknown) => {
+          if (err instanceof AxiosError) {
+            const responseData = err.response?.data as
+              | { [key: string]: string[] }
+              | { detail: string }
+              | string[]
+              | undefined;
 
-          if (
-            responseData &&
-            typeof responseData === "object" &&
-            !Array.isArray(responseData)
-          ) {
-            const newErrors: { [key: string]: string } = {};
-            for (const key in responseData) {
-              if (
-                Array.isArray(responseData[key]) &&
-                responseData[key].length > 0
-              ) {
-                const englishError = responseData[key][0];
-                newErrors[key] = translateError(key, englishError);
-              }
+            if (
+              responseData &&
+              typeof responseData === "object" &&
+              !Array.isArray(responseData)
+            ) {
+              const newErrors: { [key: string]: string } = {};
+              _.forEach(responseData, (value, key) => {
+                if (Array.isArray(value) && value.length > 0) {
+                  const englishError = value[0];
+                  newErrors[key] = translateError(key, englishError);
+                }
+              });
+              setErrors(newErrors);
+            } else {
+              const errorMsg =
+                (responseData as { detail?: string })?.detail ||
+                (Array.isArray(responseData)
+                  ? responseData[0]
+                  : "Noma'lum xatolik yuz berdi.");
+              setGeneralError(errorMsg);
             }
-            setErrors(newErrors);
           } else {
-            const errorMsg =
-              responseData?.detail ||
-              (Array.isArray(responseData)
-                ? responseData[0]
-                : "Noma'lum xatolik yuz berdi.");
-            setGeneralError(errorMsg);
+            setGeneralError("Noma'lum xatolik yuz berdi.");
+            console.error(err);
           }
-        } else {
-          // Axios xatosi emas bo'lsa
-          setGeneralError("Noma'lum xatolik yuz berdi.");
-          console.error(err);
-        }
-      } finally {
-        setIsSaving(false);
-      }
+        },
+        onSettled: () => {},
+      });
     } else {
       setNotification({
         message: "Hech qanday o'zgarish kiritilmadi.",
         type: "info",
       });
-      setIsSaving(false);
     }
   };
-
-  useEffect(() => {
-    const isDark = localStorage.getItem("medmapp_dark") === "true";
-    setIsDarkMode(isDark);
-    if (isDark) document.documentElement.classList.add("dark");
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        profileDropdownRef.current &&
-        !profileDropdownRef.current.contains(e.target as Node)
-      ) {
-        setIsProfileDropdownOpen(false);
-      }
-      if (
-        langDropdownRef.current &&
-        !langDropdownRef.current.contains(e.target as Node)
-      ) {
-        setIsLangDropdownOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, []);
 
   if (isLoading) {
     return <LoadingOverlay />;
   }
 
-  return (
-    <>
-      <div className="flex h-auto overflow-hidden ">
-        <div className="flex-1 flex flex-col overflow-hidden ">
-          <main className="flex-1">
-            <div className="mx-auto space-y-3">
-              <div className="bg-[var(--card-background)] rounded-2xl shadow-lg">
-                <div className="p-6 border-b border-[var(--border-color)]">
-                  <h2 className="text-lg font-bold text-[var(--text-color)]">
-                    Profil sozlamalari
-                  </h2>
-                  <p className="text-sm text-[var(--text-color)]">
-                    Shaxsiy ma&apos;lumotlaringizni yangilang.
-                  </p>
-                </div>
-                <div className="p-6 space-y-3">
-                  <div className="flex items-center gap-6">
-                    <img
-                      className="h-20 w-20 rounded-full object-cover"
-                      src="https://placehold.co/80x80/EFEFEF/333333?text=A"
-                      alt="Profil rasmi"
-                    />
-                    <div>
-                      <button className="bg-[#4153F1] cursor-pointer text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
-                        Rasm yuklash
-                      </button>
-                      <button className="text-sm text-[var(--text-color)] hover:text-danger ml-3">
-                        O&apos;chirish
-                      </button>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="full_name"
-                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
-                      >
-                        To&apos;liq ism
-                      </label>
-                      <input
-                        type="text"
-                        id="full_name"
-                        name="full_name"
-                        value={profile.full_name || ""}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
-                          errors.full_name
-                            ? "border-red-500"
-                            : "border-[var(--border-color)]"
-                        }`}
-                      />
-                      {errors.full_name && (
-                        <p className="text-xs text-red-500 mt-1">
-                          {errors.full_name}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
-                      >
-                        Elektron pochta
-                      </label>
-                      <input
-                        type="email"
-                        id="email"
-                        name="email"
-                        value={profile.email || ""}
-                        onChange={handleInputChange}
-                        className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
-                          errors.email
-                            ? "border-red-500"
-                            : "border-[var(--border-color)]"
-                        }`}
-                      />
-                      {errors.email && (
-                        <p className="text-xs text-red-500 mt-1">
-                          {errors.email}
-                        </p>
-                      )}
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="phone"
-                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
-                      >
-                        Telefon raqam (kirish uchun)
-                      </label>
-                      <input
-                        type="tel"
-                        id="phone"
-                        name="phone"
-                        value={profile.phone || ""}
-                        className="w-full p-3 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg cursor-not-allowed"
-                        disabled
-                      />
-                    </div>
-                    <div>
-                      <label
-                        htmlFor="region"
-                        className="text-sm font-medium text-[var(--text-color)] mb-1 block"
-                      >
-                        Viloyat
-                      </label>
-                      <select
-                        id="region"
-                        name="region"
-                        className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
-                      >
-                        <option>Toshkent shahri</option>
-                        <option selected>Surxondaryo viloyati</option>
-                      </select>
-                    </div>
-                  </div>
-                </div>
+  if (isError) {
+    return <div>Ma&apos;lumotlarni yuklab bo&apos;lmadi.</div>;
+  }
 
-                <div className="p-6 bg-[var(--card-background)] rounded-b-2xl">
-                  {generalError && (
-                    <p className="text-red-500 text-sm mb-4">{generalError}</p>
-                  )}
-                  <div className="flex items-center justify-end gap-4">
-                    <div
-                      className={`transition-opacity duration-300 ${
-                        notification ? "opacity-100" : "opacity-0"
-                      }`}
-                    >
-                      {notification && (
-                        <div
-                          className={`flex items-center gap-2 text-sm ${
-                            notification.type === "success"
-                              ? "text-green-600"
-                              : "text-blue-500"
-                          }`}
-                        >
-                          {notification.type === "success" ? (
-                            <CheckCircle className="w-5 h-5" />
-                          ) : (
-                            <Info className="w-5 h-5" />
-                          )}
-                          <span>{notification.message}</span>
-                        </div>
-                      )}
-                    </div>
-                    <button
-                      onClick={handleSaveChanges}
-                      disabled={isSaving}
-                      className="bg-[#4153F1] text-white cursor-pointer font-bold py-2 px-5 rounded-lg hover:bg-opacity-90 transition disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[150px]"
-                    >
-                      {isSaving && (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      )}
-                      {isSaving ? "Saqlanmoqda..." : "O'zgarishlarni saqlash"}
+  return (
+    <div className="flex h-auto overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <main className="flex-1">
+          <div className="mx-auto space-y-3">
+            <div className="bg-[var(--card-background)] rounded-2xl shadow-lg">
+              <div className="p-6 border-b border-[var(--border-color)]">
+                <h2 className="text-lg font-bold text-[var(--text-color)]">
+                  Profil sozlamalari
+                </h2>
+                <p className="text-sm text-[var(--text-color)]">
+                  Shaxsiy ma&apos;lumotlaringizni yangilang.
+                </p>
+              </div>
+              <div className="p-6 space-y-3">
+                <div className="flex items-center gap-6">
+                  <img
+                    className="h-20 w-20 rounded-full object-cover"
+                    src="https://placehold.co/80x80/EFEFEF/333333?text=A"
+                    alt="Profil rasmi"
+                  />
+                  <div>
+                    <button className="bg-[#4153F1] cursor-pointer text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-primary-600 transition">
+                      Rasm yuklash
                     </button>
+                    <button className="text-sm text-[var(--text-color)] hover:text-danger ml-3">
+                      O&apos;chirish
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label
+                      htmlFor="full_name"
+                      className="text-sm font-medium text-[var(--text-color)] mb-1 block"
+                    >
+                      To&apos;liq ism
+                    </label>
+                    <input
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      value={profile.full_name || ""}
+                      onChange={handleInputChange}
+                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        errors.full_name
+                          ? "border-red-500"
+                          : "border-[var(--border-color)]"
+                      }`}
+                    />
+                    {errors.full_name && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.full_name}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="text-sm font-medium text-[var(--text-color)] mb-1 block"
+                    >
+                      Elektron pochta
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={profile.email || ""}
+                      onChange={handleInputChange}
+                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
+                        errors.email
+                          ? "border-red-500"
+                          : "border-[var(--border-color)]"
+                      }`}
+                    />
+                    {errors.email && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.email}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="phone"
+                      className="text-sm font-medium text-[var(--text-color)] mb-1 block"
+                    >
+                      Telefon raqam (kirish uchun)
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone"
+                      name="phone"
+                      value={profile.phone || ""}
+                      className="w-full p-3 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg cursor-not-allowed"
+                      disabled
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor="region"
+                      className="text-sm font-medium text-[var(--text-color)] mb-1 block"
+                    >
+                      Viloyat
+                    </label>
+                    <select
+                      id="region"
+                      name="region"
+                      value={profile.region || ""}
+                      onChange={handleInputChange}
+                      className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
+                    >
+                      <option value="Toshkent shahri">Toshkent shahri</option>
+                      <option value="Surxondaryo viloyati">
+                        Surxondaryo viloyati
+                      </option>
+                    </select>
+                    {errors.region && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {errors.region}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
-
-              <div className="bg-[var(--card-background)] rounded-2xl shadow-lg border-2 border-[#EF4444]/20">
-                <div className="p-6 border-b border-[var(--border-color)]">
-                  <h2 className="text-lg font-bold text-[#EF4444]">
-                    Xavfli hudud
-                  </h2>
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center">
-                    <div className="mb-3 sm:mb-0">
-                      <h4 className="font-semibold text-[var(--text-color)]">
-                        Hisobni o&apos;chirish
-                      </h4>
-                      <p className="text-sm text-[var(--text-color)]">
-                        Hisobingiz o&apos;chirilgach, uni qayta tiklab
-                        bo&apos;lmaydi.
-                      </p>
-                    </div>
-                    <button className="bg-[#EF4444]/10 text-[#EF4444] text-sm font-bold py-2 px-4 rounded-lg hover:bg-danger/20 transition self-start sm:self-center">
-                      Hisobni o&apos;chirish
-                    </button>
+              <div className="p-6 bg-[var(--card-background)] rounded-b-2xl">
+                {generalError && (
+                  <p className="text-red-500 text-sm mb-4">{generalError}</p>
+                )}
+                <div className="flex items-center justify-end gap-4">
+                  <div
+                    className={`transition-opacity duration-300 ${
+                      notification ? "opacity-100" : "opacity-0"
+                    }`}
+                  >
+                    {notification && (
+                      <div
+                        className={`flex items-center gap-2 text-sm ${
+                          notification.type === "success"
+                            ? "text-green-600"
+                            : "text-blue-500"
+                        }`}
+                      >
+                        {notification.type === "success" ? (
+                          <CheckCircle className="w-5 h-5" />
+                        ) : (
+                          <Info className="w-5 h-5" />
+                        )}
+                        <span>{notification.message}</span>
+                      </div>
+                    )}
                   </div>
+                  <button
+                    onClick={handleSaveChanges}
+                    disabled={updateProfileMutation.isPending}
+                    className="bg-[#4153F1] text-white cursor-pointer font-bold py-2 px-5 rounded-lg hover:bg-opacity-90 transition disabled:bg-opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[150px]"
+                  >
+                    {updateProfileMutation.isPending && (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    )}
+                    {updateProfileMutation.isPending
+                      ? "Saqlanmoqda..."
+                      : "O'zgarishlarni saqlash"}
+                  </button>
                 </div>
               </div>
             </div>
-          </main>
-        </div>
+
+            <div className="bg-[var(--card-background)] rounded-2xl shadow-lg border-2 border-[#EF4444]/20">
+              <div className="p-6 border-b border-[var(--border-color)]">
+                <h2 className="text-lg font-bold text-[#EF4444]">
+                  Xavfli hudud
+                </h2>
+              </div>
+              <div className="p-6">
+                <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+                  <div className="mb-3 sm:mb-0">
+                    <h4 className="font-semibold text-[var(--text-color)]">
+                      Hisobni o&apos;chirish
+                    </h4>
+                    <p className="text-sm text-[var(--text-color)]">
+                      Hisobingiz o&apos;chirilgach, uni qayta tiklab
+                      bo&apos;lmaydi.
+                    </p>
+                  </div>
+                  <button className="bg-[#EF4444]/10 text-[#EF4444] text-sm font-bold py-2 px-4 rounded-lg hover:bg-danger/20 transition self-start sm:self-center">
+                    Hisobni o&apos;chirish
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
-    </>
+    </div>
   );
 };
 
