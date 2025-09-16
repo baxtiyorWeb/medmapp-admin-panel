@@ -173,9 +173,9 @@ const Table = () => {
   }
 
   return (
-    <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg main-content">
+    <main className="flex-1 mb-10 overflow-y-auto rounded-2xl shadow-lg main-content">
       {/* Header with Title and Filters */}
-      <div className="main-content-header mb-10 p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="main-content-header  p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h2 className="text-lg font-bold main-content-title">
           Mening arizalarim
         </h2>
@@ -225,7 +225,7 @@ const Table = () => {
       ) : (
         !isLoading &&
         !isError && (
-          <div className="px-6 sm:px-8 pb-6 sm:pb-8">
+          <div className="py-3">
             {/* === DESKTOP UCHUN JADVAL (O'rta ekranlardan kattasida ko'rinadi) === */}
             <div className="overflow-x-auto hidden md:block">
               <table className="w-full text-sm text-left main-content-table">
@@ -247,7 +247,7 @@ const Table = () => {
                 </thead>
                 <tbody>
                   {filteredApplications?.map((app) => (
-                    <tr key={app.id} className="main-content-table-row">
+                    <tr key={app.id} className="main-content-table-row border-t border-[var(--border-color)]">
                       <td className="px-6 py-4 h-[61px] font-bold main-content-table-cell id">
                         {app.id}
                       </td>
