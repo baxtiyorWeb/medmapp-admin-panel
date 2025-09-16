@@ -1,4 +1,3 @@
-// Reusable ServiceCardItem Component
 export default function ServiceCardItem({
   icon,
   title,
