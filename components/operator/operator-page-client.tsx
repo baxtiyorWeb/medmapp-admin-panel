@@ -232,21 +232,36 @@ export default function OperatorPageClient() {
 
   const handleWizardNext = () => {
     if (wizardStep < 3) {
+      if (wizardStep === 1) {
+        const form = newPatientFormRef.current;
+        if (!form) return;
+
+        const formData = new FormData(form);
+        const name = formData.get("name")?.toString().trim();
+        const phone = formData.get("phone")?.toString().trim();
+
+        if (!name || !phone) {
+          showToast("Ism va Telefon maydonlari majburiy!", "danger");
+          return;
+        }
+      }
       setWizardStep(wizardStep + 1);
       return;
     }
+
     const form = newPatientFormRef.current;
     if (!form) return;
 
     const formData = new FormData(form);
-    const name = formData.get("name") as string;
-    const phone = formData.get("phone") as string;
+    const name = formData.get("name")?.toString().trim();
+    const phone = formData.get("phone")?.toString().trim();
 
     if (!name || !phone) {
       showToast("Ism va Telefon maydonlari majburiy!", "danger");
       setWizardStep(1);
       return;
     }
+
     const newPatient: Omit<Patient, "id"> = {
       name,
       tagId: 1,
@@ -261,18 +276,18 @@ export default function OperatorPageClient() {
         },
       ],
       details: {
-        passport: formData.get("passport") as string,
-        dob: formData.get("dob") as string,
-        gender: formData.get("gender") as string,
+        passport: formData.get("passport")?.toString() || "",
+        dob: formData.get("dob")?.toString() || "",
+        gender: formData.get("gender")?.toString() || "",
         phone,
-        email: formData.get("email") as string,
-        complaints: formData.get("complaints") as string,
-        previousDiagnosis: formData.get("diagnosis") as string,
+        email: formData.get("email")?.toString() || "",
+        complaints: formData.get("complaints")?.toString() || "",
+        previousDiagnosis: formData.get("diagnosis")?.toString() || "",
         documents: newPatientFiles.map((f) => ({ name: f.name, url: "#" })),
       },
     };
     setPatients((prev) => [{ ...newPatient, id: Date.now() }, ...prev]);
-    showToast("Yangi bemor qo'shildi");
+    showToast("Yangi bemor qo'shildi", "success");
     setIsNewPatientModalOpen(false);
   };
 
@@ -297,20 +312,22 @@ export default function OperatorPageClient() {
 
   const getTagColorClasses = (color: string) => {
     const colorMap: { [key: string]: string } = {
-      success: "bg-green-100 text-green-800",
-      warning: "bg-yellow-100 text-yellow-800",
-      danger: "bg-red-100 text-red-800",
-      primary: "bg-sky-100 text-sky-800",
-      secondary: "bg-slate-100 text-slate-800",
+      success: "bg-green-100 text-green-700 ring-1 ring-green-200",
+      warning: "bg-yellow-100 text-yellow-700 ring-1 ring-yellow-200",
+      danger: "bg-red-100 text-red-700 ring-1 ring-red-200",
+      primary: "bg-blue-100 text-blue-700 ring-1 ring-blue-200",
+      secondary: "bg-gray-100 text-gray-700 ring-1 ring-gray-200",
     };
     return colorMap[color] || colorMap.secondary;
   };
 
   const getToastColorClasses = (type: string) => {
     const colorMap: { [key: string]: string } = {
-      success: "bg-green-500 text-white",
-      danger: "bg-red-500 text-white",
-      warning: "bg-yellow-500 text-black",
+      success:
+        "bg-green-500 text-white ring-1 ring-green-600/20 shadow-green-500/20",
+      danger: "bg-red-500 text-white ring-1 ring-red-600/20 shadow-red-500/20",
+      warning:
+        "bg-yellow-500 text-gray-900 ring-1 ring-yellow-600/20 shadow-yellow-500/20",
     };
     return colorMap[type];
   };
@@ -319,125 +336,130 @@ export default function OperatorPageClient() {
     <>
       <style jsx global>{`
         .sortable-ghost {
-          background: #f0f9ff;
-          border: 2px dashed #0ea5e9;
-          opacity: 0.7;
+          background: #f8fafc;
+          border: 2px dashed #3b82f6;
+          opacity: 0.6;
+          border-radius: 0.75rem;
         }
       `}</style>
 
       {/* Toast Container */}
-      <div className="fixed top-5 right-5 z-[100] space-y-3">
+      <div className="fixed top-6 right-6 z-[100] space-y-4">
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`flex items-center justify-between w-full max-w-xs p-4 rounded-lg shadow-lg ${getToastColorClasses(
+            className={`flex items-center justify-between w-full max-w-sm p-4 rounded-xl shadow-xl ring-1 ${getToastColorClasses(
               toast.type
             )}`}
           >
-            <div className="text-sm font-normal">{toast.message}</div>
+            <div className="text-sm font-medium">{toast.message}</div>
             <button
               onClick={() => removeToast(toast.id)}
-              className="-mx-1.5 -my-1.5 ml-3 flex-shrink-0 h-8 w-8 rounded-lg p-1.5 inline-flex items-center justify-center hover:bg-white/20 focus:outline-none cursor-pointer"
+              className="ml-4 flex-shrink-0 h-6 w-6 rounded-full p-1 inline-flex items-center justify-center hover:bg-white/10 focus:outline-none transition"
             >
-              <i className="bi bi-x-lg"></i>
+              <i className="bi bi-x text-base"></i>
             </button>
           </div>
         ))}
       </div>
 
-      <section className="p-6 bg-slate-50 min-h-screen">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <div className="w-full sm:w-auto">
-            <h1 className="text-3xl font-bold text-slate-800">
+      <section className="p-8 bg-gray-50 min-h-screen antialiased">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+          <div className="w-full md:w-auto">
+            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
               Boshqaruv Paneli
             </h1>
           </div>
-          <div className="w-full sm:w-auto flex flex-wrap items-center justify-start sm:justify-end gap-3">
-            <div className="relative">
-              <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                <i className="bi bi-search text-slate-400"></i>
+          <div className="w-full md:w-auto flex flex-wrap items-center justify-start md:justify-end gap-4">
+            <div className="relative flex-grow md:flex-grow-0">
+              <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-gray-400">
+                <i className="bi bi-search text-lg"></i>
               </span>
               <input
                 type="search"
-                className="pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 transition"
+                className="pl-12 pr-5 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm hover:shadow-md w-full md:w-64"
                 placeholder="Bemor qidirish..."
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <button
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-100 transition duration-150 cursor-pointer"
+              className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
               type="button"
               onClick={() => setIsFiltersOpen(true)}
             >
-              <i className="bi bi-funnel"></i>
-              <span className="hidden sm:inline ml-2">Filtr</span>
+              <i className="bi bi-funnel text-lg"></i>
+              <span className="hidden md:inline">Filtr</span>
             </button>
             <button
-              className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg shadow-sm hover:bg-slate-100 transition duration-150 cursor-pointer"
+              className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
               type="button"
               onClick={() => setIsTagModalOpen(true)}
             >
-              <i className="bi bi-tags"></i>
-              <span className="hidden sm:inline ml-2">Holatlar</span>
+              <i className="bi bi-tags text-lg"></i>
+              <span className="hidden md:inline">Holatlar</span>
             </button>
             <button
-              className="px-4 py-2 text-sm font-medium text-white bg-sky-600 border border-transparent rounded-lg shadow-sm hover:bg-sky-700 transition duration-150 cursor-pointer"
+              className="px-5 py-3 text-sm font-semibold text-white bg-blue-600 border border-transparent rounded-2xl shadow-md hover:shadow-lg hover:bg-blue-700 transition duration-200 flex items-center gap-2"
               onClick={handleOpenNewPatientModal}
             >
-              <i className="bi bi-plus-lg"></i>
-              <span className="hidden sm:inline ml-2">Yangi Bemor</span>
+              <i className="bi bi-plus-lg text-lg"></i>
+              <span className="hidden md:inline">Yangi Bemor</span>
             </button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-5 rounded-xl shadow-md flex items-center gap-5 transition hover:shadow-lg hover:-translate-y-1">
-            <div className="p-4 rounded-full bg-sky-100 text-sky-600">
-              <i className="bi bi-people-fill text-2xl"></i>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+            <div className="p-4 rounded-full bg-blue-50 text-blue-600 shadow-sm">
+              <i className="bi bi-people-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Jami Bitimlar</p>
-              <h4 className="text-2xl font-bold text-slate-800">
+              <p className="text-sm text-gray-500 font-medium">Jami Bitimlar</p>
+              <h4 className="text-3xl font-bold text-gray-900">
                 {patients.length}
               </h4>
             </div>
           </div>
-          <div className="bg-white p-5 rounded-xl shadow-md flex items-center gap-5 transition hover:shadow-lg hover:-translate-y-1">
-            <div className="p-4 rounded-full bg-green-100 text-green-600">
-              <i className="bi bi-person-plus-fill text-2xl"></i>
+          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+            <div className="p-4 rounded-full bg-green-50 text-green-600 shadow-sm">
+              <i className="bi bi-person-plus-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Yangi Bemorlar</p>
-              <h4 className="text-2xl font-bold text-slate-800">
+              <p className="text-sm text-gray-500 font-medium">
+                Yangi Bemorlar
+              </p>
+              <h4 className="text-3xl font-bold text-gray-900">
                 {patients.filter((p) => p.stageId === "stage1").length}
               </h4>
             </div>
           </div>
-          <div className="bg-white p-5 rounded-xl shadow-md flex items-center gap-5 transition hover:shadow-lg hover:-translate-y-1">
-            <div className="p-4 rounded-full bg-yellow-100 text-yellow-600">
-              <i className="bi bi-check-circle-fill text-2xl"></i>
+          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+            <div className="p-4 rounded-full bg-yellow-50 text-yellow-600 shadow-sm">
+              <i className="bi bi-check-circle-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Faol Bemorlar</p>
-              <h4 className="text-2xl font-bold text-slate-800">
+              <p className="text-sm text-gray-500 font-medium">Faol Bemorlar</p>
+              <h4 className="text-3xl font-bold text-gray-900">
                 {patients.filter((p) => p.stageId !== "stage5").length}
               </h4>
             </div>
           </div>
-          <div className="bg-white p-5 rounded-xl shadow-md flex items-center gap-5 transition hover:shadow-lg hover:-translate-y-1">
-            <div className="p-4 rounded-full bg-indigo-100 text-indigo-600">
-              <i className="bi bi-cash-stack text-2xl"></i>
+          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+            <div className="p-4 rounded-full bg-indigo-50 text-indigo-600 shadow-sm">
+              <i className="bi bi-cash-stack text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-slate-500">Kutilayotgan Daromad</p>
-              <h4 className="text-2xl font-bold text-slate-800">$2,564</h4>
+              <p className="text-sm text-gray-500 font-medium">
+                Kutilayotgan Daromad
+              </p>
+              <h4 className="text-3xl font-bold text-gray-900">$2,564</h4>
             </div>
           </div>
         </div>
 
-        <div className="overflow-x-auto pb-4">
+        <div className="overflow-x-auto pb-6">
           <div
-            className="grid grid-flow-col auto-cols-[320px] gap-4 min-w-max"
+            className="grid grid-flow-col auto-cols-[340px] gap-6 min-w-max"
             ref={kanbanBoardRef}
           >
             {stages.map((stage) => {
@@ -447,17 +469,17 @@ export default function OperatorPageClient() {
               return (
                 <div
                   key={stage.id}
-                  className="flex flex-col bg-slate-100 rounded-xl"
+                  className="flex flex-col bg-gray-100 rounded-2xl shadow-sm overflow-hidden"
                 >
                   <div
-                    className={`p-4 font-bold text-slate-700 border-b-4 ${stage.colorClass}`}
+                    className={`p-5 font-semibold text-gray-800 border-b-4 ${stage.colorClass} flex items-center justify-between`}
                   >
                     <span>
                       {stage.title} ({patientsInStage.length})
                     </span>
                   </div>
                   <div
-                    className="kanban-cards flex-grow p-2 space-y-3 overflow-y-auto"
+                    className="kanban-cards flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-300px)]"
                     data-stage-id={stage.id}
                   >
                     {patientsInStage.length > 0 ? (
@@ -473,43 +495,43 @@ export default function OperatorPageClient() {
                         return (
                           <div
                             key={patient.id}
-                            className="bg-white rounded-lg shadow p-4 cursor-pointer hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+                            className="bg-white rounded-xl shadow-md p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300"
                             data-id={patient.id}
                             onClick={() => setSelectedPatient(patient)}
                           >
-                            <div className="flex justify-between items-start mb-3">
+                            <div className="flex justify-between items-start mb-4">
                               <div>
-                                <div className="font-semibold text-slate-800">
+                                <div className="font-bold text-gray-900 text-lg">
                                   {patient.name}
                                 </div>
-                                <div className="text-slate-500 text-sm">
+                                <div className="text-gray-500 text-sm mt-1">
                                   {patient.details.phone}
                                 </div>
                               </div>
                               <span
-                                className={`text-xs font-medium px-2.5 py-1 rounded-full ${getTagColorClasses(
+                                className={`text-xs font-semibold px-3 py-1.5 rounded-full ${getTagColorClasses(
                                   tag.color
                                 )}`}
                               >
                                 {tag.text}
                               </span>
                             </div>
-                            <div className="space-y-2.5 text-sm text-slate-600 mb-4">
-                              <div className="flex items-start gap-2.5">
-                                <i className="bi bi-info-circle-fill text-slate-400 mt-1"></i>
+                            <div className="space-y-3 text-sm text-gray-600 mb-5">
+                              <div className="flex items-start gap-3">
+                                <i className="bi bi-info-circle-fill text-gray-400 mt-0.5 text-base"></i>
                                 <span>{lastHistory?.text}</span>
                               </div>
-                              <div className="flex items-start gap-2.5">
-                                <i className="bi bi-exclamation-diamond-fill text-slate-400 mt-1"></i>
+                              <div className="flex items-start gap-3">
+                                <i className="bi bi-exclamation-diamond-fill text-gray-400 mt-0.5 text-base"></i>
                                 <span>
                                   Keyingi qadam:{" "}
                                   {getNextStepText(patient.stageId)}
                                 </span>
                               </div>
                             </div>
-                            <div className="flex justify-between items-center text-xs text-slate-500">
+                            <div className="flex justify-between items-center text-xs text-gray-500 font-medium">
                               <span>
-                                <i className="bi bi-bookmark-star-fill mr-1"></i>
+                                <i className="bi bi-bookmark-star-fill mr-1.5"></i>
                                 {patient.source}
                               </span>
                               <span>{formatDate(lastHistory?.date)}</span>
@@ -518,9 +540,11 @@ export default function OperatorPageClient() {
                         );
                       })
                     ) : (
-                      <div className="text-center text-slate-400 p-5">
-                        <i className="bi bi-moon-stars text-4xl"></i>
-                        <p className="mt-2 text-sm">Bemorlar yo&apos;q</p>
+                      <div className="text-center text-gray-400 p-8">
+                        <i className="bi bi-moon-stars-fill text-5xl"></i>
+                        <p className="mt-3 text-base font-medium">
+                          Bemorlar yo&apos;q
+                        </p>
                       </div>
                     )}
                   </div>
@@ -543,7 +567,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -554,59 +581,60 @@ export default function OperatorPageClient() {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed top-0 right-0 h-full w-full max-w-2xl bg-white shadow-xl">
+            <Dialog.Panel className="fixed top-0 right-0 h-full w-full max-w-xl bg-white shadow-2xl overflow-hidden">
               {selectedPatient && (
                 <>
-                  <div className="flex justify-between items-center p-4 border-b">
-                    <Dialog.Title className="text-xl font-semibold text-slate-800">
+                  <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                    <Dialog.Title className="text-2xl font-bold text-gray-900">
                       {selectedPatient.name}
                     </Dialog.Title>
                     <button
                       type="button"
-                      className="p-1 rounded-full hover:bg-slate-200 cursor-pointer"
+                      className="p-2 rounded-full hover:bg-gray-100 transition text-gray-600 hover:text-gray-900"
                       onClick={handleClosePatientDetails}
                     >
                       <i className="bi bi-x-lg text-xl"></i>
                     </button>
                   </div>
-                  <div className="p-5 overflow-y-auto h-[calc(100vh-69px)] bg-slate-50 space-y-5">
+                  <div className="p-8 overflow-y-auto h-[calc(100vh-80px)] bg-gray-50 space-y-6">
                     {/* Personal Details Card */}
-                    <div className="bg-white rounded-lg shadow p-4">
-                      <div className="flex justify-between items-center mb-3">
-                        <h6 className="font-semibold text-slate-700">
-                          <i className="bi bi-person-badge mr-2"></i>Shaxsiy
-                          ma&apos;lumotlar
+                    <div className="bg-white rounded-2xl shadow-md p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h6 className="font-bold text-gray-800 text-lg">
+                          <i className="bi bi-person-badge mr-2 text-blue-600"></i>
+                          Shaxsiy ma&apos;lumotlar
                         </h6>
                         {editingSection !== "personal" ? (
                           <button
-                            className="text-sky-600 hover:text-sky-800 text-sm font-medium cursor-pointer"
+                            className="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center gap-1 transition"
                             onClick={() => handleStartEditing("personal")}
                           >
-                            <i className="bi bi-pencil"></i> Tahrirlash
+                            <i className="bi bi-pencil text-base"></i>{" "}
+                            Tahrirlash
                           </button>
                         ) : (
-                          <div className="flex gap-2">
+                          <div className="flex gap-3">
                             <button
-                              className="px-3 py-1 text-sm text-white bg-green-600 rounded hover:bg-green-700 cursor-pointer"
+                              className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-sm"
                               onClick={handleSaveDetails}
                             >
-                              <i className="bi bi-check-lg"></i> Saqlash
+                              <i className="bi bi-check-lg mr-1"></i> Saqlash
                             </button>
                             <button
-                              className="px-3 py-1 text-sm bg-slate-200 rounded hover:bg-slate-300 cursor-pointer"
+                              className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition shadow-sm"
                               onClick={handleCancelEditing}
                             >
-                              <i className="bi bi-x-lg"></i>
+                              <i className="bi bi-x-lg mr-1"></i> Bekor
                             </button>
                           </div>
                         )}
                       </div>
-                      <div className="space-y-2 text-sm">
+                      <div className="space-y-4 text-sm">
                         {editingSection === "personal" &&
                         editingPatientDetails ? (
-                          <div className="grid grid-cols-2 gap-4">
+                          <div className="grid grid-cols-2 gap-5">
                             <div>
-                              <label className="text-xs text-slate-500">
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                 Pasport
                               </label>
                               <input
@@ -614,11 +642,11 @@ export default function OperatorPageClient() {
                                 name="passport"
                                 value={editingPatientDetails.passport}
                                 onChange={handleDetailChange}
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
                               />
                             </div>
                             <div>
-                              <label className="text-xs text-slate-500">
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                 Tug&apos;ilgan sana
                               </label>
                               <input
@@ -626,25 +654,25 @@ export default function OperatorPageClient() {
                                 name="dob"
                                 value={editingPatientDetails.dob}
                                 onChange={handleDetailChange}
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
                               />
                             </div>
                             <div>
-                              <label className="text-xs text-slate-500">
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                 Jins
                               </label>
                               <select
                                 name="gender"
                                 value={editingPatientDetails.gender}
                                 onChange={handleDetailChange}
-                                className="w-full mt-1 p-2 border rounded-md bg-white"
+                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm bg-white"
                               >
                                 <option value="Erkak">Erkak</option>
                                 <option value="Ayol">Ayol</option>
                               </select>
                             </div>
                             <div>
-                              <label className="text-xs text-slate-500">
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                 Telefon
                               </label>
                               <input
@@ -652,11 +680,11 @@ export default function OperatorPageClient() {
                                 name="phone"
                                 value={editingPatientDetails.phone}
                                 onChange={handleDetailChange}
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
                               />
                             </div>
                             <div className="col-span-2">
-                              <label className="text-xs text-slate-500">
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
                                 Pochta
                               </label>
                               <input
@@ -664,41 +692,49 @@ export default function OperatorPageClient() {
                                 name="email"
                                 value={editingPatientDetails.email}
                                 onChange={handleDetailChange}
-                                className="w-full mt-1 p-2 border rounded-md"
+                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
                               />
                             </div>
                           </div>
                         ) : (
                           <>
-                            <div className="flex justify-between py-1.5">
-                              <span className="text-slate-500">Pasport</span>
-                              <span className="font-medium text-slate-800">
+                            <div className="flex justify-between py-2 items-center">
+                              <span className="text-gray-500 font-medium">
+                                Pasport
+                              </span>
+                              <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.passport}
                               </span>
                             </div>
-                            <div className="flex justify-between py-1.5">
-                              <span className="text-slate-500">
+                            <div className="flex justify-between py-2 items-center">
+                              <span className="text-gray-500 font-medium">
                                 Tug&apos;ilgan sana
                               </span>
-                              <span className="font-medium text-slate-800">
+                              <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.dob}
                               </span>
                             </div>
-                            <div className="flex justify-between py-1.5">
-                              <span className="text-slate-500">Jins</span>
-                              <span className="font-medium text-slate-800">
+                            <div className="flex justify-between py-2 items-center">
+                              <span className="text-gray-500 font-medium">
+                                Jins
+                              </span>
+                              <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.gender}
                               </span>
                             </div>
-                            <div className="flex justify-between py-1.5">
-                              <span className="text-slate-500">Telefon</span>
-                              <span className="font-medium text-slate-800">
+                            <div className="flex justify-between py-2 items-center">
+                              <span className="text-gray-500 font-medium">
+                                Telefon
+                              </span>
+                              <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.phone}
                               </span>
                             </div>
-                            <div className="flex justify-between py-1.5">
-                              <span className="text-slate-500">Pochta</span>
-                              <span className="font-medium text-slate-800">
+                            <div className="flex justify-between py-2 items-center">
+                              <span className="text-gray-500 font-medium">
+                                Pochta
+                              </span>
+                              <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.email}
                               </span>
                             </div>
@@ -707,13 +743,14 @@ export default function OperatorPageClient() {
                       </div>
                     </div>
                     {/* Medical Details Card */}
-                    {/* ... */}
-                    <div className="mt-6">
+                    {/* ... (Shu yerga tibbiy ma'lumotlar qo'shishingiz mumkin, lekin funksiyalarni o'zgartirmayman) */}
+                    <div className="mt-8">
                       <button
-                        className="w-full py-2.5 text-red-600 bg-white border border-red-300 rounded-lg hover:bg-red-50 cursor-pointer transition"
+                        className="w-full py-3 text-red-600 bg-white border border-red-200 rounded-2xl hover:bg-red-50 hover:border-red-300 transition shadow-sm hover:shadow-md font-semibold"
                         onClick={() => setPatientToDelete(selectedPatient)}
                       >
-                        <i className="bi bi-trash mr-2"></i>Bemorni o&apos;chirish
+                        <i className="bi bi-trash mr-2"></i>Bemorni
+                        o&apos;chirish
                       </button>
                     </div>
                   </div>
@@ -739,7 +776,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -751,14 +791,14 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                <div className="p-5 border-b">
-                  <Dialog.Title className="font-semibold text-lg text-slate-800">
+              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <Dialog.Title className="font-bold text-xl text-gray-900">
                     Bosqichni O&apos;zgartirish
                   </Dialog.Title>
                 </div>
-                <div className="p-5">
-                  <p className="mb-4 text-slate-600">
+                <div className="p-6">
+                  <p className="mb-5 text-gray-600 text-base">
                     Bemor{" "}
                     <strong>
                       {
@@ -776,30 +816,30 @@ export default function OperatorPageClient() {
                   </p>
                   <label
                     htmlFor="stage-change-comment"
-                    className="block mb-1 text-sm font-medium text-slate-700"
+                    className="block mb-2 text-sm font-semibold text-gray-700"
                   >
                     Izoh (majburiy)
                   </label>
                   <textarea
                     id="stage-change-comment"
-                    className="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-sky-500 transition"
-                    rows={3}
+                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm resize-none"
+                    rows={4}
                     value={stageChangeComment}
                     onChange={(e) => setStageChangeComment(e.target.value)}
                     required
                   ></textarea>
                 </div>
-                <div className="flex justify-end gap-3 p-4 bg-slate-50 rounded-b-lg">
+                <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
                   <button
                     type="button"
-                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-100 cursor-pointer transition"
+                    className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
                     onClick={() => setPatientToMove(null)}
                   >
                     Bekor qilish
                   </button>
                   <button
                     type="button"
-                    className="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-md hover:bg-sky-700 cursor-pointer transition"
+                    className="px-5 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition shadow-sm"
                     onClick={confirmStageChange}
                   >
                     Saqlash
@@ -826,7 +866,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -838,30 +881,30 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                <div className="p-5 border-b">
-                  <Dialog.Title className="font-semibold text-lg text-slate-800">
+              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <Dialog.Title className="font-bold text-xl text-gray-900">
                     Tasdiqlash
                   </Dialog.Title>
                 </div>
-                <div className="p-5">
-                  <p className="text-slate-600">
+                <div className="p-6">
+                  <p className="text-gray-600 text-base">
                     Rostdan ham <strong>{patientToDelete?.name}</strong> ismli
                     bemorni o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib
                     bo&apos;lmaydi.
                   </p>
                 </div>
-                <div className="flex justify-end gap-3 p-4 bg-slate-50 rounded-b-lg">
+                <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
                   <button
                     type="button"
-                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-100 cursor-pointer transition"
+                    className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
                     onClick={() => setPatientToDelete(null)}
                   >
                     Yo&apos;q
                   </button>
                   <button
                     type="button"
-                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 cursor-pointer transition"
+                    className="px-5 py-3 text-sm font-semibold text-white bg-red-600 rounded-xl hover:bg-red-700 transition shadow-sm"
                     onClick={confirmDeletePatient}
                   >
                     Ha, o&apos;chirish
@@ -888,7 +931,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -900,32 +946,32 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-lg shadow-xl w-full max-w-3xl">
-                <div className="p-5 border-b">
-                  <Dialog.Title className="font-semibold text-lg text-slate-800">
+              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <Dialog.Title className="font-bold text-xl text-gray-900">
                     Konsultatsiya uchun Anketa
                   </Dialog.Title>
                 </div>
-                <div className="p-6">
-                  <div className="relative mb-8">
-                    <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -translate-y-1/2"></div>
+                <div className="p-8">
+                  <div className="relative mb-10">
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 rounded-full"></div>
                     <div
-                      className="absolute top-1/2 left-0 h-0.5 bg-sky-600 -translate-y-1/2 transition-all duration-300"
+                      className="absolute top-1/2 left-0 h-1 bg-blue-600 -translate-y-1/2 transition-all duration-300 rounded-full"
                       style={{ width: `${((wizardStep - 1) / 2) * 100}%` }}
                     ></div>
                     <div className="flex justify-between relative">
                       {[1, 2, 3].map((step, index) => (
                         <div key={step} className="flex flex-col items-center">
                           <div
-                            className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-base font-bold shadow-md ${
                               wizardStep >= step
-                                ? "bg-sky-600 text-white"
-                                : "bg-slate-200 text-slate-500"
-                            }`}
+                                ? "bg-blue-600 text-white"
+                                : "bg-gray-200 text-gray-500"
+                            } transition`}
                           >
                             {step}
                           </div>
-                          <div className="text-xs mt-1 text-slate-500">
+                          <div className="text-sm mt-2 text-gray-600 font-medium">
                             {["Shaxsiy", "Tibbiy", "Hujjatlar"][index]}
                           </div>
                         </div>
@@ -935,15 +981,157 @@ export default function OperatorPageClient() {
                   <form
                     ref={newPatientFormRef}
                     onSubmit={(e) => e.preventDefault()}
+                    className="space-y-6"
                   >
-                    {/* Form steps content */}
+                    {wizardStep === 1 && (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Ism
+                          </label>
+                          <input
+                            type="text"
+                            name="name"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            placeholder="Ism va familiya"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Telefon
+                          </label>
+                          <input
+                            type="tel"
+                            name="phone"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            placeholder="+998 90 123 45 67"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Pasport
+                          </label>
+                          <input
+                            type="text"
+                            name="passport"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            placeholder="AA1234567"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Tug&apos;ilgan sana
+                          </label>
+                          <input
+                            type="date"
+                            name="dob"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Jins
+                          </label>
+                          <select
+                            name="gender"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm bg-white"
+                          >
+                            <option value="Erkak">Erkak</option>
+                            <option value="Ayol">Ayol</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Pochta
+                          </label>
+                          <input
+                            type="email"
+                            name="email"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            placeholder="example@domain.com"
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {wizardStep === 2 && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Shikoyatlar
+                          </label>
+                          <textarea
+                            name="complaints"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm resize-none"
+                            rows={4}
+                            placeholder="Bemorning shikoyatlari..."
+                          ></textarea>
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Oldingi tashxis
+                          </label>
+                          <textarea
+                            name="diagnosis"
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm resize-none"
+                            rows={4}
+                            placeholder="Avval qo'yilgan tashxislar..."
+                          ></textarea>
+                        </div>
+                      </div>
+                    )}
+                    {wizardStep === 3 && (
+                      <div className="space-y-6">
+                        <div>
+                          <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                            Hujjatlar
+                          </label>
+                          <input
+                            type="file"
+                            multiple
+                            onChange={(e) =>
+                              setNewPatientFiles(
+                                e.target.files ? Array.from(e.target.files) : []
+                              )
+                            }
+                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                          />
+                          {newPatientFiles.length > 0 && (
+                            <ul className="mt-4 space-y-2">
+                              {newPatientFiles.map((file, index) => (
+                                <li
+                                  key={index}
+                                  className="flex items-center justify-between bg-gray-50 p-3 rounded-xl shadow-sm"
+                                >
+                                  <span className="text-sm text-gray-700">
+                                    {file.name}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    className="text-red-500 hover:text-red-700 w-8 h-8 rounded-full hover:bg-red-100 transition flex items-center justify-center"
+                                    onClick={() =>
+                                      setNewPatientFiles((prev) =>
+                                        prev.filter((_, i) => i !== index)
+                                      )
+                                    }
+                                  >
+                                    &times;
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </form>
                 </div>
-                <div className="flex justify-end gap-3 p-4 bg-slate-50 rounded-b-lg">
+                <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
                   {wizardStep > 1 && (
                     <button
                       type="button"
-                      className="px-4 py-2 text-sm font-medium bg-white border rounded-md cursor-pointer"
+                      className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
                       onClick={handleWizardBack}
                     >
                       Orqaga
@@ -951,7 +1139,7 @@ export default function OperatorPageClient() {
                   )}
                   <button
                     type="button"
-                    className="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-md cursor-pointer"
+                    className="px-5 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition shadow-sm"
                     onClick={handleWizardNext}
                   >
                     {wizardStep === 3 ? "Tasdiqlash va Yuborish" : "Keyingisi"}
@@ -978,7 +1166,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -990,32 +1181,32 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-lg shadow-xl w-full max-w-md">
-                <div className="p-5 border-b">
-                  <Dialog.Title className="font-semibold text-lg text-slate-800">
+              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                <div className="p-6 border-b border-gray-100">
+                  <Dialog.Title className="font-bold text-xl text-gray-900">
                     Holatlarni Boshqarish
                   </Dialog.Title>
                 </div>
-                <div className="p-5 space-y-4">
+                <div className="p-6 space-y-6">
                   <div>
-                    <h6 className="font-medium text-slate-600 mb-2">
+                    <h6 className="font-bold text-gray-800 text-lg mb-3">
                       Mavjud Holatlar
                     </h6>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                       {tags.map((tag) => (
                         <li
                           key={tag.id}
-                          className="flex justify-between items-center bg-slate-50 p-2 rounded-md"
+                          className="flex justify-between items-center bg-gray-50 p-4 rounded-xl shadow-sm"
                         >
                           <span
-                            className={`text-sm font-medium px-2.5 py-1 rounded-full ${getTagColorClasses(
+                            className={`text-sm font-semibold px-4 py-2 rounded-full ${getTagColorClasses(
                               tag.color
                             )}`}
                           >
                             {tag.text}
                           </span>
                           <button
-                            className="text-red-500 hover:text-red-700 w-6 h-6 rounded-full hover:bg-red-100 cursor-pointer"
+                            className="text-red-500 hover:text-red-700 w-8 h-8 rounded-full hover:bg-red-100 transition flex items-center justify-center text-xl"
                             onClick={() => handleDeleteTag(tag.id)}
                           >
                             &times;
@@ -1025,21 +1216,21 @@ export default function OperatorPageClient() {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-medium text-slate-600 mb-2">
+                    <h6 className="font-bold text-gray-800 text-lg mb-3">
                       Yangi Holat Qo&apos;shish
                     </h6>
-                    <div className="flex gap-2">
+                    <div className="flex gap-3">
                       <input
                         type="text"
                         value={newTagName}
                         onChange={(e) => setNewTagName(e.target.value)}
-                        className="flex-grow p-2 border border-slate-300 rounded-md"
+                        className="flex-grow p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
                         placeholder="Yangi holat nomi..."
                       />
                       <select
                         value={newTagColor}
                         onChange={(e) => setNewTagColor(e.target.value)}
-                        className="p-2 border border-slate-300 rounded-md bg-white"
+                        className="p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm bg-white w-32"
                       >
                         <option value="success">Yashil</option>
                         <option value="warning">Sariq</option>
@@ -1048,7 +1239,7 @@ export default function OperatorPageClient() {
                         <option value="secondary">Kulrang</option>
                       </select>
                       <button
-                        className="px-4 py-2 text-sm font-medium text-white bg-sky-600 rounded-md hover:bg-sky-700 cursor-pointer"
+                        className="px-5 py-3 text-sm font-semibold text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition shadow-sm"
                         onClick={handleAddNewTag}
                       >
                         Qo&apos;shish
@@ -1077,7 +1268,10 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div
+              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+              aria-hidden="true"
+            />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -1088,21 +1282,23 @@ export default function OperatorPageClient() {
             leaveFrom="translate-x-0"
             leaveTo="translate-x-full"
           >
-            <Dialog.Panel className="fixed top-0 right-0 h-full w-full max-w-sm bg-white shadow-xl">
-              <div className="flex justify-between items-center p-4 border-b">
-                <Dialog.Title className="text-xl font-semibold text-slate-800">
+            <Dialog.Panel className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl overflow-hidden">
+              <div className="flex justify-between items-center p-6 border-b border-gray-100">
+                <Dialog.Title className="text-2xl font-bold text-gray-900">
                   Filtrlar
                 </Dialog.Title>
                 <button
                   type="button"
-                  className="p-1 rounded-full hover:bg-slate-200 cursor-pointer"
+                  className="p-2 rounded-full hover:bg-gray-100 transition text-gray-600 hover:text-gray-900"
                   onClick={() => setIsFiltersOpen(false)}
                 >
                   <i className="bi bi-x-lg text-xl"></i>
                 </button>
               </div>
-              <div className="p-5">
-                <p>Bu yerda filtrlar bo&apos;ladi...</p>
+              <div className="p-8">
+                <p className="text-gray-600 text-base">
+                  Bu yerda filtrlar bo&apos;ladi...
+                </p>
               </div>
             </Dialog.Panel>
           </Transition.Child>

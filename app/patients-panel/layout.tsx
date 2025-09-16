@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, MessageSquare, Settings, LogOut } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { BsFillGrid1X2Fill } from "react-icons/bs";
-import { useQuery } from "@tanstack/react-query";
-import { get, isArray } from "lodash";
+import { get } from "lodash";
 import { useProfile } from "@/hooks/useProfile";
 import LoadingOverlay from "@/components/LoadingOverlay";
 import "./../../components/patients/style.css";
@@ -22,45 +21,53 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false); // Boshlang'ich holat
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [imgSrc, setImgSrc] = useState("/assets/MedMapp_logo_main.png");
+  const profileRef = useRef<HTMLDivElement>(null);
   const { isDarkMode, toggleDarkMode } = useDarkModeContext();
   const pathname = usePathname();
   const router = useRouter();
 
   const { profile, isLoading } = useProfile();
 
+  // YECHIM: Ekranni o'lchamini aniqlash uchun yangi useEffect
   useEffect(() => {
+    // Bu funksiya ekran kengligini tekshiradi
     const handleResize = () => {
-      const mobileView = window.innerWidth < 768;
-      setIsMobile(mobileView);
-      setIsSidebarOpen(!mobileView);
-    };
-
-    const handleClickOutside = (event: MouseEvent) => {
-      const profileToggle = document.querySelector(".profile-toggle");
-      const profileDropdown = document.querySelector(".profile-dropdown");
-      if (
-        isProfileDropdownOpen &&
-        profileToggle &&
-        profileDropdown &&
-        !profileToggle.contains(event.target as Node) &&
-        !profileDropdown.contains(event.target as Node)
-      ) {
-        setIsProfileDropdownOpen(false);
+      const mobile = window.innerWidth < 768; // Tailwind'dagi 'md' breakpoint
+      setIsMobile(mobile);
+      // Agar ekran mobil o'lchamda bo'lsa, sidebar'ni yopib qo'yamiz
+      if (mobile) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
       }
     };
 
+    // Komponent ilk marta yuklanganda funksiyani ishga tushiramiz
     handleResize();
-    window.addEventListener("resize", handleResize);
-    document.addEventListener("mousedown", handleClickOutside);
 
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isProfileDropdownOpen]);
+    // Har safar ekran o'lchami o'zgarganda funksiyani chaqiramiz
+    window.addEventListener("resize", handleResize);
+
+    // Komponent DOM'dan o'chirilganda event listener'ni tozalaymiz
+    return () => window.removeEventListener("resize", handleResize);
+  }, []); // Bo'sh massiv [] - bu effekt faqat bir marta, komponent yuklanganda ishga tushishini bildiradi
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setIsProfileDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -68,7 +75,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
     router.push("/login");
   };
 
-  // Animatsiya uchun variantlar
   const modalVariants: Variants = {
     hidden: { opacity: 0, scale: 0.95 },
     visible: {
@@ -85,15 +91,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen bg-[var(--background-color)] text-[var(--text-color)] overflow-hidden">
-      {isMobile && (
-        <div
-          id="sidebar-backdrop"
-          className={`fixed inset-0 bg-black/80 z-30 transition-opacity duration-300 ease-in-out ${
-            isSidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-          }`}
-          onClick={() => setIsSidebarOpen(false)}
-        />
-      )}
+      {/* Sidebar uchun qora fon (faqat mobilda ko'rinadi) */}
+      <AnimatePresence>
+        {isMobile && isSidebarOpen && (
+          <motion.div
+            id="sidebar-backdrop"
+            className="fixed inset-0 bg-black/80 z-30"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Sidebar */}
       <aside
@@ -108,12 +119,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
               className="h-[66px] w-auto rounded-lg"
               width={150}
               height={66}
-              src="/assets/MedMapp_logo_main.png"
+              src={imgSrc}
               alt="MedMapp Logo"
-              onError={(e) => {
-                e.currentTarget.src =
-                  "https://placehold.co/150x40/ffffff/0f172a?text=MedMapp";
-              }}
+              onError={() =>
+                setImgSrc(
+                  "https://placehold.co/150x40/ffffff/0f172a?text=MedMapp"
+                )
+              }
             />
           </Link>
         </div>
@@ -211,7 +223,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
             </div>
 
             {/* Profile section */}
-            <div className="relative">
+            <div className="relative" ref={profileRef}>
               <button
                 className="profile-toggle cursor-pointer flex items-center space-x-3"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
