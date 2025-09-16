@@ -335,6 +335,7 @@ export default function LoginClientComponent() {
         setOtpError(false);
         setLoading(false);
         showToast("Muvaffaqiyatli ro'yxatdan o'tdingiz!", "success");
+        localStorage.removeItem("formData")
         setAuthTokens(verifyResponse.data.access, verifyResponse.data.refresh);
         setTimeout(() => (window.location.href = "/patients-panel"), 800);
       }
@@ -737,7 +738,7 @@ export default function LoginClientComponent() {
                   <button
                     type="submit"
                     id="login-verify-btn"
-                     style={{ borderRadius: "10px", cursor: "pointer" }}
+                    style={{ borderRadius: "10px", cursor: "pointer" }}
                     className="w-full px-2 py-3 bg-blue-500 rounded-2xl text-white"
                     disabled={registerOtp.join("").length !== 6}
                   >
