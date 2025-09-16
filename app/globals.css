@@ -861,3 +861,10 @@ a {
   background-color: #4338ca;
   color: white;
 }
+.dark .service-icon-color {
+  color: rgb(65 84 241);
+}
+.dark .service-icon-bg-color,
+.dark .service-icon-btn-color {
+  background-color: rgb(49 46 129 / 50%);
+}
