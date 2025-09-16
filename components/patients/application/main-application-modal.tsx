@@ -437,19 +437,20 @@ const StatusCard: React.FC = () => {
       )}
 
       {isFormSubmitted ? (
+        // << YUBORILGANDAN KEYINGI HOLAT >>
         <div className="bg-gradient-to-r mb-10 from-green-500 to-green-600 text-white rounded-2xl p-6 md:p-8 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2">
                 So&apos;rov muvaffaqiyatli yuborildi!
               </h2>
-              <p className="text-indigo-200">
+              <p className="text-green-200">
                 Arizangiz ko&apos;rib chiqilmoqda. Tez orada siz bilan
                 bog&apos;lanamiz.
               </p>
             </div>
             <button
-              className="bg-white text-green-600 cursor-not-allowed opacity-75 font-bold py-3 px-6 rounded-lg flex items-center space-x-2"
+              className="bg-white text-green-600 cursor-not-allowed opacity-75 font-bold py-3 px-6 rounded-lg flex items-center justify-center space-x-2 flex-shrink-0 w-full md:w-auto"
               disabled
             >
               <BsCheckCircleFill />
@@ -458,9 +459,10 @@ const StatusCard: React.FC = () => {
           </div>
         </div>
       ) : (
+        // << BOSHLANG'ICH HOLAT >>
         <div
           id="status-card"
-          className="bg-gradient-to-r  from-[#012970] to-[#4154f1] text-white rounded-2xl p-6 md:p-8 shadow-lg mb-10 transition-all duration-500"
+          className="bg-gradient-to-r from-[#012970] to-[#4154f1] text-white rounded-2xl p-6 md:p-8 shadow-lg mb-10 transition-all duration-500"
         >
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
@@ -475,7 +477,7 @@ const StatusCard: React.FC = () => {
             <button
               id="main-action-button"
               onClick={openModal}
-              className="bg-white cursor-pointer text-[#4154f1] hover:bg-primary-50 font-bold py-3 px-6 rounded-lg shadow-md flex items-center space-x-2 flex-shrink-0 transition-all duration-300"
+              className="bg-white cursor-pointer text-[#4154f1] hover:bg-gray-100 font-bold py-3 px-6 rounded-lg shadow-md flex items-center justify-center space-x-2 flex-shrink-0 w-full md:w-auto transition-all duration-300"
             >
               <BsPencilSquare />
               <span>Anketa to’ldirish</span>
