@@ -12,7 +12,7 @@ import React, {
 import { BsCheckCircleFill, BsPencilSquare, BsSendCheck } from "react-icons/bs";
 import { motion, AnimatePresence } from "framer-motion";
 import api from "@/utils/api";
-import useProfile from "@/hooks/useProfile";
+import { useProfile } from "@/hooks/useProfile";
 import { isArray } from "lodash";
 import { useQuery } from "@tanstack/react-query";
 
@@ -153,24 +153,16 @@ const StatusCard: React.FC = () => {
   const [direction, setDirection] = useState<number>(0);
   const [showSuccessNotification, setShowSuccessNotification] =
     useState<boolean>(false);
-  const { fetchProfile } = useProfile();
+  const { profile } = useProfile();
 
   const phoneInputRef = useRef<HTMLInputElement | null>(null);
-  const { data } = useQuery({
-    queryKey: ["profile"],
-    queryFn: async () => await fetchProfile(),
-    staleTime: 5 * 60 * 1000,
-  });
 
-  const isData = isArray(data) ? data : [data];
-  const dataItem = isData && isData.length > 0 ? isData[0] : null;
-
-  const [phoneInput, setPhoneInput] = useState<string>(`${dataItem.phone}`);
+  const [phoneInput, setPhoneInput] = useState<string>(`${profile?.phone}`);
   const [formData, setFormData] = useState<FormData>({
-    fullName: `${dataItem?.full_name || ""}`,
-    dob: `${dataItem?.dob || ""}`,
-    gender: `${dataItem?.gender || ""}`,
-    phone: `${dataItem?.phone?.replace(/^\+998/, "") || ""}`, // Strip +998 if present
+    fullName: `${profile?.full_name || ""}`,
+    dob: `${profile?.dob || ""}`,
+    gender: `${profile?.gender || ""}`,
+    phone: `${profile?.phone?.replace(/^\+998/, "") || ""}`, // Strip +998 if present
     email: "",
     complaint: "",
     diagnosis: "",
@@ -181,9 +173,9 @@ const StatusCard: React.FC = () => {
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   useEffect(() => {
-    if (!dataItem.phone) return;
+    if (!profile?.phone) return;
 
-    const phoneNumber = dataItem.phone.replace(/[^\d]/g, "");
+    const phoneNumber = profile?.phone.replace(/[^\d]/g, "");
     const cleanPhone = phoneNumber.startsWith("998")
       ? phoneNumber.slice(3)
       : phoneNumber;
@@ -208,7 +200,7 @@ const StatusCard: React.FC = () => {
 
     setFormData((prev) => ({ ...prev, phone: limitedPhone }));
     setPhoneInput(formatted);
-  }, [dataItem.phone]);
+  }, [profile?.phone]);
   const openModal = (): void => {
     setIsModalOpen(true);
     setCurrentStep(1);
@@ -996,7 +988,7 @@ const StatusCard: React.FC = () => {
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-2" id="status-text">
-                Assalomu alaykum, {dataItem?.full_name || "Foydalanuvchi"}!
+                Assalomu alaykum, {profile?.full_name || "Foydalanuvchi"}!
               </h2>
               <p className="text-indigo-200 mb-4" id="status-description">
                 Tibbiy konsultatsiya uchun so&apos;rov yuborishni boshlash uchun
