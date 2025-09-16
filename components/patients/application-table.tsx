@@ -73,10 +73,8 @@ const fetchApplications = async (): Promise<Application[]> => {
     throw new Error("Failed to fetch applications");
   }
 
-  // Expect a paginated response object from the API
   const data: PaginatedBackendResponse<BackendApplication> = response.data;
 
-  // Safely map the results array, returning an empty array if it doesn't exist.
   const mappedApplications: Application[] = (data?.results || []).map(
     (app) => ({
       id: String(app.application_id),
@@ -89,8 +87,8 @@ const fetchApplications = async (): Promise<Application[]> => {
           : (app.status as "approved" | "rejected"),
       details: {
         complaint: app.complaint,
-        documents: [], // Assuming documents are fetched separately or not needed in the table view
-        services: [], // Assuming services are fetched separately
+        documents: [],
+        services: [],
       },
       reason: app.status === "rejected" ? "Hujjatlar to'liq emas" : undefined,
     })
@@ -107,18 +105,16 @@ const Table = () => {
   });
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
 
-  // Use TanStack Query to fetch, cache, and manage server state
   const {
     data: applications,
     isLoading,
     isError,
     error,
   } = useQuery<Application[], Error>({
-    queryKey: ["applications"], // Unique key for this query
-    queryFn: fetchApplications, // The function that will fetch the data
+    queryKey: ["applications"],
+    queryFn: fetchApplications,
   });
 
-  // Filter applications based on current search and status filters
   const filteredApplications = applications?.filter((app) => {
     const searchMatch = app.id
       .toLowerCase()
@@ -128,7 +124,6 @@ const Table = () => {
     return searchMatch && statusMatch;
   });
 
-  // Event Handlers
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({ ...filters, search: e.target.value });
   };
@@ -148,13 +143,6 @@ const Table = () => {
     setSelectedApp(null);
   };
 
-  // RENDER HELPERS
-
-  /**
-   * Renders a styled status badge based on the application status.
-   * @param {string} status - The status of the application.
-   * @returns {JSX.Element | null} A JSX element for the badge or null.
-   */
   const renderStatusBadge = (status: string): JSX.Element | null => {
     switch (status) {
       case "pending":
@@ -187,7 +175,7 @@ const Table = () => {
   return (
     <main className="flex-1 overflow-y-auto rounded-2xl shadow-lg main-content">
       {/* Header with Title and Filters */}
-      <div className="main-content-header p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div className="main-content-header mb-10 p-6 sm:p-8 flex flex-col sm:flex-row justify-between items-center gap-4">
         <h2 className="text-lg font-bold main-content-title">
           Mening arizalarim
         </h2>
@@ -220,17 +208,11 @@ const Table = () => {
         </div>
       </div>
 
-      {/* Loading and Error States */}
-      {isLoading && (
-        <div className="p-6 text-center text-slate-500 flex justify-center">
-          <AiOutlineLoading className="text-2xl animate-spin duration-300 transition-all loading-spinner-primary" />
-        </div>
-      )}
       {isError && (
         <p className="p-6 text-center text-red-500">{error.message}</p>
       )}
 
-      {/* Table or Empty State */}
+      {/* Table (for Desktop) or Cards (for Mobile) */}
       {!isLoading && !isError && filteredApplications?.length === 0 ? (
         <div className="p-6 text-center text-slate-500">
           <p>Hech qanday ariza topilmadi.</p>
@@ -243,54 +225,86 @@ const Table = () => {
       ) : (
         !isLoading &&
         !isError && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left main-content-table">
-              <thead className="text-xs uppercase main-content-table-head">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Ariza ID
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Sana
-                  </th>
-                  <th scope="col" className="px-6 py-3">
-                    Holati
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right">
-                    Amallar
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredApplications?.map((app) => (
-                  <tr key={app.id} className="main-content-table-row">
-                    <td className="px-6 py-4 h-[61px] font-bold main-content-table-cell id">
-                      {app.id}
-                    </td>
-                    <td className="px-6 py-4 h-[61px] main-content-table-cell">
-                      {app.date}
-                    </td>
-                    <td className="px-6 py-4 h-[61px]">
-                      {renderStatusBadge(app.status)}
-                    </td>
-                    <td className="px-6 py-4 h-[61px] flex justify-end items-center space-x-1 text-right">
-                      <button
-                        className="view-details-btn cursor-pointer hover:underline"
-                        onClick={() => openModal(app.id)}
-                      >
-                        <FaEye />
-                      </button>
-                      <button
-                        onClick={() => openModal(app.id)}
-                        className="view-details-btn text cursor-pointer hover:underline"
-                      >
-                        Batafsil
-                      </button>
-                    </td>
+          <div className="px-6 sm:px-8 pb-6 sm:pb-8">
+            {/* === DESKTOP UCHUN JADVAL (O'rta ekranlardan kattasida ko'rinadi) === */}
+            <div className="overflow-x-auto hidden md:block">
+              <table className="w-full text-sm text-left main-content-table">
+                <thead className="text-xs uppercase main-content-table-head">
+                  <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Ariza ID
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Sana
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Holati
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-right">
+                      Amallar
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filteredApplications?.map((app) => (
+                    <tr key={app.id} className="main-content-table-row">
+                      <td className="px-6 py-4 h-[61px] font-bold main-content-table-cell id">
+                        {app.id}
+                      </td>
+                      <td className="px-6 py-4 h-[61px] main-content-table-cell">
+                        {app.date}
+                      </td>
+                      <td className="px-6 py-4 h-[61px]">
+                        {renderStatusBadge(app.status)}
+                      </td>
+                      <td className="px-6 py-4 h-[61px] flex justify-end items-center space-x-2 text-right">
+                        <button
+                          className="view-details-btn cursor-pointer flex items-center gap-2 hover:underline text-[var(--text-color)]"
+                          onClick={() => openModal(app.id)}
+                        >
+                          <FaEye />
+                          <span>Batafsil</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* === MOBIL UCHUN KARTALAR (O'rta ekranlardan kichigida ko'rinadi) === */}
+            <div className="md:hidden space-y-4">
+              {filteredApplications?.map((app) => (
+                <div
+                  key={app.id}
+                  className="bg-[var(--card-background)] border border-[var(--border-color)] rounded-lg p-4 shadow-sm space-y-3"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="font-bold text-lg text-[var(--text-color)]">
+                      #{app.id}
+                    </div>
+                    {renderStatusBadge(app.status)}
+                  </div>
+                  <div className="border-t border-[var(--border-color)] pt-3 space-y-2 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-[var(--text-light)]">Sana:</span>
+                      <span className="font-medium text-[var(--text-color)]">
+                        {app.date}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="pt-2">
+                    <button
+                      onClick={() => openModal(app.id)}
+                      className="w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                    >
+                      <FaEye />
+                      <span>Batafsil ko&apos;rish</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )
       )}
@@ -337,7 +351,7 @@ const Table = () => {
             {/* Modal Body */}
             <div className="p-6 bg-[var(--card-background)] overflow-y-auto space-y-6 modal-body">
               {/* General Information */}
-              <div >
+              <div>
                 <h4 className="font-semibold mb-2 modal-section-title">
                   Umumiy ma&apos;lumot
                 </h4>
@@ -412,21 +426,11 @@ const Table = () => {
             </div>
 
             {/* Modal Footer */}
-            <div
-              className="flex items-center justify-end p-5 border-t border-[var(--border-color)] modal-footer"
-              style={{
-                borderColor: "var(--border-color)",
-                backgroundColor: "var(--primary-light)",
-              }}
-            >
+            <div className="flex items-center justify-end p-5 border-t border-[var(--border-color)] modal-footer">
               <button
                 onClick={closeModal}
                 type="button"
-                className="font-bold py-2 px-5 rounded-lg cursor-pointer"
-                style={{
-                  backgroundColor: "#4154F1",
-                  color: "white",
-                }}
+                className="font-bold py-2 px-5 rounded-lg cursor-pointer bg-blue-600 text-white hover:bg-blue-700 transition"
               >
                 Yopish
               </button>
