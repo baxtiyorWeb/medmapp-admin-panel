@@ -279,10 +279,7 @@ const StatusCard: React.FC = () => {
       };
 
       // 1. Profil ma'lumotlarini yangilash
-      const profileResponse = await api.patch(
-        "/patients/profile/me/",
-        profilePayload
-      );
+      const profileResponse = await api.patch("/patients/me/", profilePayload);
 
       const appPayload = {
         complaint: formData.complaint,

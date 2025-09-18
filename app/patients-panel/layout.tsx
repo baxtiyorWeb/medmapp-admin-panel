@@ -24,7 +24,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false); // Boshlang'ich holat
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
-  const [imgSrc, setImgSrc] = useState("/assets/MedMapp_logo_main.png");
+
   const profileRef = useRef<HTMLDivElement>(null);
   const { isDarkMode, toggleDarkMode } = useDarkModeContext();
   const pathname = usePathname();
@@ -32,6 +32,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   const { profile, isLoading } = useProfile();
 
+  const [imgSrc, setImgSrc] = useState("/assets/MedMapp_Logo_shaffof.png");
   // YECHIM: Ekranni o'lchamini aniqlash uchun yangi useEffect
   useEffect(() => {
     // Bu funksiya ekran kengligini tekshiradi
@@ -228,19 +229,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
                 className="profile-toggle cursor-pointer flex items-center space-x-3"
                 onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
               >
-                {profile && get(profile, "full_name") ? (
-                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold">
-                    {get(profile, "full_name").charAt(0).toUpperCase()}
-                  </div>
-                ) : (
+                {get(profile, "avatar_url") ? (
                   <Image
                     width={40}
                     height={40}
                     className="h-10 w-10 rounded-full object-cover"
-                    src="/assets/user_avatar.png"
+                    src={get(profile, "avatar_url") || "/assets/user_avatar.png"}
                     alt="Profil rasmi"
                   />
+                ) : (
+                  <div className="h-10 w-10 flex items-center justify-center rounded-full bg-slate-200 dark:bg-slate-600 text-slate-800 dark:text-slate-200 font-bold">
+                    {get(profile, "full_name", "B").charAt(0).toUpperCase()}
+                  </div>
                 )}
+
                 <div className="hidden md:block text-left">
                   <div className="font-bold text-[var(--text-color)]">
                     {get(profile, "full_name", "Bemor")}

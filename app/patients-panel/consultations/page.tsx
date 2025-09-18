@@ -10,6 +10,7 @@ import {
 } from "react-icons/bs";
 import api from "@/utils/api";
 import axios from "axios";
+import usePatients from "@/hooks/usePatients";
 // --- Backend API turlari (Interfaces)
 export interface ApiUser {
   id: number;
@@ -72,7 +73,7 @@ export interface ApiConversation {
 // --- API Funksiyalari
 const getConsultations = async (): Promise<ApiConversation[]> => {
   const response = await api.get("/consultations/conversations/");
-  return response.data;
+  return response.data?.results;
 };
 
 const getMessages = async (conversationId: number): Promise<ApiMessage[]> => {
@@ -336,7 +337,7 @@ const ConsultationPage: React.FC = () => {
       }
     };
     fetchInitialData();
-  }, [handleSelectConsultation]); 
+  }, [handleSelectConsultation]);
 
   const handleSendMessage = async () => {
     if (!newMessage.trim() || !selectedConsultation) return;
@@ -399,7 +400,11 @@ const ConsultationPage: React.FC = () => {
     if (e.key === "Enter") handleSendMessage();
   };
 
-  // --- RENDER FUNKSIYALARI (UI qismi) ---
+  const { patientsItems } = usePatients();
+
+  console.log(patientsItems);
+
+ 
   const renderConsultationList = () => (
     <div id="consultation-list" className="overflow-y-auto flex-grow p-2">
       {isLoadingList ? (
@@ -463,7 +468,7 @@ const ConsultationPage: React.FC = () => {
 
   const ChatPane: React.FC<{ messages: Message[] }> = ({ messages }) => (
     <div id="chat-pane" className="tab-pane p-4 sm:p-6 space-y-4 chat-body">
-      {messages.map((msg, index) => (
+      {messages.map((msg) => (
         <div
           key={msg.id}
           className={`flex ${

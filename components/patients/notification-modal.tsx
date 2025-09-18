@@ -27,6 +27,12 @@ export default function Notification({
       borderClass = "border-green-300 dark:border-green-700";
       icon = "bi-check-circle-fill";
       break;
+    case "info":
+      bgClass = "bg-blue-600 dark:bg-blue-900";
+      textClass = "text-blue-700 dark:text-blue-200";
+      borderClass = "border-blue-500 dark:border-blue-700";
+      icon = "bi-info-circle-fill";
+      break;
     default:
       return null;
   }
