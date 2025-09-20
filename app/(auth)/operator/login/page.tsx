@@ -3,6 +3,7 @@
 import { useState, FormEvent, useEffect } from "react";
 // api.ts faylingizni to'g'ri import qilganingizga ishonch hosil qiling
 import api from "@/utils/api";
+import { AxiosError } from "axios";
 // Hozircha bu yerda mock api obyekti ishlatiladi.
 // O'zingizni loyihangizda haqiqiy axios instance bilan almashtiring.
 
@@ -183,14 +184,14 @@ export default function LoginPage() {
         // Agar javobda `access` tokeni bo'lmasa, noma'lum xato
         showToast('Noma\'lum xatolik. Token topilmadi.', 'error');
       }
-    } catch (err: any) {
-      // Agar server 401 (Unauthorized) xatolik qaytarsa, bu login yoki parol xato degani
-      if (err.response && err.response.status === 401) {
+    } catch (err) {
+      const error = err as AxiosError<{ detail?: string }>; // serverdan keladigan body tipini ham belgilash mumkin
+
+      if (error.response?.status === 401) {
         showToast('Login yoki parol xato.', 'error');
       } else {
-        // Boshqa barcha tizim xatoliklari uchun
         showToast('Tizimga kirishda xatolik yuz berdi.', 'error');
-        console.error("Login error:", err);
+        console.error("Login error:", error);
       }
     } finally {
       // Har qanday holatda ham so'rov tugagach, yuklanish holatini o'chirish

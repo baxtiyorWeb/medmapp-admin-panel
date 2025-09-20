@@ -9,6 +9,7 @@ import {
 import Sortable from "sortablejs";
 import { Dialog, Transition } from "@headlessui/react";
 import api from "@/utils/api";
+import { AxiosError } from "axios";
 
 type ToastMessage = {
   id: number;
@@ -101,7 +102,7 @@ export default function OperatorPageClient() {
 
         // Stages mapping
         setStages(
-          (stagesData.results || []).map((s: any) => ({
+          (stagesData.results || []).map((s: { code_name: string, title: string, color: string }) => ({
             id: s.code_name,
             title: s.title,
             colorClass: `border-${s.color === "#123" ? "gray" : s.color}-600`, // #123 uchun fallback
@@ -110,7 +111,7 @@ export default function OperatorPageClient() {
 
         // Patients mapping - stageId ni birinchi stage ga (1) belgilaymiz, chunki stage ma'lumoti yo'q
         setPatients(
-          (patientsData.results || []).map((p: any) => ({
+          (patientsData.results || []).map((p: Patient) => ({
             id: p.id,
             name: p.full_name,
             tagId: p.tag || 1,
@@ -135,7 +136,7 @@ export default function OperatorPageClient() {
 
         // Tags mapping
         setTags(
-          (tagsData.results || []).map((t: any) => ({
+          (tagsData.results || []).map((t: { id: number, name: string, color: string }) => ({
             id: t.id,
             text: t.name,
             color: t.color === "#a81a1a" ? "danger" : t.color, // Hex uchun fallback
@@ -387,19 +388,25 @@ export default function OperatorPageClient() {
 
       setPatients((prev) => [newPatient, ...prev]);
       showToast(`${newPatientData.name} ismli bemor muvaffaqiyatli qo'shildi!`, "success");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Bemor yaratishda xatolik:", error);
-      if (error.response?.status === 400) {
-        const errorMessage =
-          error.response.data?.full_name?.[0] ||
-          error.response.data?.phone?.[0] ||
-          "Noto'g'ri ma'lumotlar";
-        showToast(errorMessage, "danger");
-      } else if (error.response?.status === 409) {
-        showToast("Bu telefon raqami bilan bemor allaqachon ro'yxatdan o'tgan", "warning");
+
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 400) {
+          const errorMessage =
+            error.response.data?.full_name?.[0] ||
+            error.response.data?.phone?.[0] ||
+            "Noto'g'ri ma'lumotlar";
+          showToast(errorMessage, "danger");
+        } else if (error.response?.status === 409) {
+          showToast("Bu telefon raqami bilan bemor allaqachon ro'yxatdan o'tgan", "warning");
+        } else {
+          showToast("Bemor qo'shishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "danger");
+        }
       } else {
-        showToast("Bemor qo'shishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "danger");
+        showToast("Kutilmagan xatolik yuz berdi.", "danger");
       }
+
       throw error;
     }
   };
@@ -706,7 +713,7 @@ export default function OperatorPageClient() {
                     ) : (
                       <div className="text-center text-gray-400 p-8">
                         <i className="bi bi-moon-stars-fill text-5xl"></i>
-                        <p className="mt-3 text-base font-medium">Bemorlar yo'q</p>
+                        <p className="mt-3 text-base font-medium">Bemorlar yo&apos;q</p>
                       </div>
                     )}
                   </div>

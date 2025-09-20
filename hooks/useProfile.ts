@@ -62,6 +62,7 @@ export interface PatientProfile {
   phone: string,
   passport: string | null;
   dob: string | null;
+  full_name: string;
   gender: string;
   complaints: string;
   previous_diagnosis: string;

@@ -13,12 +13,17 @@ export interface Patient {
   id: number;
   name: string;
   tagId: number;
+  full_name?: string;   // optional
+  tag?: string;         // optional
+  updated_at?: string;  // optional
+  email?: string;       // optional
   stageId: string;
   phone: string;
   source: string;
   createdBy: string;
   lastUpdatedAt: string;
   history: PatientHistory[];
+  avatar_url?: string;  // optional
   details: {
     passport: string;
     dob: string;
@@ -30,6 +35,7 @@ export interface Patient {
     documents: unknown;
   };
 }
+
 
 export interface Stage {
   id: string;
