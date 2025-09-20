@@ -2,21 +2,27 @@
 import axios, { AxiosInstance } from "axios";
 
 const API_BASE_URL = "http://127.0.0.1:8000/api";
+
 const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
 });
 
+/**
+ * Auth tokenlarni olish
+ */
 export const getAuthTokens = () => {
-  const accessToken =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-  const refreshToken =
-    typeof window !== "undefined"
-      ? localStorage.getItem("refresh_token")
-      : null;
-  return { accessToken, refreshToken };
+  if (typeof window === "undefined") return { accessToken: null, refreshToken: null };
+
+  return {
+    accessToken: localStorage.getItem("access_token"),
+    refreshToken: localStorage.getItem("refresh_token"),
+  };
 };
 
+/**
+ * Tokenlarni saqlash
+ */
 export const setAuthTokens = (access: string, refresh: string) => {
   if (typeof window !== "undefined") {
     localStorage.setItem("access_token", access);
@@ -24,6 +30,9 @@ export const setAuthTokens = (access: string, refresh: string) => {
   }
 };
 
+/**
+ * Tokenlarni o‘chirish
+ */
 export const removeAuthTokens = () => {
   if (typeof window !== "undefined") {
     localStorage.removeItem("access_token");
@@ -31,6 +40,24 @@ export const removeAuthTokens = () => {
   }
 };
 
+/**
+ * Login sahifasiga yo‘naltirish
+ */
+const redirectToLogin = () => {
+  removeAuthTokens();
+  setTimeout(() => {
+    // Operator va patient panel uchun alohida
+    if (window.location.pathname.startsWith("/patients-panel")) {
+      window.location.href = "/login";
+    } else {
+      window.location.href = "/operator/login";
+    }
+  }, 800);
+};
+
+/**
+ * Request interceptor
+ */
 api.interceptors.request.use(
   (config) => {
     const { accessToken } = getAuthTokens();
@@ -42,47 +69,44 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+/**
+ * Response interceptor
+ */
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
 
-    // Faqat 401 (Unauthorized) da ishlash kerak
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-    
+
+      const { refreshToken } = getAuthTokens();
+
+      if (!refreshToken) {
+        redirectToLogin();
+        return Promise.reject(error);
+      }
+
       try {
-        const { refreshToken } = getAuthTokens();
-
-       
-        if (!refreshToken) {
-          removeAuthTokens();
-            window.location.href = "/login";
-          return Promise.reject(error);
-        }
-
-        // token yangilashga urinish
-        const refreshResponse = await axios.post(
-          `${API_BASE_URL}/auth/auth/refresh/`,
-          { refresh: refreshToken }
-        );
+        // Refresh token orqali yangi access token olish
+        const refreshResponse = await axios.post(`${API_BASE_URL}/auth/auth/refresh/`, {
+          refresh: refreshToken,
+        });
 
         const newAccessToken = refreshResponse.data.access;
-        setAuthTokens(newAccessToken, refreshToken);
 
+        // Tokenlarni yangilash
+        setAuthTokens(newAccessToken, refreshToken);
         api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
 
-        // Avvalgi so'rovni qayta yuborish
+        // Avvalgi so‘rovni qayta yuborish
         return api(originalRequest);
       } catch (refreshError) {
-        // refresh ham ishlamadi → login sahifaga
-        removeAuthTokens();
-          window.location.href = "/login";
+        redirectToLogin();
         return Promise.reject(refreshError);
       }
     }
 
-    // Boshqa status kodlar → tokenlarni o‘chirib yubormaslik kerak
     return Promise.reject(error);
   }
 );

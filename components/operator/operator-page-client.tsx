@@ -1,16 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useRef, Fragment } from "react";
+import React, { useState, useEffect, useRef, useMemo, Fragment } from "react";
 import {
-  initialPatients,
-  initialStages,
-  initialTags,
   Patient,
   Stage,
   Tag,
 } from "../../lib/data";
 import Sortable from "sortablejs";
 import { Dialog, Transition } from "@headlessui/react";
+import api from "@/utils/api";
 
 type ToastMessage = {
   id: number;
@@ -19,29 +17,20 @@ type ToastMessage = {
 };
 
 export default function OperatorPageClient() {
-  const [patients, setPatients] = useState<Patient[]>(initialPatients);
-  const [stages] = useState<Stage[]>(initialStages);
-  const [tags, setTags] = useState<Tag[]>(initialTags);
+  const [patients, setPatients] = useState<Patient[]>([]);
+  const [stages, setStages] = useState<Stage[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredPatients, setFilteredPatients] = useState<Patient[]>(patients);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
-  const [editingSection, setEditingSection] = useState<
-    "personal" | "medical" | null
-  >(null);
-  const [editingPatientDetails, setEditingPatientDetails] = useState<
-    Patient["details"] | null
-  >(null);
-
+  const [editingSection, setEditingSection] = useState<"personal" | "medical" | null>(null);
+  const [editingPatientDetails, setEditingPatientDetails] = useState<Patient["details"] | null>(null);
   type PatientToMove = { patientId: number; newStageId: string } | null;
   const [patientToMove, setPatientToMove] = useState<PatientToMove>(null);
   const [stageChangeComment, setStageChangeComment] = useState("");
   const [patientToDelete, setPatientToDelete] = useState<Patient | null>(null);
-
-  // Modal and Offcanvas visibility states
   const [isNewPatientModalOpen, setIsNewPatientModalOpen] = useState(false);
   const [isTagModalOpen, setIsTagModalOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-
   const [wizardStep, setWizardStep] = useState(1);
   const [newPatientFiles, setNewPatientFiles] = useState<File[]>([]);
   const [newTagName, setNewTagName] = useState("");
@@ -51,16 +40,11 @@ export default function OperatorPageClient() {
   const kanbanBoardRef = useRef<HTMLDivElement>(null);
   const newPatientFormRef = useRef<HTMLFormElement>(null);
 
-  const showToast = (
-    message: string,
-    type: "success" | "danger" | "warning" = "success"
-  ) => {
+  const showToast = (message: string, type: "success" | "danger" | "warning" = "success") => {
     const newToast: ToastMessage = { id: Date.now(), message, type };
     setToasts((prevToasts) => [...prevToasts, newToast]);
     setTimeout(() => {
-      setToasts((prevToasts) =>
-        prevToasts.filter((toast) => toast.id !== newToast.id)
-      );
+      setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== newToast.id));
     }, 5000);
   };
 
@@ -80,11 +64,8 @@ export default function OperatorPageClient() {
 
   const getNextStepText = (stageId: string) => {
     const nextSteps: { [key: string]: string } = {
-      stage1: "Hujjatlarni so'rash",
-      stage2: "Klinika tanlash",
-      stage3: "To'lovni qabul qilish",
-      stage4: "Safar sanasini belgilash",
-      stage5: "Yopilgan",
+      "1": "Hujjatlarni so'rash",
+      "2": "Klinika tanlash",
     };
     return nextSteps[stageId] || "Noma'lum";
   };
@@ -100,19 +81,78 @@ export default function OperatorPageClient() {
     setSelectedPatient(null);
   };
 
+  const filteredPatients = useMemo(
+    () => patients.filter((p) => p.name.toLowerCase().includes(searchTerm.toLowerCase())),
+    [patients, searchTerm]
+  );
+
   useEffect(() => {
-    setFilteredPatients(
-      patients.filter((p) =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    );
-  }, [searchTerm, patients]);
+    const fetchData = async () => {
+      try {
+        const [patientsResponse, stagesResponse, tagsResponse] = await Promise.all([
+          api.get("patients/"),
+          api.get("patients/stages/"),
+          api.get("patients/tags/"),
+        ]);
+
+        const { data: patientsData } = patientsResponse;
+        const { data: stagesData } = stagesResponse;
+        const { data: tagsData } = tagsResponse;
+
+        // Stages mapping
+        setStages(
+          (stagesData.results || []).map((s: any) => ({
+            id: s.code_name,
+            title: s.title,
+            colorClass: `border-${s.color === "#123" ? "gray" : s.color}-600`, // #123 uchun fallback
+          }))
+        );
+
+        // Patients mapping - stageId ni birinchi stage ga (1) belgilaymiz, chunki stage ma'lumoti yo'q
+        setPatients(
+          (patientsData.results || []).map((p: any) => ({
+            id: p.id,
+            name: p.full_name,
+            tagId: p.tag || 1,
+            stageId: "1", // Hamma patientni birinchi stage ga qo'yamiz, chunki stage ma'lumoti yo'q
+            phone: p.phone || "",
+            source: p.source || "Anketa",
+            createdBy: "Noma'lum",
+            lastUpdatedAt: p.updated_at,
+            history: [],
+            details: {
+              phone: p.phone || "",
+              email: p.email || "",
+              passport: "",
+              dob: "",
+              gender: "Erkak",
+              complaints: "",
+              previousDiagnosis: "",
+              documents: p.avatar_url ? [{ name: "avatar.png", url: p.avatar_url }] : [],
+            },
+          }))
+        );
+
+        // Tags mapping
+        setTags(
+          (tagsData.results || []).map((t: any) => ({
+            id: t.id,
+            text: t.name,
+            color: t.color === "#a81a1a" ? "danger" : t.color, // Hex uchun fallback
+          }))
+        );
+      } catch (error) {
+        console.error("Ma'lumotlarni yuklashda xatolik:", error);
+        showToast("Ma'lumotlarni yuklashda xatolik yuz berdi", "danger");
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (!kanbanBoardRef.current) return;
-    const containers = Array.from(
-      kanbanBoardRef.current.querySelectorAll(".kanban-cards")
-    );
+    const containers = Array.from(kanbanBoardRef.current.querySelectorAll(".kanban-cards"));
     const sortableInstances: Sortable[] = [];
     containers.forEach((container) => {
       sortableInstances.push(
@@ -125,10 +165,9 @@ export default function OperatorPageClient() {
             const originalList = evt.from;
             const originalIndex = evt.oldDraggableIndex;
 
-            originalList.insertBefore(
-              originalItem,
-              originalList.children[originalIndex!]
-            );
+            if (originalIndex !== undefined) {
+              originalList.insertBefore(originalItem, originalList.children[originalIndex]);
+            }
 
             if (evt.from !== evt.to) {
               setPatientToMove({
@@ -146,9 +185,7 @@ export default function OperatorPageClient() {
   const handleStartEditing = (section: "personal" | "medical") => {
     if (!selectedPatient) return;
     setEditingSection(section);
-    setEditingPatientDetails(
-      JSON.parse(JSON.stringify(selectedPatient.details))
-    );
+    setEditingPatientDetails(JSON.parse(JSON.stringify(selectedPatient.details)));
   };
 
   const handleCancelEditing = () => {
@@ -156,24 +193,47 @@ export default function OperatorPageClient() {
     setEditingPatientDetails(null);
   };
 
-  const handleSaveDetails = () => {
+  const handleSaveDetails = async () => {
     if (!selectedPatient || !editingPatientDetails) return;
-    const updatedPatient = {
-      ...selectedPatient,
-      details: editingPatientDetails,
-    };
-    setPatients((prev) =>
-      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-    );
-    setSelectedPatient(updatedPatient);
-    handleCancelEditing();
-    showToast("Ma'lumotlar saqlandi");
+
+    try {
+      const { data: updatedPatientData } = await api.patch(`patients/${selectedPatient.id}/`, {
+        full_name: selectedPatient.name,
+        phone: editingPatientDetails.phone,
+        email: editingPatientDetails.email,
+      });
+
+      setPatients((prev) =>
+        prev.map((p) =>
+          p.id === selectedPatient.id
+            ? {
+              ...p,
+              name: updatedPatientData.full_name,
+              details: {
+                ...p.details,
+                ...updatedPatientData,
+              },
+            }
+            : p
+        )
+      );
+      setSelectedPatient({
+        ...selectedPatient,
+        name: updatedPatientData.full_name,
+        details: {
+          ...selectedPatient.details,
+          ...updatedPatientData,
+        },
+      });
+      handleCancelEditing();
+      showToast("Ma'lumotlar saqlandi");
+    } catch (error) {
+      showToast("Ma'lumotlarni saqlashda xatolik yuz berdi", "danger");
+    }
   };
 
   const handleDetailChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     if (!editingPatientDetails) return;
     setEditingPatientDetails((prev) =>
@@ -181,28 +241,51 @@ export default function OperatorPageClient() {
     );
   };
 
-  const handleTagChangeInDetails = (
-    e: React.ChangeEvent<HTMLSelectElement>
-  ) => {
+  const handleTagChangeInDetails = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newTagId = parseInt(e.target.value);
     if (!selectedPatient) return;
-    const updatedPatient = { ...selectedPatient, tagId: newTagId };
-    setPatients((prev) =>
-      prev.map((p) => (p.id === updatedPatient.id ? updatedPatient : p))
-    );
-    setSelectedPatient(updatedPatient);
-    showToast("Holat o'zgartirildi");
+
+    try {
+      const { data: updatedPatientData } = await api.patch(`patients/${selectedPatient.id}/`, {
+        tag: newTagId,
+      });
+
+      setPatients((prev) =>
+        prev.map((p) =>
+          p.id === selectedPatient.id
+            ? {
+              ...p,
+              tagId: updatedPatientData.tag,
+            }
+            : p
+        )
+      );
+      setSelectedPatient({
+        ...selectedPatient,
+        tagId: updatedPatientData.tag,
+      });
+      showToast("Holat o'zgartirildi");
+    } catch (error) {
+      showToast("Holatni o'zgartirishda xatolik yuz berdi", "danger");
+    }
   };
 
-  const confirmStageChange = () => {
+  const confirmStageChange = async () => {
     if (!patientToMove || !stageChangeComment.trim()) {
       showToast("Iltimos, izoh yozing!", "danger");
       return;
     }
-    setPatients((prev) =>
-      prev.map((p) =>
-        p.id === patientToMove.patientId
-          ? {
+
+    try {
+      await api.patch(`patients/${patientToMove.patientId}/change-stage/`, {
+        new_stage_id: patientToMove.newStageId,
+        comment: stageChangeComment,
+      });
+
+      setPatients((prev) =>
+        prev.map((p) =>
+          p.id === patientToMove.patientId
+            ? {
               ...p,
               stageId: patientToMove.newStageId,
               history: [
@@ -214,23 +297,114 @@ export default function OperatorPageClient() {
                 },
               ],
             }
-          : p
-      )
-    );
-    showToast("Bosqich muvaffaqiyatli o'zgartirildi");
-    setStageChangeComment("");
-    setPatientToMove(null);
+            : p
+        )
+      );
+      showToast("Bosqich muvaffaqiyatli o'zgartirildi");
+      setStageChangeComment("");
+      setPatientToMove(null);
+    } catch (error) {
+      showToast("Bosqichni o'zgartirishda xatolik yuz berdi", "danger");
+    }
   };
 
-  const confirmDeletePatient = () => {
+  const confirmDeletePatient = async () => {
     if (!patientToDelete) return;
-    setPatients((prev) => prev.filter((p) => p.id !== patientToDelete.id));
-    showToast("Bemor muvaffaqiyatli o'chirildi.", "warning");
-    setPatientToDelete(null);
-    setSelectedPatient(null);
+
+    try {
+      await api.delete(`patients/${patientToDelete.id}/`);
+
+      setPatients((prev) => prev.filter((p) => p.id !== patientToDelete.id));
+      showToast("Bemor muvaffaqiyatli o'chirildi.", "warning");
+      setPatientToDelete(null);
+      setSelectedPatient(null);
+    } catch (error) {
+      showToast("Bemorni o'chirishda xatolik yuz berdi", "danger");
+    }
   };
 
-  const handleWizardNext = () => {
+  const handleCreatePatient = async (
+    newPatientData: Omit<Patient, "id" | "history" | "lastUpdatedAt">,
+    files: File[]
+  ) => {
+    try {
+      const createResponse = await api.post("patients/create/", {
+        full_name: newPatientData.name,
+        phone: newPatientData.details.phone,
+        email: newPatientData.details.email,
+        source: newPatientData.source,
+      });
+
+      const createdPatient = createResponse.data;
+
+      if (files.length > 0) {
+        try {
+          const formData = new FormData();
+          files.forEach((file) => {
+            formData.append("documents", file);
+          });
+
+          await api.post(`patients/${createdPatient.id}/documents/`, formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          });
+        } catch (fileUploadError) {
+          console.warn("Fayllarni yuklashda xatolik:", fileUploadError);
+        }
+      }
+
+      const updateData = {
+        details: {
+          ...newPatientData.details,
+          passport: newPatientData.details.passport,
+          dob: newPatientData.details.dob,
+          gender: newPatientData.details.gender,
+          complaints: newPatientData.details.complaints,
+          previous_diagnosis: newPatientData.details.previousDiagnosis,
+        },
+        tag: newPatientData.tagId,
+        stage: newPatientData.stageId,
+        created_by: newPatientData.createdBy,
+      };
+
+      await api.patch(`patients/${createdPatient.id}/`, updateData);
+
+      const newPatient: Patient = {
+        ...newPatientData,
+        id: createdPatient.id,
+        history: [],
+        lastUpdatedAt: new Date().toISOString(),
+        details: {
+          ...newPatientData.details,
+          documents: files.map((file) => ({
+            name: file.name,
+            size: file.size,
+            type: file.type,
+          })),
+        },
+      };
+
+      setPatients((prev) => [newPatient, ...prev]);
+      showToast(`${newPatientData.name} ismli bemor muvaffaqiyatli qo'shildi!`, "success");
+    } catch (error: any) {
+      console.error("Bemor yaratishda xatolik:", error);
+      if (error.response?.status === 400) {
+        const errorMessage =
+          error.response.data?.full_name?.[0] ||
+          error.response.data?.phone?.[0] ||
+          "Noto'g'ri ma'lumotlar";
+        showToast(errorMessage, "danger");
+      } else if (error.response?.status === 409) {
+        showToast("Bu telefon raqami bilan bemor allaqachon ro'yxatdan o'tgan", "warning");
+      } else {
+        showToast("Bemor qo'shishda xatolik yuz berdi. Qaytadan urinib ko'ring.", "danger");
+      }
+      throw error;
+    }
+  };
+
+  const handleWizardNext = async () => {
     if (wizardStep < 3) {
       if (wizardStep === 1) {
         const form = newPatientFormRef.current;
@@ -262,52 +436,63 @@ export default function OperatorPageClient() {
       return;
     }
 
-    const newPatient: Omit<Patient, "id"> = {
+    const newPatientData: Omit<Patient, "id" | "history" | "lastUpdatedAt"> = {
       name,
       tagId: 1,
-      stageId: "stage1",
+      stageId: "1", // Yangi patientni birinchi stage ga qo'yamiz
       source: "Anketa",
       createdBy: "Operator #1",
-      history: [
-        {
-          date: new Date().toISOString(),
-          author: "Tizim",
-          text: "Bemor profili yaratildi.",
-        },
-      ],
+      phone,
       details: {
         passport: formData.get("passport")?.toString() || "",
         dob: formData.get("dob")?.toString() || "",
-        gender: formData.get("gender")?.toString() || "",
+        gender: formData.get("gender")?.toString() || "Erkak",
         phone,
         email: formData.get("email")?.toString() || "",
         complaints: formData.get("complaints")?.toString() || "",
         previousDiagnosis: formData.get("diagnosis")?.toString() || "",
-        documents: newPatientFiles.map((f) => ({ name: f.name, url: "#" })),
+        documents: [],
       },
     };
-    setPatients((prev) => [{ ...newPatient, id: Date.now() }, ...prev]);
-    showToast("Yangi bemor qo'shildi", "success");
-    setIsNewPatientModalOpen(false);
+
+    try {
+      await handleCreatePatient(newPatientData, newPatientFiles);
+      setIsNewPatientModalOpen(false);
+    } catch (error) {
+      // Error is handled in handleCreatePatient
+    }
   };
 
   const handleWizardBack = () => {
     if (wizardStep > 1) setWizardStep(wizardStep - 1);
   };
 
-  const handleAddNewTag = () => {
+  const handleAddNewTag = async () => {
     if (!newTagName.trim()) return;
-    setTags((prev) => [
-      ...prev,
-      { id: Date.now(), text: newTagName, color: newTagColor },
-    ]);
-    setNewTagName("");
-    showToast("Yangi holat qo'shildi");
+
+    try {
+      const { data: newTag } = await api.post("tags/", {
+        name: newTagName,
+        color: newTagColor,
+      });
+
+      setTags((prev) => [...prev, { id: newTag.id, text: newTag.name, color: newTag.color }]);
+      setNewTagName("");
+      showToast("Yangi holat qo'shildi");
+    } catch (error) {
+      showToast("Yangi holat qo'shishda xatolik yuz berdi", "danger");
+    }
   };
 
-  const handleDeleteTag = (tagId: number) => {
-    setTags((prev) => prev.filter((t) => t.id !== tagId));
-    showToast("Holat o'chirildi", "warning");
+  const handleDeleteTag = async (tagId: number) => {
+    try {
+      await api.delete(`patients/tags/${tagId}/`);
+
+      setTags((prev) => prev.filter((t) => t.id !== tagId));
+      showToast("Holat o'chirildi", "warning");
+    } catch (error) {
+      showToast("Holatni o'chirishda xatolik yuz berdi", "danger");
+    }
   };
 
   const getTagColorClasses = (color: string) => {
@@ -323,15 +508,14 @@ export default function OperatorPageClient() {
 
   const getToastColorClasses = (type: string) => {
     const colorMap: { [key: string]: string } = {
-      success:
-        "bg-green-500 text-white ring-1 ring-green-600/20 shadow-green-500/20",
+      success: "bg-green-500 text-white ring-1 ring-green-600/20 shadow-green-500/20",
       danger: "bg-red-500 text-white ring-1 ring-red-600/20 shadow-red-500/20",
-      warning:
-        "bg-yellow-500 text-gray-900 ring-1 ring-yellow-600/20 shadow-yellow-500/20",
+      warning: "bg-yellow-500 text-gray-900 ring-1 ring-yellow-600/20 shadow-yellow-500/20",
     };
     return colorMap[type];
   };
 
+  // Qolgan JSX kodlarini avvalgi holatida saqlaymiz, faqat Kanban boardni tekshirish uchun log qo'shamiz
   return (
     <>
       <style jsx global>{`
@@ -348,9 +532,7 @@ export default function OperatorPageClient() {
         {toasts.map((toast) => (
           <div
             key={toast.id}
-            className={`flex items-center justify-between w-full max-w-sm p-4 rounded-xl shadow-xl ring-1 ${getToastColorClasses(
-              toast.type
-            )}`}
+            className={`flex items-center justify-between w-full max-w-sm p-4 rounded-xl shadow-xl ring-1 ${getToastColorClasses(toast.type)}`}
           >
             <div className="text-sm font-medium">{toast.message}</div>
             <button
@@ -363,10 +545,10 @@ export default function OperatorPageClient() {
         ))}
       </div>
 
-      <section className="p-8 bg-gray-50 min-h-screen antialiased">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-6">
+      <section className="p-6 bg-[var(--card-background)] min-h-screen antialiased md:p-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 md:mb-8 md:gap-6">
           <div className="w-full md:w-auto">
-            <h1 className="text-4xl font-bold text-gray-900 tracking-tight">
+            <h1 className="text-3xl font-bold text-[var(--text-color)] tracking-tight md:text-4xl">
               Boshqaruv Paneli
             </h1>
           </div>
@@ -377,13 +559,13 @@ export default function OperatorPageClient() {
               </span>
               <input
                 type="search"
-                className="pl-12 pr-5 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm hover:shadow-md w-full md:w-64"
+                className="pl-12 pr-5 py-3 bg-[var(--input-bg)] text-[var(--text-color)] border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow shadow-sm hover:shadow-md w-full md:w-64"
                 placeholder="Bemor qidirish..."
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
             <button
-              className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
+              className="px-5 py-3 text-sm font-semibold bg-[var(--input-bg)] text-[var(--text-color)] border  border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
               type="button"
               onClick={() => setIsFiltersOpen(true)}
             >
@@ -391,7 +573,7 @@ export default function OperatorPageClient() {
               <span className="hidden md:inline">Filtr</span>
             </button>
             <button
-              className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
+              className="px-5 py-3 text-sm font-semibold bg-[var(--input-bg)] text-[var(--text-color)] border  border-gray-200 rounded-2xl shadow-sm hover:shadow-md hover:bg-gray-50 transition duration-200 flex items-center gap-2"
               type="button"
               onClick={() => setIsTagModalOpen(true)}
             >
@@ -408,110 +590,95 @@ export default function OperatorPageClient() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6 md:gap-6 md:mb-8">
+          <div className="bg-[var(--input-bg)] text-[var(--text-color)] p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1 md:p-6">
             <div className="p-4 rounded-full bg-blue-50 text-blue-600 shadow-sm">
               <i className="bi bi-people-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Jami Bitimlar</p>
-              <h4 className="text-3xl font-bold text-gray-900">
-                {patients.length}
-              </h4>
+              <p className="text-sm text-[var(--text-light)] font-medium">Jami Bitimlar</p>
+              <h4 className="text-3xl font-bold text-[var(--text-color)]">{patients.length}</h4>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+          <div className="bg-[var(--input-bg)] text-[var(--text-color)] p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1 md:p-6">
             <div className="p-4 rounded-full bg-green-50 text-green-600 shadow-sm">
               <i className="bi bi-person-plus-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">
-                Yangi Bemorlar
-              </p>
-              <h4 className="text-3xl font-bold text-gray-900">
-                {patients.filter((p) => p.stageId === "stage1").length}
+              <p className="text-sm text-[var(--text-light)] font-medium">Yangi Bemorlar</p>
+              <h4 className="text-3xl font-bold text-[var(--text-color)]">
+                {patients.filter((p) => p.stageId === "1").length}
               </h4>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+          <div className="bg-[var(--input-bg)] text-[var(--text-color)] p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1 md:p-6">
             <div className="p-4 rounded-full bg-yellow-50 text-yellow-600 shadow-sm">
               <i className="bi bi-check-circle-fill text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">Faol Bemorlar</p>
-              <h4 className="text-3xl font-bold text-gray-900">
-                {patients.filter((p) => p.stageId !== "stage5").length}
+              <p className="text-sm text-[var(--text-light)] font-medium">Faol Bemorlar</p>
+              <h4 className="text-3xl font-bold text-[var(--text-color)]">
+                {patients.filter((p) => p.stageId !== "2").length}
               </h4>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1">
+          <div className="bg-[var(--input-bg)] text-[var(--text-color)] p-5 rounded-2xl shadow-md hover:shadow-xl transition duration-300 flex items-center gap-4 hover:-translate-y-1 md:p-6">
             <div className="p-4 rounded-full bg-indigo-50 text-indigo-600 shadow-sm">
               <i className="bi bi-cash-stack text-3xl"></i>
             </div>
             <div>
-              <p className="text-sm text-gray-500 font-medium">
-                Kutilayotgan Daromad
-              </p>
-              <h4 className="text-3xl font-bold text-gray-900">$2,564</h4>
+              <p className="text-sm text-[var(--text-light)] font-medium">Kutilayotgan Daromad</p>
+              <h4 className="text-3xl font-bold text-[var(--text-color)]">$2,564</h4>
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto pb-6">
           <div
-            className="grid grid-flow-col auto-cols-[340px] gap-6 min-w-max"
+            className="grid grid-flow-col auto-cols-[300px] gap-4 min-w-max md:auto-cols-[340px] md:gap-6"
             ref={kanbanBoardRef}
           >
             {stages.map((stage) => {
-              const patientsInStage = filteredPatients.filter(
-                (p) => p.stageId === stage.id
-              );
+              const patientsInStage = filteredPatients.filter((p) => p.stageId === stage.id);
+              console.log(stages);
+
               return (
                 <div
                   key={stage.id}
-                  className="flex flex-col bg-gray-100 rounded-2xl shadow-sm overflow-hidden"
+                  className="flex bg-[var(--input-bg)] text-[var(--text-color)] flex-col bg-gray-100 rounded-2xl shadow-sm overflow-hidden"
                 >
                   <div
-                    className={`p-5 font-semibold text-gray-800 border-b-4 ${stage.colorClass} flex items-center justify-between`}
+                    className={`p-5 bg-[var(--input-bg)] text-[var(--text-color)] font-semibold text-gray-800 border-b-4 ${stage.colorClass} flex items-center justify-between`}
                   >
-                    <span>
+                    <span className="text-[var(--text-color)]">
                       {stage.title} ({patientsInStage.length})
                     </span>
                   </div>
                   <div
-                    className="kanban-cards flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-300px)]"
+                    className="kanban-cards bg-[var(--input-bg)] text-[var(--text-color)] flex-grow p-4 space-y-4 overflow-y-auto max-h-[calc(100vh-300px)]"
                     data-stage-id={stage.id}
                   >
                     {patientsInStage.length > 0 ? (
                       patientsInStage.map((patient) => {
-                        const tag = tags.find(
-                          (t) => t.id === patient.tagId
-                        ) || {
+                        const tag = tags.find((t) => t.id === patient.tagId) || {
                           color: "secondary",
                           text: "Noma'lum",
                         };
-                        const lastHistory =
-                          patient.history[patient.history.length - 1];
+                        const lastHistory = patient.history[patient.history.length - 1];
                         return (
                           <div
                             key={patient.id}
-                            className="bg-white rounded-xl shadow-md p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300"
+                            className="bg-[var(--background-color)] text-[var(--text-color)] rounded-xl shadow-md p-5 cursor-pointer hover:shadow-xl hover:-translate-y-1 transition duration-300"
                             data-id={patient.id}
                             onClick={() => setSelectedPatient(patient)}
                           >
                             <div className="flex justify-between items-start mb-4">
                               <div>
-                                <div className="font-bold text-gray-900 text-lg">
-                                  {patient.name}
-                                </div>
-                                <div className="text-gray-500 text-sm mt-1">
-                                  {patient.details.phone}
-                                </div>
+                                <div className="font-bold text-[var(--text-color)] text-lg">{patient.name}</div>
+                                <div className="text-[var(--text-light)] text-sm mt-1">{patient.details.phone}</div>
                               </div>
                               <span
-                                className={`text-xs font-semibold px-3 py-1.5 rounded-full ${getTagColorClasses(
-                                  tag.color
-                                )}`}
+                                className={`text-xs text-[var(--text-light)] font-semibold px-3 py-1.5 rounded-full ${getTagColorClasses(tag.color)}`}
                               >
                                 {tag.text}
                               </span>
@@ -519,14 +686,11 @@ export default function OperatorPageClient() {
                             <div className="space-y-3 text-sm text-gray-600 mb-5">
                               <div className="flex items-start gap-3">
                                 <i className="bi bi-info-circle-fill text-gray-400 mt-0.5 text-base"></i>
-                                <span>{lastHistory?.text}</span>
+                                <span className="text-[var(--text-light)]">{lastHistory?.text || "Hech qanday izoh"}</span>
                               </div>
                               <div className="flex items-start gap-3">
                                 <i className="bi bi-exclamation-diamond-fill text-gray-400 mt-0.5 text-base"></i>
-                                <span>
-                                  Keyingi qadam:{" "}
-                                  {getNextStepText(patient.stageId)}
-                                </span>
+                                <span className="text-[var(--text-light)]">Keyingi qadam: {getNextStepText(patient.stageId)}</span>
                               </div>
                             </div>
                             <div className="flex justify-between items-center text-xs text-gray-500 font-medium">
@@ -534,7 +698,7 @@ export default function OperatorPageClient() {
                                 <i className="bi bi-bookmark-star-fill mr-1.5"></i>
                                 {patient.source}
                               </span>
-                              <span>{formatDate(lastHistory?.date)}</span>
+                              <span>{formatDate(lastHistory?.date || patient.lastUpdatedAt)}</span>
                             </div>
                           </div>
                         );
@@ -542,9 +706,7 @@ export default function OperatorPageClient() {
                     ) : (
                       <div className="text-center text-gray-400 p-8">
                         <i className="bi bi-moon-stars-fill text-5xl"></i>
-                        <p className="mt-3 text-base font-medium">
-                          Bemorlar yo&apos;q
-                        </p>
+                        <p className="mt-3 text-base font-medium">Bemorlar yo'q</p>
                       </div>
                     )}
                   </div>
@@ -567,10 +729,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -597,7 +756,6 @@ export default function OperatorPageClient() {
                     </button>
                   </div>
                   <div className="p-8 overflow-y-auto h-[calc(100vh-80px)] bg-gray-50 space-y-6">
-                    {/* Personal Details Card */}
                     <div className="bg-white rounded-2xl shadow-md p-6">
                       <div className="flex justify-between items-center mb-4">
                         <h6 className="font-bold text-gray-800 text-lg">
@@ -609,8 +767,7 @@ export default function OperatorPageClient() {
                             className="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center gap-1 transition"
                             onClick={() => handleStartEditing("personal")}
                           >
-                            <i className="bi bi-pencil text-base"></i>{" "}
-                            Tahrirlash
+                            <i className="bi bi-pencil text-base"></i> Tahrirlash
                           </button>
                         ) : (
                           <div className="flex gap-3">
@@ -630,8 +787,7 @@ export default function OperatorPageClient() {
                         )}
                       </div>
                       <div className="space-y-4 text-sm">
-                        {editingSection === "personal" &&
-                        editingPatientDetails ? (
+                        {editingSection === "personal" && editingPatientDetails ? (
                           <div className="grid grid-cols-2 gap-5">
                             <div>
                               <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
@@ -642,7 +798,7 @@ export default function OperatorPageClient() {
                                 name="passport"
                                 value={editingPatientDetails.passport}
                                 onChange={handleDetailChange}
-                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                               />
                             </div>
                             <div>
@@ -654,7 +810,7 @@ export default function OperatorPageClient() {
                                 name="dob"
                                 value={editingPatientDetails.dob}
                                 onChange={handleDetailChange}
-                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                               />
                             </div>
                             <div>
@@ -665,7 +821,7 @@ export default function OperatorPageClient() {
                                 name="gender"
                                 value={editingPatientDetails.gender}
                                 onChange={handleDetailChange}
-                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm bg-white"
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  bg-white"
                               >
                                 <option value="Erkak">Erkak</option>
                                 <option value="Ayol">Ayol</option>
@@ -680,7 +836,7 @@ export default function OperatorPageClient() {
                                 name="phone"
                                 value={editingPatientDetails.phone}
                                 onChange={handleDetailChange}
-                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                               />
                             </div>
                             <div className="col-span-2">
@@ -692,48 +848,38 @@ export default function OperatorPageClient() {
                                 name="email"
                                 value={editingPatientDetails.email}
                                 onChange={handleDetailChange}
-                                className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                               />
                             </div>
                           </div>
                         ) : (
                           <>
                             <div className="flex justify-between py-2 items-center">
-                              <span className="text-gray-500 font-medium">
-                                Pasport
-                              </span>
+                              <span className="text-gray-500 font-medium">Pasport</span>
                               <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.passport}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 items-center">
-                              <span className="text-gray-500 font-medium">
-                                Tug&apos;ilgan sana
-                              </span>
+                              <span className="text-gray-500 font-medium">Tug&apos;ilgan sana</span>
                               <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.dob}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 items-center">
-                              <span className="text-gray-500 font-medium">
-                                Jins
-                              </span>
+                              <span className="text-gray-500 font-medium">Jins</span>
                               <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.gender}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 items-center">
-                              <span className="text-gray-500 font-medium">
-                                Telefon
-                              </span>
+                              <span className="text-gray-500 font-medium">Telefon</span>
                               <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.phone}
                               </span>
                             </div>
                             <div className="flex justify-between py-2 items-center">
-                              <span className="text-gray-500 font-medium">
-                                Pochta
-                              </span>
+                              <span className="text-gray-500 font-medium">Pochta</span>
                               <span className="font-semibold text-gray-900">
                                 {selectedPatient.details.email}
                               </span>
@@ -742,15 +888,88 @@ export default function OperatorPageClient() {
                         )}
                       </div>
                     </div>
-                    {/* Medical Details Card */}
-                    {/* ... (Shu yerga tibbiy ma'lumotlar qo'shishingiz mumkin, lekin funksiyalarni o'zgartirmayman) */}
+                    <div className="bg-white rounded-2xl shadow-md p-6">
+                      <div className="flex justify-between items-center mb-4">
+                        <h6 className="font-bold text-gray-800 text-lg">
+                          <i className="bi bi-heart-pulse mr-2 text-red-600"></i>
+                          Tibbiy ma&apos;lumotlar
+                        </h6>
+                        {editingSection !== "medical" ? (
+                          <button
+                            className="text-blue-600 hover:text-blue-800 text-sm font-semibold flex items-center gap-1 transition"
+                            onClick={() => handleStartEditing("medical")}
+                          >
+                            <i className="bi bi-pencil text-base"></i> Tahrirlash
+                          </button>
+                        ) : (
+                          <div className="flex gap-3">
+                            <button
+                              className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-xl hover:bg-green-700 transition shadow-sm"
+                              onClick={handleSaveDetails}
+                            >
+                              <i className="bi bi-check-lg mr-1"></i> Saqlash
+                            </button>
+                            <button
+                              className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition shadow-sm"
+                              onClick={handleCancelEditing}
+                            >
+                              <i className="bi bi-x-lg mr-1"></i> Bekor
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-4 text-sm">
+                        {editingSection === "medical" && editingPatientDetails ? (
+                          <div className="space-y-5">
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                Shikoyatlar
+                              </label>
+                              <textarea
+                                name="complaints"
+                                value={editingPatientDetails.complaints}
+                                onChange={handleDetailChange}
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  resize-none"
+                                rows={4}
+                              ></textarea>
+                            </div>
+                            <div>
+                              <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                Oldingi tashxis
+                              </label>
+                              <textarea
+                                name="previousDiagnosis"
+                                value={editingPatientDetails.previousDiagnosis}
+                                onChange={handleDetailChange}
+                                className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  resize-none"
+                                rows={4}
+                              ></textarea>
+                            </div>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="py-2">
+                              <span className="text-gray-500 font-medium block mb-1">Shikoyatlar</span>
+                              <span className="font-semibold text-gray-900">
+                                {selectedPatient.details.complaints || "Yo'q"}
+                              </span>
+                            </div>
+                            <div className="py-2">
+                              <span className="text-gray-500 font-medium block mb-1">Oldingi tashxis</span>
+                              <span className="font-semibold text-gray-900">
+                                {selectedPatient.details.previousDiagnosis || "Yo'q"}
+                              </span>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </div>
                     <div className="mt-8">
                       <button
                         className="w-full py-3 text-red-600 bg-white border border-red-200 rounded-2xl hover:bg-red-50 hover:border-red-300 transition shadow-sm hover:shadow-md font-semibold"
                         onClick={() => setPatientToDelete(selectedPatient)}
                       >
-                        <i className="bi bi-trash mr-2"></i>Bemorni
-                        o&apos;chirish
+                        <i className="bi bi-trash mr-2"></i>Bemorni o&apos;chirish
                       </button>
                     </div>
                   </div>
@@ -763,10 +982,7 @@ export default function OperatorPageClient() {
 
       {/* Stage Change Modal */}
       <Transition show={!!patientToMove} as={Fragment}>
-        <Dialog
-          onClose={() => setPatientToMove(null)}
-          className="relative z-50"
-        >
+        <Dialog onClose={() => setPatientToMove(null)} className="relative z-50">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -776,10 +992,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -791,28 +1004,18 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
-                  <Dialog.Title className="font-bold text-xl text-gray-900">
+              <Dialog.Panel className="bg-[var(--background-color)] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+                <div className="p-6 border-b border-[var(--border-color)]">
+                  <Dialog.Title className="font-bold text-xl text-[var(--text-color)]">
                     Bosqichni O&apos;zgartirish
                   </Dialog.Title>
                 </div>
                 <div className="p-6">
                   <p className="mb-5 text-gray-600 text-base">
                     Bemor{" "}
-                    <strong>
-                      {
-                        patients.find((p) => p.id === patientToMove?.patientId)
-                          ?.name
-                      }
-                    </strong>{" "}
+                    <strong>{patients.find((p) => p.id === patientToMove?.patientId)?.name}</strong>{" "}
                     uchun yangi bosqich:{" "}
-                    <strong>
-                      {
-                        stages.find((s) => s.id === patientToMove?.newStageId)
-                          ?.title
-                      }
-                    </strong>
+                    <strong>{stages.find((s) => s.id === patientToMove?.newStageId)?.title}</strong>
                   </p>
                   <label
                     htmlFor="stage-change-comment"
@@ -829,10 +1032,10 @@ export default function OperatorPageClient() {
                     required
                   ></textarea>
                 </div>
-                <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
+                <div className="flex justify-end gap-4 p-5 bg-[var(--card-background)] rounded-b-2xl">
                   <button
                     type="button"
-                    className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
+                    className="bg-[#475569] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer"
                     onClick={() => setPatientToMove(null)}
                   >
                     Bekor qilish
@@ -853,10 +1056,7 @@ export default function OperatorPageClient() {
 
       {/* Delete Confirmation Modal */}
       <Transition show={!!patientToDelete} as={Fragment}>
-        <Dialog
-          onClose={() => setPatientToDelete(null)}
-          className="relative z-50"
-        >
+        <Dialog onClose={() => setPatientToDelete(null)} className="relative z-50">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -866,10 +1066,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -889,15 +1086,14 @@ export default function OperatorPageClient() {
                 </div>
                 <div className="p-6">
                   <p className="text-gray-600 text-base">
-                    Rostdan ham <strong>{patientToDelete?.name}</strong> ismli
-                    bemorni o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib
-                    bo&apos;lmaydi.
+                    Rostdan ham <strong>{patientToDelete?.name}</strong> ismli bemorni
+                    o&apos;chirmoqchimisiz? Bu amalni orqaga qaytarib bo&apos;lmaydi.
                   </p>
                 </div>
                 <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
                   <button
                     type="button"
-                    className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
+                    className="px-5 py-3 text-sm font-semibold bg-[var(--input-bg)] text-[var(--text-color)] border  border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
                     onClick={() => setPatientToDelete(null)}
                   >
                     Yo&apos;q
@@ -918,10 +1114,7 @@ export default function OperatorPageClient() {
 
       {/* New Patient Modal */}
       <Transition show={isNewPatientModalOpen} as={Fragment}>
-        <Dialog
-          onClose={() => setIsNewPatientModalOpen(false)}
-          className="relative z-50"
-        >
+        <Dialog onClose={() => setIsNewPatientModalOpen(false)} className="relative z-50">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -931,10 +1124,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -946,15 +1136,15 @@ export default function OperatorPageClient() {
             leaveTo="opacity-0 scale-95"
           >
             <div className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden">
-                <div className="p-6 border-b border-gray-100">
+              <Dialog.Panel className="bg-[var(--background-color)] rounded-2xl shadow-2xl w-full max-w-4xl overflow-hidden">
+                <div className="p-6 border-b border-[var(--border-color)]">
                   <Dialog.Title className="font-bold text-xl text-gray-900">
                     Konsultatsiya uchun Anketa
                   </Dialog.Title>
                 </div>
                 <div className="p-8">
                   <div className="relative mb-10">
-                    <div className="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -translate-y-1/2 rounded-full"></div>
+                    <div className="absolute top-1/2 left-0 w-full h-1 bg-[var(--card-background)] -translate-y-1/2 rounded-full"></div>
                     <div
                       className="absolute top-1/2 left-0 h-1 bg-blue-600 -translate-y-1/2 transition-all duration-300 rounded-full"
                       style={{ width: `${((wizardStep - 1) / 2) * 100}%` }}
@@ -963,11 +1153,8 @@ export default function OperatorPageClient() {
                       {[1, 2, 3].map((step, index) => (
                         <div key={step} className="flex flex-col items-center">
                           <div
-                            className={`w-10 h-10 rounded-full flex items-center justify-center text-base font-bold shadow-md ${
-                              wizardStep >= step
-                                ? "bg-blue-600 text-white"
-                                : "bg-gray-200 text-gray-500"
-                            } transition`}
+                            className={`w-10 h-10 rounded-full flex items-center justify-center text-base font-bold shadow-md ${wizardStep >= step ? "bg-blue-600 text-white" : "bg-[var(--input-bg)] text-gray-500"
+                              } transition`}
                           >
                             {step}
                           </div>
@@ -978,11 +1165,7 @@ export default function OperatorPageClient() {
                       ))}
                     </div>
                   </div>
-                  <form
-                    ref={newPatientFormRef}
-                    onSubmit={(e) => e.preventDefault()}
-                    className="space-y-6"
-                  >
+                  <form ref={newPatientFormRef} onSubmit={(e) => e.preventDefault()} className="space-y-6">
                     {wizardStep === 1 && (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
@@ -992,7 +1175,7 @@ export default function OperatorPageClient() {
                           <input
                             type="text"
                             name="name"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                             placeholder="Ism va familiya"
                             required
                           />
@@ -1004,7 +1187,7 @@ export default function OperatorPageClient() {
                           <input
                             type="tel"
                             name="phone"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                             placeholder="+998 90 123 45 67"
                             required
                           />
@@ -1016,7 +1199,7 @@ export default function OperatorPageClient() {
                           <input
                             type="text"
                             name="passport"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                             placeholder="AA1234567"
                           />
                         </div>
@@ -1027,7 +1210,7 @@ export default function OperatorPageClient() {
                           <input
                             type="date"
                             name="dob"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                           />
                         </div>
                         <div>
@@ -1036,7 +1219,7 @@ export default function OperatorPageClient() {
                           </label>
                           <select
                             name="gender"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm bg-white"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  "
                           >
                             <option value="Erkak">Erkak</option>
                             <option value="Ayol">Ayol</option>
@@ -1049,7 +1232,7 @@ export default function OperatorPageClient() {
                           <input
                             type="email"
                             name="email"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                             placeholder="example@domain.com"
                           />
                         </div>
@@ -1063,7 +1246,7 @@ export default function OperatorPageClient() {
                           </label>
                           <textarea
                             name="complaints"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm resize-none"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  resize-none"
                             rows={4}
                             placeholder="Bemorning shikoyatlari..."
                           ></textarea>
@@ -1074,7 +1257,7 @@ export default function OperatorPageClient() {
                           </label>
                           <textarea
                             name="diagnosis"
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm resize-none"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm  resize-none"
                             rows={4}
                             placeholder="Avval qo'yilgan tashxislar..."
                           ></textarea>
@@ -1091,11 +1274,9 @@ export default function OperatorPageClient() {
                             type="file"
                             multiple
                             onChange={(e) =>
-                              setNewPatientFiles(
-                                e.target.files ? Array.from(e.target.files) : []
-                              )
+                              setNewPatientFiles(e.target.files ? Array.from(e.target.files) : [])
                             }
-                            className="w-full mt-2 p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm"
+                            className="w-full mt-2 p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-xl focus:ring-2 focus:ring-blue-500 transition shadow-sm "
                           />
                           {newPatientFiles.length > 0 && (
                             <ul className="mt-4 space-y-2">
@@ -1104,16 +1285,12 @@ export default function OperatorPageClient() {
                                   key={index}
                                   className="flex items-center justify-between bg-gray-50 p-3 rounded-xl shadow-sm"
                                 >
-                                  <span className="text-sm text-gray-700">
-                                    {file.name}
-                                  </span>
+                                  <span className="text-sm text-gray-700">{file.name}</span>
                                   <button
                                     type="button"
                                     className="text-red-500 hover:text-red-700 w-8 h-8 rounded-full hover:bg-red-100 transition flex items-center justify-center"
                                     onClick={() =>
-                                      setNewPatientFiles((prev) =>
-                                        prev.filter((_, i) => i !== index)
-                                      )
+                                      setNewPatientFiles((prev) => prev.filter((_, i) => i !== index))
                                     }
                                   >
                                     &times;
@@ -1127,11 +1304,11 @@ export default function OperatorPageClient() {
                     )}
                   </form>
                 </div>
-                <div className="flex justify-end gap-4 p-5 bg-gray-50 rounded-b-2xl">
+                <div className="flex bg-[var(--card-background)] justify-end gap-4 p-5  rounded-b-2xl">
                   {wizardStep > 1 && (
                     <button
                       type="button"
-                      className="px-5 py-3 text-sm font-semibold text-gray-700 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition shadow-sm"
+                      className="bg-[#475569] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer"
                       onClick={handleWizardBack}
                     >
                       Orqaga
@@ -1153,10 +1330,7 @@ export default function OperatorPageClient() {
 
       {/* Tag Management Modal */}
       <Transition show={isTagModalOpen} as={Fragment}>
-        <Dialog
-          onClose={() => setIsTagModalOpen(false)}
-          className="relative z-50"
-        >
+        <Dialog onClose={() => setIsTagModalOpen(false)} className="relative z-50">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -1166,10 +1340,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -1189,9 +1360,7 @@ export default function OperatorPageClient() {
                 </div>
                 <div className="p-6 space-y-6">
                   <div>
-                    <h6 className="font-bold text-gray-800 text-lg mb-3">
-                      Mavjud Holatlar
-                    </h6>
+                    <h6 className="font-bold text-gray-800 text-lg mb-3">Mavjud Holatlar</h6>
                     <ul className="space-y-3">
                       {tags.map((tag) => (
                         <li
@@ -1199,9 +1368,7 @@ export default function OperatorPageClient() {
                           className="flex justify-between items-center bg-gray-50 p-4 rounded-xl shadow-sm"
                         >
                           <span
-                            className={`text-sm font-semibold px-4 py-2 rounded-full ${getTagColorClasses(
-                              tag.color
-                            )}`}
+                            className={`text-sm font-semibold px-4 py-2 rounded-full ${getTagColorClasses(tag.color)}`}
                           >
                             {tag.text}
                           </span>
@@ -1216,9 +1383,7 @@ export default function OperatorPageClient() {
                     </ul>
                   </div>
                   <div>
-                    <h6 className="font-bold text-gray-800 text-lg mb-3">
-                      Yangi Holat Qo&apos;shish
-                    </h6>
+                    <h6 className="font-bold text-gray-800 text-lg mb-3">Yangi Holat Qo&apos;shish</h6>
                     <div className="flex gap-3">
                       <input
                         type="text"
@@ -1255,10 +1420,7 @@ export default function OperatorPageClient() {
 
       {/* Filters Offcanvas */}
       <Transition show={isFiltersOpen} as={Fragment}>
-        <Dialog
-          onClose={() => setIsFiltersOpen(false)}
-          className="relative z-50"
-        >
+        <Dialog onClose={() => setIsFiltersOpen(false)} className="relative z-50">
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -1268,10 +1430,7 @@ export default function OperatorPageClient() {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div
-              className="fixed inset-0 bg-black/40 backdrop-blur-sm"
-              aria-hidden="true"
-            />
+            <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
           </Transition.Child>
           <Transition.Child
             as={Fragment}
@@ -1284,9 +1443,7 @@ export default function OperatorPageClient() {
           >
             <Dialog.Panel className="fixed top-0 right-0 h-full w-full max-w-md bg-white shadow-2xl overflow-hidden">
               <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                <Dialog.Title className="text-2xl font-bold text-gray-900">
-                  Filtrlar
-                </Dialog.Title>
+                <Dialog.Title className="text-2xl font-bold text-gray-900">Filtrlar</Dialog.Title>
                 <button
                   type="button"
                   className="p-2 rounded-full hover:bg-gray-100 transition text-gray-600 hover:text-gray-900"
@@ -1296,9 +1453,7 @@ export default function OperatorPageClient() {
                 </button>
               </div>
               <div className="p-8">
-                <p className="text-gray-600 text-base">
-                  Bu yerda filtrlar bo&apos;ladi...
-                </p>
+                <p className="text-gray-600 text-base">Bu yerda filtrlar bo&apos;ladi...</p>
               </div>
             </Dialog.Panel>
           </Transition.Child>

@@ -12,7 +12,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { get } from "lodash";
-import { useProfile } from "@/hooks/useProfile";
+import { useOperatorProfile, useProfile } from "@/hooks/useProfile";
 import "./layout.css";
 import { SidebarItem } from "@/components/SidebarItem";
 import { useDarkModeContext } from "@/providers/DarkThemeProvider";
@@ -26,7 +26,7 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
   const pathname = usePathname();
   const { isDarkMode, toggleDarkMode } = useDarkModeContext();
 
-  const { profile } = useProfile();
+  const { profile } = useOperatorProfile();
 
   useEffect(() => {
     const handleResize = () => {
@@ -72,15 +72,13 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
 
   return (
     <div
-      className={`wrapper ${isSidebarCollapsed ? "sidebar-collapsed" : ""} ${
-        isSidebarToggled ? "sidebar-toggled" : ""
-      }`}
+      className={`wrapper ${isSidebarCollapsed ? "sidebar-collapsed" : ""} ${isSidebarToggled ? "sidebar-toggled" : ""
+        }`}
     >
       <aside
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)]  flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)]  flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
           <Link href="/">
@@ -150,9 +148,8 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
         </nav>
       </aside>
       <div
-        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
-          isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"
-        }`}
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen ? "ml-0 md:ml-[260px]" : "ml-0"
+          }`}
       >
         <header className="flex items-center justify-between py-4 px-8 bg-[var(--card-background)] border-b border-[var(--border-color)] h-[89px] flex-shrink-0">
           <div className="flex items-center">
@@ -206,11 +203,12 @@ export default function OperatorLayout({ children }: React.PropsWithChildren) {
                     alt="Profil rasmi"
                   />
                 )}
+                {/*  */}
                 <div className="hidden md:block text-left">
                   <div className="font-bold text-[var(--text-color)]">
                     {get(profile, "full_name", "Bemor")}
                   </div>
-                  <div className="text-sm text-[var(--text-light)]">Bemor</div>
+                  <div className="text-sm text-[var(--text-light)]"> {get(profile, "role", "Bemor")}</div>
                 </div>
               </button>
               {isProfileDropdownOpen && (

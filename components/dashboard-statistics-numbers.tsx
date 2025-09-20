@@ -4,6 +4,9 @@ import AppointmentTable from "./dashboard-users-table";
 import DashboardUserLastMessage from "./dashboard-user-latest-message";
 
 const DashboardStatisticsNumbers = () => {
+
+
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
@@ -13,6 +16,7 @@ const DashboardStatisticsNumbers = () => {
           label="Bugungi uchrashuvlar"
           value="12 ta"
         />
+
         <StatCard
           icon={<UserPlus2 className="w-[22px] h-[32px]" />}
           bgColor="bg-[#198753]"

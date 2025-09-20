@@ -7,6 +7,8 @@ const Header = () => {
     typeof window !== "undefined" &&
       localStorage.getItem("medmapp_dark") === "true"
   );
+
+
   const [isProfileOpen, setIsProfileOpen] = useState<boolean>(false);
 
   const toggleDarkMode = () => {

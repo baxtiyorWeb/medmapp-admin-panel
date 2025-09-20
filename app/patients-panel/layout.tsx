@@ -110,9 +110,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       {/* Sidebar */}
       <aside
         id="sidebar"
-        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)] flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${
-          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
+        className={`fixed inset-y-0 left-0 z-40 w-[260px] bg-[var(--card-background)] flex flex-col border-r border-[var(--border-color)] transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
       >
         <div className="flex items-center p-6 mb-2 h-[89px] flex-shrink-0">
           <Link href="/">
@@ -185,9 +184,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       </aside>
 
       <div
-        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${
-          isSidebarOpen && !isMobile ? "ml-[260px]" : "ml-0"
-        }`}
+        className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 ease-in-out ${isSidebarOpen && !isMobile ? "ml-[260px]" : "ml-0"
+          }`}
       >
         {/* Header */}
         <header className="flex items-center justify-between py-4 px-8 bg-[var(--card-background)] border-b border-[var(--border-color)] h-[89px] flex-shrink-0">

@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, FormEvent, useEffect } from "react";
+// api.ts faylingizni to'g'ri import qilganingizga ishonch hosil qiling
 import api from "@/utils/api";
+// Hozircha bu yerda mock api obyekti ishlatiladi.
+// O'zingizni loyihangizda haqiqiy axios instance bilan almashtiring.
+
+
 
 const Spinner = () => (
   <svg
@@ -156,43 +161,41 @@ export default function LoginPage() {
       return;
     }
 
-    // --- MOCK API SO'ROVI ---
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // --- HAQIQIY API CHAQUVUVI ---
+    try {
+      // Backendga `login` va `password` bilan so'rov yuborish
+      const response = await api.post('/auth/auth/operator/login/', { phone_number: login, password });
 
-    if (login === "operator" && password === "12345") {
-      showToast("Muvaffaqiyatli kirdingiz!", "success");
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Xabarni ko'rish uchun vaqt
-      localStorage.setItem("authToken", "mock_token_12345");
-      window.location.href = window.location.origin;
-    } else {
-      showToast("Login yoki parol xato.", "error");
-    }
+      // Django'dan 'access' tokeni muvaffaqiyatli kelsa
+      if (response.data && response.data.access) {
+        showToast('Muvaffaqiyatli kirdingiz!', 'success');
 
-    setIsLoading(false);
 
-    /*
-        // --- HAQIQIY API CHAQUVUVI (Hozir kommentda) ---
-        try {
-            const response = await api.post('/auth/login', { login, password });
-            if (response.data && response.data.token) {
-                showToast('Muvaffaqiyatli kirdingiz!', 'success');
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                localStorage.setItem('authToken', response.data.token);
-                window.location.href = window.location.origin;
-            } else {
-                 showToast('Noma\'lum xatolik. Token topilmadi.', 'error');
-            }
-        } catch (err: any) {
-            if (err.response && err.response.status === 401) {
-                showToast('Login yoki parol xato.', 'error');
-            } else {
-                showToast('Tizimga kirishda xatolik yuz berdi.', 'error');
-                console.error("Login error:", err);
-            }
-        } finally {
-            setIsLoading(false);
+        if (response.data.refresh) {
+          localStorage.setItem('access_token', response.data.access);
+          localStorage.setItem('refresh_token', response.data.refresh);
         }
-        */
+
+        // Xabarni ko'rsatish uchun kichik kechikish va asosiy sahifaga o'tish
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        window.location.href = window.location.origin;
+      } else {
+        // Agar javobda `access` tokeni bo'lmasa, noma'lum xato
+        showToast('Noma\'lum xatolik. Token topilmadi.', 'error');
+      }
+    } catch (err: any) {
+      // Agar server 401 (Unauthorized) xatolik qaytarsa, bu login yoki parol xato degani
+      if (err.response && err.response.status === 401) {
+        showToast('Login yoki parol xato.', 'error');
+      } else {
+        // Boshqa barcha tizim xatoliklari uchun
+        showToast('Tizimga kirishda xatolik yuz berdi.', 'error');
+        console.error("Login error:", err);
+      }
+    } finally {
+      // Har qanday holatda ham so'rov tugagach, yuklanish holatini o'chirish
+      setIsLoading(false);
+    }
   };
 
   return (

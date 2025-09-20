@@ -11,7 +11,8 @@ import {
   useProfile,
   useUpdateProfile,
   useUploadAvatar, // Yangi hook
-  useDeleteAvatar, // Yangi hook
+  useDeleteAvatar,
+  Patient, // Yangi hook
 } from "@/hooks/useProfile"; // hooklar shu fayldan import qilinadi deb faraz qilindi
 import Image from "next/image";
 import Notification from "@/components/patients/notification-modal";
@@ -29,7 +30,7 @@ const formatPhoneNumber = (phoneNumber: string | null): string => {
 
 // Maydon nomlarini o'zbekchaga tarjima qilish uchun obyekt
 const fieldNamesUz: { [key: string]: string } = {
-  full_name: "To'liq ism",
+  full_name: "to'liq ism",
   email: "Elektron pochta",
   passport: "Passport",
   region: "Viloyat",
@@ -61,9 +62,9 @@ const Settings: React.FC = () => {
   const queryClient = useQueryClient();
   const { profile: initialProfile, isLoading, isError } = useProfile();
 
-  const [profile, setProfile] = useState<Partial<PatientProfile>>({});
+  const [profile, setProfile] = useState<Partial<Patient>>({});
   const [initialProfileState, setInitialProfileState] = useState<
-    Partial<PatientProfile>
+    Partial<Patient>
   >({});
 
   const updateProfileMutation = useUpdateProfile();
@@ -85,9 +86,9 @@ const Settings: React.FC = () => {
   // Dastlabki profil ma'lumotlarini state'ga yuklash
   useEffect(() => {
     if (initialProfile) {
-      const formattedData: Partial<PatientProfile> = {
+      const formattedData: Partial<Patient> = {
         ...initialProfile,
-        phone: formatPhoneNumber(initialProfile.phone),
+        phone: formatPhoneNumber(initialProfile?.phone),
       };
       setProfile(formattedData);
       setInitialProfileState(formattedData);
@@ -175,19 +176,19 @@ const Settings: React.FC = () => {
     setGeneralError(null);
     setNotification(null);
 
-    const changedData: Partial<PatientProfile> = _.omitBy(
+    const changedData: Partial<Patient> = _.omitBy(
       profile,
       (value, key) => {
-        return initialProfileState[key as keyof PatientProfile] === value;
+        return initialProfileState[key as keyof Patient] === value;
       }
     );
 
     if (Object.keys(changedData).length > 0) {
       updateProfileMutation.mutate(changedData, {
         onSuccess: (updatedProfile) => {
-          const formatted: Partial<PatientProfile> = {
+          const formatted: Partial<Patient> = {
             ...updatedProfile,
-            phone: formatPhoneNumber(updatedProfile.phone),
+            phone: formatPhoneNumber(updatedProfile?.phone),
           };
           setProfile(formatted);
           setInitialProfileState(formatted);
@@ -310,7 +311,7 @@ const Settings: React.FC = () => {
                       htmlFor="full_name"
                       className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                     >
-                      To&apos;liq ism
+                      To‘liq ism
                     </label>
                     <input
                       type="text"
@@ -318,11 +319,10 @@ const Settings: React.FC = () => {
                       name="full_name"
                       value={profile.full_name || ""}
                       onChange={handleInputChange}
-                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
-                        errors.full_name
-                          ? "border-red-500"
-                          : "border-[var(--border-color)]"
-                      }`}
+                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${errors.full_name
+                        ? "border-red-500"
+                        : "border-[var(--border-color)]"
+                        }`}
                     />
                     {errors.full_name && (
                       <p className="text-xs text-red-500 mt-1">
@@ -345,11 +345,10 @@ const Settings: React.FC = () => {
                       name="email"
                       value={profile.email || ""}
                       onChange={handleInputChange}
-                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${
-                        errors.email
-                          ? "border-red-500"
-                          : "border-[var(--border-color)]"
-                      }`}
+                      className={`w-full p-3 border bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none ${errors.email
+                        ? "border-red-500"
+                        : "border-[var(--border-color)]"
+                        }`}
                     />
                     {errors.email && (
                       <p className="text-xs text-red-500 mt-1">
@@ -361,15 +360,15 @@ const Settings: React.FC = () => {
                   {/* Phone */}
                   <div>
                     <label
-                      htmlFor="phone"
+                      htmlFor="phone_number"
                       className="text-sm font-medium text-[var(--text-color)] mb-1 block"
                     >
                       Telefon raqam (kirish uchun)
                     </label>
                     <input
                       type="tel"
-                      id="phone"
-                      name="phone"
+                      id="phone_number"
+                      name="phone_number"
                       value={profile.phone || ""}
                       className="w-full p-3 bg-[var(--input-bg)] border border-[var(--border-color)] rounded-lg cursor-not-allowed"
                       disabled
@@ -387,7 +386,7 @@ const Settings: React.FC = () => {
                     <select
                       id="region"
                       name="region"
-                      value={profile.region || ""}
+                      value={profile?.region || ""}
                       onChange={handleInputChange}
                       className="w-full p-3 border border-[var(--border-color)] bg-[var(--input-bg)] rounded-lg focus:ring-2 focus:ring-primary focus:outline-none appearance-none"
                     >

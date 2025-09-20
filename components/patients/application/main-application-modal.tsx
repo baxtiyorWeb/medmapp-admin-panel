@@ -94,7 +94,7 @@ const StatusCard: React.FC = () => {
         setPhoneInput(formatted);
       }
     }
-  }, [profile]);
+  }, []);
 
   const openModal = useCallback(() => {
     setIsModalOpen(true);
@@ -232,12 +232,12 @@ const StatusCard: React.FC = () => {
             documents: prev.documents.map((doc) =>
               doc.id === id
                 ? {
-                    ...doc,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    dataUrl: ev.target?.result as string,
-                  }
+                  ...doc,
+                  name: file.name,
+                  size: file.size,
+                  type: file.type,
+                  dataUrl: ev.target?.result as string,
+                }
                 : doc
             ),
           }));

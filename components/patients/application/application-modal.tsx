@@ -4,6 +4,7 @@
 import React from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { BsSendCheck } from "react-icons/bs";
+import { get } from "lodash";
 
 interface ApplicationModalProps {
   isOpen: boolean;
@@ -129,7 +130,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
                         {stepInfo.title}
                       </h4>
                       <p className="text-sm text-slate-500 mt-1">
-                        {stepInfo.description}
+                        {get(stepInfo, "description")}
                       </p>
                     </div>
                     <div className="bg-[var(--card-background)]  p-[20px] rounded-2xl">
@@ -144,9 +145,8 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
             <div className="flex-shrink-0 flex items-center justify-between p-4 bg-[var(--background-color)] border-t border-[var(--border-color)] rounded-b-2xl">
               <button
                 type="button"
-                className={`bg-[#475569] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer ${
-                  currentStep === 1 ? "invisible" : "visible"
-                }`}
+                className={`bg-[#475569] text-white font-bold py-2 px-5 rounded-lg hover:bg-[#64748B] transition cursor-pointer ${currentStep === 1 ? "invisible" : "visible"
+                  }`}
                 onClick={onPrev}
               >
                 Orqaga
